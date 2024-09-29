@@ -1,0 +1,165 @@
+SPECTRA PATH: 
+/home/letizia/Documents/Dottorato/Programma_new/relax/data600/dati_olio600/38/pdata/1
+
+CALIBRATION: (1.20000:0.88800) ppm
+in points
+0   0   0   2   2   2   4   5   6   8   10   12   17   33   -53   28   
+in ppm
+0.00000   0.00000   0.00000   0.00073   0.00073   0.00073   0.00147   0.00183   0.00220   0.00293   0.00367   0.00440   0.00623   0.01210   -0.01944   0.01027   
+
+Points:
+1	0.004
+2	0.013
+3	0.053
+4	0.083
+5	0.103
+6	0.153
+7	0.253
+8	0.353
+9	0.453
+10	0.553
+11	0.703
+12	0.903
+13	1.203
+14	2.003
+15	4.003
+16	5.003
+
+VCLIST point: 264.67 T
+
+Selected intervals (ppm):
+1	5.4200	5.3460
+2	5.5580	5.4250
+
+====================================================================================================
+
+N. interval: 1
+Baseline coefficients
+A	0.00000e+00
+B	0.00000e+00
+C	0.00000e+00
+D	0.00000e+00
+E	0.00000e+00
+N. point	Integral
+0	5136300.303 +/- 4208.582
+1	4239583.047 +/- 2796.640
+2	2078412.699 +/- 2686.684
+3	1295872.236 +/- 2461.932
+4	923420.361 +/- 1189.977
+5	511663.297 +/- 907.604
+6	191247.268 +/- 817.456
+7	89709.771 +/- 815.821
+8	43063.441 +/- 785.275
+9	29118.211 +/- 796.355
+10	11799.891 +/- 703.164
+11	2576.941 +/- 793.743
+12	3600.096 +/- 750.747
+13	1166.547 +/- 728.014
+14	490.299 +/- 722.428
+15	2693.172 +/- 587.632
+
+N. interval: 2
+Baseline coefficients
+A	0.00000e+00
+B	0.00000e+00
+C	0.00000e+00
+D	0.00000e+00
+E	0.00000e+00
+N. point	Integral
+0	45289940.051 +/- 7542.112
+1	42304749.381 +/- 5011.800
+2	31183729.791 +/- 4814.751
+3	25051313.117 +/- 4411.978
+4	21825205.264 +/- 2132.534
+5	15214807.369 +/- 1626.498
+6	7656143.816 +/- 1464.947
+7	3941738.479 +/- 1462.016
+8	2067898.055 +/- 1407.274
+9	1099424.604 +/- 1427.132
+10	443139.861 +/- 1260.125
+11	140408.900 +/- 1422.450
+12	28547.922 +/- 1345.399
+13	-292.775 +/- 1304.659
+14	6685.396 +/- 1294.648
+15	20645.498 +/- 1053.082
+
+
+------------------------------
+N. PEAK: 1
+------------------------------
+
+Fit Parameters:
+
+Mono
+y = a + A exp(-t/T1)
+fit: T1=-1.2471e+00, a=3.751e+04, A=5.385e+06
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 15
+    # data points      = 16
+    # variables        = 1
+    chi-square         = 4.8114e+10
+    reduced chi-square = 3.2076e+09
+    Akaike info crit   = 351.188149
+    Bayesian info crit = 351.960738
+[[Variables]]
+    t1: -1.24714197 +/- 0.00966357 (0.77%) (init = 0)
+
+Bi
+y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))
+fit: f=4.825e-02, T1a=-1.2330e+00, T1b=-3.1901e+00, a=3.328e+04, A=1.084e+08
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 40
+    # data points      = 16
+    # variables        = 3
+    chi-square         = 2.9597e+10
+    reduced chi-square = 2.2767e+09
+    Akaike info crit   = 347.413828
+    Bayesian info crit = 349.731595
+[[Variables]]
+    f:    0.04824846 +/- 1994.25453 (4133301.52%) (init = 0.5)
+    t1a: -1.23302471 +/- 0.00970264 (0.79%) (init = 0)
+    t1b: -3.19013866 +/- 1.00223287 (31.42%) (init = 0)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(f, t1b) = -0.9996
+
+------------------------------
+N. PEAK: 2
+------------------------------
+
+Fit Parameters:
+
+Mono
+y = a + A exp(-t/T1)
+fit: T1=-8.6543e-01, a=1.588e+05, A=4.625e+07
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 13
+    # data points      = 16
+    # variables        = 1
+    chi-square         = 5.7959e+11
+    reduced chi-square = 3.8640e+10
+    Akaike info crit   = 391.008051
+    Bayesian info crit = 391.780640
+[[Variables]]
+    t1: -0.86542833 +/- 0.00358434 (0.41%) (init = 0)
+
+Bi
+y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))
+fit: f=2.338e-01, T1a=-3.9423e+00, T1b=-8.6543e-01, a=1.588e+05, A=6.036e+07
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 39
+    # data points      = 16
+    # variables        = 3
+    chi-square         = 5.7959e+11
+    reduced chi-square = 4.4584e+10
+    Akaike info crit   = 395.008054
+    Bayesian info crit = 397.325821
+##  Warning: uncertainties could not be estimated:
+[[Variables]]
+    f:    0.23379685 (init = 0.5)
+    t1a: -3.94229314 (init = 0)
+    t1b: -0.86543497 (init = 0)
+====================================================================================================

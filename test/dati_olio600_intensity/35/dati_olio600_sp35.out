@@ -1,0 +1,169 @@
+SPECTRA PATH: 
+/home/letizia/Documents/Dottorato/Programma_new/relax/data600/dati_olio600/28
+
+CALIBRATION: (1.20000-0.88800) ppm
+in points
+0   0   0   2   2   2   4   5   6   7   9   11   14   26   38   -5   
+in ppm
+0.00000   0.00000   0.00000   0.00073   0.00073   0.00073   0.00147   0.00183   0.00220   0.00257   0.00330   0.00403   0.00513   0.00954   0.01394   -0.00183   
+
+Points:
+1	0.004
+2	0.013
+3	0.053
+4	0.083
+5	0.103
+6	0.153
+7	0.253
+8	0.353
+9	0.453
+10	0.553
+11	0.703
+12	0.903
+13	1.203
+14	2.003
+15	4.003
+16	5.003
+
+VCLIST point: 868.59 T
+
+SELECTED INTERVALS:
+
+
+====================================================================================================
+
+N. interval: 1
+Baseline coefficients
+A	0.00000e+00
+B	0.00000e+00
+C	0.00000e+00
+D	0.00000e+00
+E	0.00000e+00
+N. point	Integral
+0	659085.723 +/- 175.887
+1	630210.320 +/- 159.252
+2	522184.559 +/- 142.395
+3	452427.328 +/- 112.728
+4	412968.793 +/- 86.602
+5	326259.582 +/- 56.461
+6	205024.371 +/- 28.180
+7	129714.328 +/- 20.758
+8	82380.125 +/- 17.633
+9	52499.176 +/- 10.557
+10	26973.414 +/- 10.195
+11	11095.316 +/- 13.909
+12	3054.988 +/- 9.308
+13	596.566 +/- 7.867
+14	635.586 +/- 9.194
+15	219.992 +/- 5.370
+
+N. interval: 2
+Baseline coefficients
+A	0.00000e+00
+B	0.00000e+00
+C	0.00000e+00
+D	0.00000e+00
+E	0.00000e+00
+N. point	Integral
+0	93332.246 +/- 175.887
+1	85920.082 +/- 159.252
+2	57416.668 +/- 142.395
+3	42786.750 +/- 112.728
+4	35846.141 +/- 86.602
+5	22463.277 +/- 56.461
+6	9756.750 +/- 28.180
+7	4386.098 +/- 20.758
+8	1998.469 +/- 17.633
+9	1054.961 +/- 10.557
+10	641.895 +/- 10.195
+11	278.172 +/- 13.909
+12	110.414 +/- 9.308
+13	64.277 +/- 7.867
+14	64.688 +/- 9.194
+15	47.254 +/- 5.370
+
+
+------------------------------
+N. PEAK: 1
+------------------------------
+
+Fit Parameters:
+
+Mono
+y = a + A exp(-t/T1)
+fit: T1=-6.7149e-01, a=1.271e+03, A=6.685e+05
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 11
+    # data points      = 16
+    # variables        = 1
+    chi-square         = 15300145.9
+    reduced chi-square = 1020009.73
+    Akaike info crit   = 222.332547
+    Bayesian info crit = 223.105136
+[[Variables]]
+    t1: -0.67149425 +/- 0.00126828 (0.19%) (init = 0)
+
+Bi
+y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))
+fit: f=1.285e-01, T1a=-8.4778e-01, T1b=-6.4699e-01, a=4.041e+02, A=6.708e+05
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 113
+    # data points      = 16
+    # variables        = 3
+    chi-square         = 1809943.86
+    reduced chi-square = 139226.451
+    Akaike info crit   = 192.179483
+    Bayesian info crit = 194.497249
+[[Variables]]
+    f:    0.12852840 +/- 0.11459720 (89.16%) (init = 0.5)
+    t1a: -0.84777999 +/- 0.09294617 (10.96%) (init = 0)
+    t1b: -0.64698536 +/- 0.01334883 (2.06%) (init = 0)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(f, t1b)   = +0.9955
+    C(f, t1a)   = +0.9950
+    C(t1a, t1b) = +0.9818
+
+------------------------------
+N. PEAK: 2
+------------------------------
+
+Fit Parameters:
+
+Mono
+y = a + A exp(-t/T1)
+fit: T1=-9.8794e-01, a=4.760e+02, A=9.642e+04
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 13
+    # data points      = 16
+    # variables        = 1
+    chi-square         = 3770188.93
+    reduced chi-square = 251345.929
+    Akaike info crit   = 199.920751
+    Bayesian info crit = 200.693340
+[[Variables]]
+    t1: -0.98793980 +/- 0.00436789 (0.44%) (init = 0)
+
+Bi
+y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))
+fit: f=6.542e-01, T1a=-1.0846e+00, T1b=-8.1102e-01, a=9.777e+01, A=9.743e+04
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 63
+    # data points      = 16
+    # variables        = 3
+    chi-square         = 492014.247
+    reduced chi-square = 37847.2498
+    Akaike info crit   = 171.338788
+    Bayesian info crit = 173.656554
+[[Variables]]
+    f:    0.65415366 +/- 0.17553391 (26.83%) (init = 0.5)
+    t1a: -1.08459379 +/- 0.04075765 (3.76%) (init = 0)
+    t1b: -0.81101531 +/- 0.06863218 (8.46%) (init = 0)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(f, t1a)   = +0.9907
+    C(f, t1b)   = +0.9901
+    C(t1a, t1b) = +0.9642
+====================================================================================================

@@ -1,0 +1,166 @@
+SPECTRA PATH: 
+/home/letizia/Documents/Dottorato/Programma_new/relax/data600/dati_olio600/28
+
+CALIBRATION: (1.20000-0.88800) ppm
+in points
+0   0   0   2   2   2   4   5   6   8   10   12   17   33   -53   28   
+in ppm
+0.00000   0.00000   0.00000   0.00073   0.00073   0.00073   0.00147   0.00183   0.00220   0.00293   0.00367   0.00440   0.00623   0.01210   -0.01944   0.01027   
+
+Points:
+1	0.004
+2	0.013
+3	0.053
+4	0.083
+5	0.103
+6	0.153
+7	0.253
+8	0.353
+9	0.453
+10	0.553
+11	0.703
+12	0.903
+13	1.203
+14	2.003
+15	4.003
+16	5.003
+
+VCLIST point: 264.67 T
+
+SELECTED INTERVALS:
+
+
+====================================================================================================
+
+N. interval: 1
+Baseline coefficients
+A	0.00000e+00
+B	0.00000e+00
+C	0.00000e+00
+D	0.00000e+00
+E	0.00000e+00
+N. point	Integral
+0	565640.508 +/- 134.062
+1	528553.242 +/- 121.717
+2	391291.500 +/- 75.993
+3	311994.234 +/- 58.465
+4	270795.082 +/- 56.116
+5	187325.746 +/- 35.168
+6	90952.410 +/- 15.346
+7	44645.742 +/- 10.971
+8	22065.160 +/- 9.270
+9	10926.195 +/- 9.304
+10	3790.926 +/- 6.906
+11	939.625 +/- 6.449
+12	335.199 +/- 8.861
+13	260.988 +/- 13.226
+14	192.711 +/- 9.400
+15	1016.062 +/- 11.455
+
+N. interval: 2
+Baseline coefficients
+A	0.00000e+00
+B	0.00000e+00
+C	0.00000e+00
+D	0.00000e+00
+E	0.00000e+00
+N. point	Integral
+0	58077.613 +/- 134.062
+1	48687.504 +/- 121.717
+2	22270.777 +/- 75.993
+3	12792.590 +/- 58.465
+4	9207.570 +/- 56.116
+5	4447.016 +/- 35.168
+6	2026.777 +/- 15.346
+7	1077.707 +/- 10.971
+8	574.289 +/- 9.270
+9	385.434 +/- 9.304
+10	157.676 +/- 6.906
+11	61.988 +/- 6.449
+12	41.230 +/- 8.861
+13	49.922 +/- 13.226
+14	24.734 +/- 9.400
+15	124.672 +/- 11.455
+
+
+------------------------------
+N. PEAK: 1
+------------------------------
+
+Fit Parameters:
+
+Mono
+y = a + A exp(-t/T1)
+fit: T1=-8.7136e-01, a=9.651e+02, A=5.806e+05
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 15
+    # data points      = 16
+    # variables        = 1
+    chi-square         = 16131831.3
+    reduced chi-square = 1075455.42
+    Akaike info crit   = 223.179460
+    Bayesian info crit = 223.952049
+[[Variables]]
+    t1: -0.87136210 +/- 0.00150582 (0.17%) (init = 0)
+
+Bi
+y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))
+fit: f=6.324e-02, T1a=-1.1825e+00, T1b=-8.5310e-01, a=3.358e+02, A=5.830e+05
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 113
+    # data points      = 16
+    # variables        = 3
+    chi-square         = 2205890.15
+    reduced chi-square = 169683.858
+    Akaike info crit   = 195.344847
+    Bayesian info crit = 197.662614
+[[Variables]]
+    f:    0.06323530 +/- 0.03650146 (57.72%) (init = 0.5)
+    t1a: -1.18253430 +/- 0.11151146 (9.43%) (init = 0)
+    t1b: -0.85310189 +/- 0.00636617 (0.75%) (init = 0)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(f, t1b)   = +0.9853
+    C(f, t1a)   = +0.9837
+    C(t1a, t1b) = +0.9443
+
+------------------------------
+N. PEAK: 2
+------------------------------
+
+Fit Parameters:
+
+Mono
+y = a + A exp(-t/T1)
+fit: T1=-1.2854e+00, a=4.459e+02, A=6.206e+04
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 15
+    # data points      = 16
+    # variables        = 1
+    chi-square         = 3349672.60
+    reduced chi-square = 223311.507
+    Akaike info crit   = 198.028551
+    Bayesian info crit = 198.801140
+[[Variables]]
+    t1: -1.28544319 +/- 0.00723761 (0.56%) (init = 0)
+
+Bi
+y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))
+fit: f=2.514e-01, T1a=-1.2854e+00, T1b=-3.9840e+00, a=4.459e+02, A=2.468e+05
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 46
+    # data points      = 16
+    # variables        = 3
+    chi-square         = 3349672.88
+    reduced chi-square = 257667.145
+    Akaike info crit   = 202.028552
+    Bayesian info crit = 204.346319
+##  Warning: uncertainties could not be estimated:
+[[Variables]]
+    f:    0.25142217 (init = 0.5)
+    t1a: -1.28543499 (init = 0)
+    t1b: -3.98399568 (init = 0)
+====================================================================================================

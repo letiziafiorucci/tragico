@@ -1,0 +1,1481 @@
+SPECTRA PATH: 
+/home/letizia/Documents/NMR/FDX2_13C15N_700b_280224/
+
+Points:
+1	0.100
+2	0.060
+3	0.040
+4	0.020
+5	0.015
+6	0.012
+7	0.010
+8	0.008
+9	0.007
+10	0.006
+11	0.005
+12	0.004
+13	0.003
+14	0.002
+15	0.001
+16	0.001
+17	0.000
+
+INPUT1: inp1
+n. peak	name	ppm1	ppm2	v	mult
+1	true	116.44200	73.24400	76.26133	0
+2	true	116.44200	73.24400	80.16207	0
+3	true	116.44200	73.24400	92.40604	0
+4	true	116.44200	73.24400	100.07749	0
+5	true	116.44200	73.24400	104.19493	0
+6	true	116.44200	73.24400	108.72412	0
+7	true	116.44200	73.24400	113.09169	0
+8	true	116.44200	73.24400	114.27184	0
+
+INPUT2: inp2
+n. peak	i	ppm1	ppm2	k		fwhm		phi		A		B		C		D		E
+1	0	116.4	73.2	1.52260e-03	1.27811e+00	0.00000e+00	-2.860e-01	-6.400e-03	1.900e-04	0.000e+00	0.000e+00
+2	1	116.4	73.2	2.21375e-03	9.67321e-01	0.00000e+00	-2.860e-01	-6.400e-03	1.900e-04	0.000e+00	0.000e+00
+3	2	116.4	73.2	1.95410e-03	2.48240e+00	0.00000e+00	-2.860e-01	-6.400e-03	1.900e-04	0.000e+00	0.000e+00
+4	3	116.4	73.2	1.95410e-03	2.09392e+00	0.00000e+00	-2.860e-01	-6.400e-03	1.900e-04	0.000e+00	0.000e+00
+5	4	116.4	73.2	1.72491e-03	1.31695e+00	0.00000e+00	-2.860e-01	-6.400e-03	1.900e-04	0.000e+00	0.000e+00
+6	5	116.4	73.2	6.35795e-04	1.72486e+00	0.00000e+00	-2.860e-01	-6.400e-03	1.900e-04	0.000e+00	0.000e+00
+7	6	116.4	73.2	1.04723e-03	1.16156e+00	0.00000e+00	-2.860e-01	-6.400e-03	1.900e-04	0.000e+00	0.000e+00
+8	7	116.4	73.2	1.18638e-03	1.23926e+00	0.00000e+00	-2.860e-01	-6.400e-03	1.900e-04	0.000e+00	0.000e+00
+====================================================================================================
+====================================================================================================
+(I: fit interval, P: point in the series)
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 1
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 30000
+    # data points      = 1993
+    # variables        = 45
+    chi-square         = 0.00740067
+    reduced chi-square = 3.7991e-06
+    Akaike info crit   = -24829.6381
+    Bayesian info crit = -24577.7552
+##  Warning: uncertainties could not be estimated:
+    ph_2:     at boundary
+    lw_3:     at boundary
+    ph_3:     at boundary
+    xg_4:     at boundary
+    lw_6:     at boundary
+    ph_6:     at boundary
+    xg_7:     at boundary
+    xg_8:     at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.2659)
+    k_1:      0.00202526 (init = 0.001562112)
+    lw_1:     2.29101922 (init = 1.673769)
+    ph_1:    -0.05794843 (init = 0.001508225)
+    xg_1:     0.54995990 (init = 0.2981556)
+    shift_2:  80.0307153 (init = 80.16806)
+    k_2:      0.00281607 (init = 0.002380256)
+    lw_2:     1.31923834 (init = 1.352667)
+    ph_2:     0.15707963 (init = -0.005302726)
+    xg_2:     0.21086303 (init = 0.5229459)
+    shift_3:  92.4099912 (init = 92.4234)
+    k_3:      0.00139290 (init = 0.001777282)
+    lw_3:     2.49998640 (init = 2.498256)
+    ph_3:     0.15707963 (init = -0.001469107)
+    xg_3:     0.50651992 (init = 0.0031984)
+    shift_4:  99.8322413 (init = 100.0888)
+    k_4:      0.00101760 (init = 0.001462596)
+    lw_4:     2.05380303 (init = 2.340554)
+    ph_4:     0.06271880 (init = 0.0003412933)
+    xg_4:     1.00000000 (init = 0.5698513)
+    shift_5:  104.072976 (init = 104.201)
+    k_5:      0.00177336 (init = 0.001838743)
+    lw_5:     1.81325089 (init = 1.536926)
+    ph_5:    -0.05818048 (init = -0.0007297412)
+    xg_5:     0.39527053 (init = 0.09907964)
+    shift_6:  108.625217 (init = 108.7272)
+    k_6:      6.2495e-04 (init = 0.0002434233)
+    lw_6:     2.50000000 (init = 0.9976916)
+    ph_6:    -0.15707963 (init = 0.0001134713)
+    xg_6:     0.60835598 (init = 0.3360058)
+    shift_7:  113.410635 (init = 113.0605)
+    k_7:      0.00205734 (init = 0.001094926)
+    lw_7:     2.17866492 (init = 1.446983)
+    ph_7:    -0.01586710 (init = -0.0008323163)
+    xg_7:     1.00000000 (init = 0.7514379)
+    shift_8:  115.195551 (init = 114.269)
+    k_8:      0.00117593 (init = 0.001391711)
+    lw_8:     2.49973947 (init = 1.200053)
+    ph_8:    -0.11005669 (init = -0.0003939262)
+    xg_8:     1.00000000 (init = 0.02965868)
+    A:       -0.28963926 (init = -0.2838394)
+    B:       -0.00686276 (init = -0.007063199)
+    C:        2.5793e-04 (init = 0.000243546)
+    D:       -1.3078e-06 (init = -1.281247e-06)
+    E:       -4.0320e-09 (init = 1.012053e-08)
+
+Integrals: 
+8.295452194510405 +/- 0.4555116836779404
+11.534608503000626 +/- 0.4648310790264292
+5.705313766800739 +/- 0.7611691434570509
+4.168095507131987 +/- 0.1344090083276826
+7.263665623059912 +/- 0.4389904169908495
+2.559772604701162 +/- 0.32500041167231
+8.426863397051966 +/- 0.19339238859042152
+4.816593473590741 +/- 0.33249852364215693
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 2
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 29679
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.16540345
+    reduced chi-square = 8.3876e-05
+    Akaike info crit   = -18685.7505
+    Bayesian info crit = -18568.2052
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at boundary
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    C:        at boundary
+    D:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:      0.00406996 (init = 0.003715104)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:      0.00593683 (init = 0.005852107)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:      0.00301621 (init = 0.003237308)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.83171)
+    k_4:      0.00181819 (init = 0.001883783)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:      0.00396176 (init = 0.0040069)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:      0.00202901 (init = 0.001842254)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:      0.00332233 (init = 0.003120273)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:      0.00529244 (init = 0.004880638)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.50012216 (init = -0.4897066)
+    B:       -0.00654050 (init = -0.007811206)
+    C:        2.3214e-04 (init = 0.0002577367)
+    D:       -1.4386e-06 (init = -1.308418e-06)
+    E:       -4.4352e-09 (init = -4.039332e-09)
+
+Integrals: 
+16.670529747628887 +/- 1.304245005111629
+24.317197193199878 +/- 1.6409450765248181
+12.354382168772325 +/- 1.9408727577441107
+7.447290257304747 +/- 0.7519746712579805
+16.227352843490483 +/- 3.9429301394092056
+8.310813696199348 +/- 2.8059529796244087
+13.608261152551432 +/- 1.3706288949254828
+21.677821828005698 +/- 1.457828330813746
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 3
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 7836
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.38025401
+    reduced chi-square = 1.9283e-04
+    Akaike info crit   = -17026.6740
+    Bayesian info crit = -16909.1287
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    C:        at boundary
+    D:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:      0.00644648 (init = 0.006794093)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:      0.00818261 (init = 0.008265259)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:      0.00408470 (init = 0.003866287)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:      0.00260414 (init = 0.002511043)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:      0.00573614 (init = 0.005700231)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:      0.00325077 (init = 0.003414847)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:      0.00499836 (init = 0.005182088)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:      0.00847607 (init = 0.008865549)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.62738015 (init = -0.6374938)
+    B:       -0.00708786 (init = -0.00587654)
+    C:        2.5535e-04 (init = 0.0002320893)
+    D:       -1.2947e-06 (init = -1.438194e-06)
+    E:       -3.9917e-09 (init = -4.435843e-09)
+
+Integrals: 
+26.40472420161786 +/- 1.841298123843885
+33.51588562446658 +/- 2.5338838167286672
+16.730908263459664 +/- 2.182898233323553
+10.666564795703435 +/- 1.1854603725557664
+23.495184176552016 +/- 6.2531728041676296
+13.315126571216611 +/- 3.8755469338305644
+20.473266757174567 +/- 2.305946185856799
+34.71799039531905 +/- 2.8960281551913427
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 4
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 7331
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.96762850
+    reduced chi-square = 4.9068e-04
+    Akaike info crit   = -15165.1946
+    Bayesian info crit = -15047.6493
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    C:        at boundary
+    D:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:      0.01080332 (init = 0.01116337)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:      0.00879136 (init = 0.008877919)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:      0.00566515 (init = 0.00543388)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:      0.00293969 (init = 0.00284617)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:      0.00679462 (init = 0.006756143)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:      0.00445080 (init = 0.004626564)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:      0.00656524 (init = 0.006754368)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:      0.01229993 (init = 0.01270182)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.76223624 (init = -0.772792)
+    B:       -0.00656429 (init = -0.005284258)
+    C:        2.8088e-04 (init = 0.0002553575)
+    D:       -1.1653e-06 (init = -1.294845e-06)
+    E:       -3.5925e-09 (init = -3.992872e-09)
+
+Integrals: 
+44.25030318057225 +/- 3.437150007460648
+36.00933167269333 +/- 5.8518178983259155
+23.20442893132085 +/- 4.487986918833383
+12.040965227970341 +/- 1.955485846861171
+27.830732659558027 +/- 8.303335157144451
+18.230439655790104 +/- 6.897488085226879
+26.891231905759714 +/- 1.908362523772141
+50.38053092085662 +/- 3.338779371066862
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 5
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 10570
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.52320811
+    reduced chi-square = 2.6532e-04
+    Akaike info crit   = -16390.6284
+    Bayesian info crit = -16273.0831
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    C:        at boundary
+    D:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:      0.00867416 (init = 0.009051734)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:      0.00549698 (init = 0.005585935)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:      0.00584124 (init = 0.005604259)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:      0.00250988 (init = 0.002410835)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:      0.00480305 (init = 0.00476459)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:      0.00366081 (init = 0.003833334)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:      0.00496309 (init = 0.005157317)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:      0.00896324 (init = 0.009374004)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.61237604 (init = -0.6235675)
+    B:       -0.00794430 (init = -0.006581909)
+    C:        3.0897e-04 (init = 0.0002810652)
+    D:       -1.0487e-06 (init = -1.165194e-06)
+    E:       -3.2333e-09 (init = -3.591507e-09)
+
+Integrals: 
+35.52926624372359 +/- 3.9245989076709757
+22.515568047897162 +/- 3.9354402231101977
+23.9256957529479 +/- 3.014694542461564
+10.280477578712732 +/- 0.9903635108791595
+19.673272368016303 +/- 6.717465468041755
+14.994668508044628 +/- 3.6214326546180065
+20.32881540541913 +/- 1.72728955666674
+36.71341567880245 +/- 3.000967392671305
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 6
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 1770
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.35658029
+    reduced chi-square = 1.8082e-04
+    Akaike info crit   = -17154.7842
+    Bayesian info crit = -17037.2389
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    D:        at initial value
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:      0.00712686 (init = 0.007121846)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:      0.00327761 (init = 0.003278473)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:      0.00453710 (init = 0.00453862)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:      0.00137304 (init = 0.001373005)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:      0.00308215 (init = 0.003077734)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:      0.00260202 (init = 0.002607594)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:      0.00299300 (init = 0.002995344)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:      0.00637672 (init = 0.006383763)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.47042862 (init = -0.4702964)
+    B:       -0.00827532 (init = -0.008297305)
+    C:        3.0809e-04 (init = 0.0003089858)
+    D:       -1.0487e-06 (init = -1.048727e-06)
+    E:       -2.9099e-09 (init = -3.234114e-09)
+
+Integrals: 
+29.191567044068364 +/- 3.3018939997987387
+13.425054437204375 +/- 3.1788525847401754
+18.583907808764604 +/- 4.343027036347644
+5.62397690955535 +/- 1.0828572483170107
+12.624462671007455 +/- 4.586547165891879
+10.657872414551157 +/- 2.8443115721634658
+12.25931201981995 +/- 1.3087146243063141
+26.119025227029173 +/- 1.9237410220573088
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 7
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 28562
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.32969938
+    reduced chi-square = 1.6719e-04
+    Akaike info crit   = -17310.9919
+    Bayesian info crit = -17193.4466
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    D:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:      0.00664491 (init = 0.006395535)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:      0.00229052 (init = 0.002240175)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:      0.00475363 (init = 0.00489981)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:      0.00137072 (init = 0.00142039)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:      0.00210406 (init = 0.002108416)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:      0.00187249 (init = 0.001751951)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:      0.00204521 (init = 0.00192684)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:      0.00512073 (init = 0.004894357)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.42676127 (init = -0.419031)
+    B:       -0.00735504 (init = -0.008410812)
+    C:        2.7834e-04 (init = 0.0003080926)
+    D:       -9.4385e-07 (init = -1.048694e-06)
+    E:       -2.6189e-09 (init = -2.909926e-09)
+
+Integrals: 
+27.217503729965603 +/- 4.457396164717494
+9.381959536057705 +/- 3.3581619221614973
+19.470850309853006 +/- 2.3440364839165753
+5.6144611620386335 +/- 0.968981851102952
+8.618209235556101 +/- 3.891283537912088
+7.669691641693838 +/- 3.55220314964435
+8.377190088693016 +/- 0.9682335205407233
+20.974503950315494 +/- 2.1004177249324
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 8
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 26748
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.22594948
+    reduced chi-square = 1.1458e-04
+    Akaike info crit   = -18064.0864
+    Bayesian info crit = -17946.5411
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    D:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:      0.00516570 (init = 0.004923435)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:      9.5763e-04 (init = 0.0009068279)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:      0.00391733 (init = 0.004058039)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:      3.7143e-04 (init = 0.0004145094)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:      0.00111651 (init = 0.001121016)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:      0.00159868 (init = 0.001481677)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:      0.00111044 (init = 0.0009981573)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:      0.00332501 (init = 0.003107678)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.33239577 (init = -0.3249707)
+    B:       -0.00679350 (init = -0.007792192)
+    C:        2.5052e-04 (init = 0.0002784137)
+    D:       -8.4947e-07 (init = -9.438833e-07)
+    E:       -2.3571e-09 (init = -2.620973e-09)
+
+Integrals: 
+21.15864176882722 +/- 3.3331773217528076
+3.922429713193967 +/- 3.016108847736235
+16.0453421109633 +/- 3.1550290604669033
+1.5213663427860327 +/- 1.3039380568867402
+4.573226495371367 +/- 2.974824767864014
+6.54817741855188 +/- 2.2027189536726355
+4.548355473776117 +/- 0.654554680270337
+13.619225334574963 +/- 1.4265547009495954
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 9
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 4004
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.21961610
+    reduced chi-square = 1.1137e-04
+    Akaike info crit   = -18120.7483
+    Bayesian info crit = -18003.2029
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    D:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:      0.00469798 (init = 0.004724413)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:      2.3221e-04 (init = 0.0002420402)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:      0.00347492 (init = 0.003456577)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:      3.8619e-04 (init = 0.0003731829)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:      2.4358e-04 (init = 0.0002313037)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:      0.00120741 (init = 0.001216924)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:      3.4625e-04 (init = 0.0003664947)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:      0.00260490 (init = 0.002654312)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.28938749 (init = -0.2899806)
+    B:       -0.00730032 (init = -0.007272555)
+    C:        2.4790e-04 (init = 0.0002506916)
+    D:       -7.6452e-07 (init = -8.493572e-07)
+    E:       -2.1213e-09 (init = -2.356516e-09)
+
+Integrals: 
+19.242859262224158 +/- 3.108331140722779
+0.9511406758976921 +/- 2.8469617024663267
+14.233236141190527 +/- 3.049611574345505
+1.5818225102069468 +/- 0.643502590192752
+0.9976834797197424 +/- 3.0759001536620656
+4.9455493996823305 +/- 3.563587889022243
+1.4182295887243899 +/- 1.060115493783487
+10.669687268364024 +/- 1.3904827185528315
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 10
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 7130
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.22188436
+    reduced chi-square = 1.1252e-04
+    Akaike info crit   = -18100.2695
+    Bayesian info crit = -17982.7242
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    C:        at boundary
+    D:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:      0.00416718 (init = 0.00394375)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:     -2.7091e-04 (init = -0.0003169925)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:      0.00349595 (init = 0.00362404)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:      2.0303e-04 (init = 0.0002484945)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:     -5.8427e-04 (init = -0.0005730881)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:      0.00131995 (init = 0.0012162)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:     -2.8190e-05 (init = -0.0001281455)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:      0.00238688 (init = 0.002189673)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.29204786 (init = -0.2852759)
+    B:       -0.00608508 (init = -0.006996031)
+    C:        2.2311e-04 (init = 0.0002480409)
+    D:       -6.8807e-07 (init = -7.629637e-07)
+    E:       -1.9092e-09 (init = -2.119054e-09)
+
+Integrals: 
+17.0687120391077 +/- 3.415424314639617
+1.1096275243649683 +/- 3.0915428260034243
+14.319403164613565 +/- 1.9202612932895289
+0.8316005497358828 +/- 0.8485257376177249
+2.3931562337078196 +/- 4.070268429677798
+5.4065112634285875 +/- 2.567951413061804
+0.11546589384395586 +/- 0.5555673513812796
+9.77664064068537 +/- 1.0474228530306657
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 11
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 207
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.18051505
+    reduced chi-square = 9.1539e-05
+    Akaike info crit   = -18511.5096
+    Bayesian info crit = -18393.9642
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    C:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:      0.00332478 (init = 0.003055663)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:     -7.3590e-04 (init = -0.0006808097)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:      0.00265053 (init = 0.002896629)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:     -1.6406e-04 (init = 7.959179e-05)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:     -0.00102453 (init = -0.001058805)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:      0.00125445 (init = 0.001328525)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:     -3.3064e-04 (init = -2.674405e-05)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:      0.00143738 (init = 0.001100157)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.26396598 (init = -0.2558859)
+    B:       -0.00516433 (init = -0.0062267)
+    C:        2.0080e-04 (init = 0.0002231491)
+    D:       -7.0337e-07 (init = -6.881684e-07)
+    E:       -1.9092e-09 (init = -1.909214e-09)
+
+Integrals: 
+13.61826863811517 +/- 2.582340957798335
+3.014227321896218 +/- 2.119034067333379
+10.85654382063662 +/- 1.8968406313774433
+0.6719780943295558 +/- 0.7282622649925486
+4.196476226128547 +/- 3.1460385193746117
+5.138221622987388 +/- 3.4833012230273384
+1.3543179688943847 +/- 0.6732802589511051
+5.88750274583366 +/- 1.2833034399408818
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 12
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 251
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.15137702
+    reduced chi-square = 7.6763e-05
+    Akaike info crit   = -18862.3585
+    Bayesian info crit = -18744.8132
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    C:        at boundary
+    D:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:      0.00214904 (init = 0.001814286)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:     -0.00130062 (init = -0.001419729)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:      0.00199461 (init = 0.002165038)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:     -5.1609e-04 (init = -0.0005901343)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:     -0.00137963 (init = -0.001300109)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:      6.3861e-04 (init = 0.0006351855)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:     -9.9493e-04 (init = -0.0009606769)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:      7.3386e-04 (init = 0.0004300185)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.19367599 (init = -0.1844767)
+    B:       -0.00489799 (init = -0.005926446)
+    C:        1.8072e-04 (init = 0.0002009962)
+    D:       -7.7370e-07 (init = -7.019165e-07)
+    E:       -1.9092e-09 (init = -1.909214e-09)
+
+Integrals: 
+8.802427789386496 +/- 2.281997103804356
+5.327315170639398 +/- 1.517224274917723
+8.169897267232237 +/- 1.9851882611850717
+2.113905629385065 +/- 0.6090237421693658
+5.650974646706073 +/- 3.92213612694746
+2.6157410894534148 +/- 3.629018611943491
+4.075232675939462 +/- 0.610665240654579
+3.005906264532903 +/- 1.170469086985246
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 13
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 12250
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.11903548
+    reduced chi-square = 6.0363e-05
+    Akaike info crit   = -19341.3798
+    Bayesian info crit = -19223.8345
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    C:        at boundary
+    D:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:      0.00128312 (init = 0.001137356)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:     -0.00204111 (init = -0.002070624)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:      0.00136904 (init = 0.001452154)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:     -7.8887e-04 (init = -0.0007615066)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:     -0.00175517 (init = -0.001750437)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:      1.6495e-04 (init = 9.271828e-05)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:     -0.00115605 (init = -0.001219324)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:     -3.1847e-04 (init = -0.0004424755)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.18810446 (init = -0.1835957)
+    B:       -0.00414815 (init = -0.004767973)
+    C:        1.6265e-04 (init = 0.000180682)
+    D:       -6.9633e-07 (init = -7.738017e-07)
+    E:       -1.7183e-09 (init = -1.908989e-09)
+
+Integrals: 
+5.255655744307381 +/- 1.749817938966096
+8.360378057582373 +/- 1.3375967698119422
+5.607596844463975 +/- 2.5209613498033043
+3.231230327488825 +/- 0.5185430370707651
+7.1891680969965615 +/- 2.9537559654851275
+0.6756295340374939 +/- 2.8703087250934507
+4.7351642539637595 +/- 0.6128542778946171
+1.304463187238161 +/- 0.9014480228272245
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 14
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 6019
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.20855420
+    reduced chi-square = 1.0576e-04
+    Akaike info crit   = -18223.7506
+    Bayesian info crit = -18106.2053
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    C:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:      9.3441e-04 (init = 0.0007868895)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:     -0.00211495 (init = -0.002143878)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:      8.4872e-04 (init = 0.0009344719)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:     -0.00115511 (init = -0.001125838)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:     -0.00251364 (init = -0.002507909)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:     -1.7567e-04 (init = -0.0002429147)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:     -0.00147851 (init = -0.001546333)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:     -8.9896e-04 (init = -0.001026806)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.17339479 (init = -0.1689106)
+    B:       -0.00386379 (init = -0.004469855)
+    C:        1.4638e-04 (init = 0.00016308)
+    D:       -6.4685e-07 (init = -6.980341e-07)
+    E:       -1.5465e-09 (init = -1.721502e-09)
+
+Integrals: 
+3.827337114919229 +/- 3.6723533721359667
+8.66283640708247 +/- 4.292753400784827
+3.476343388108025 +/- 1.3385151198793497
+4.731325252466132 +/- 1.1347440936057676
+10.295857671040384 +/- 3.807569357367039
+0.7195330678882862 +/- 3.1729785847227996
+6.055963971062349 +/- 0.7015708689188915
+3.682144478233259 +/- 1.2478414338477217
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 15
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 1909
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.26671485
+    reduced chi-square = 1.3525e-04
+    Akaike info crit   = -17733.5102
+    Bayesian info crit = -17615.9648
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    C:        at boundary
+    D:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:     -0.00151480 (init = -0.001854453)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:     -0.00340397 (init = -0.003494675)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:     -6.4863e-04 (init = -0.0005310481)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:     -0.00119862 (init = -0.00111005)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:     -0.00337318 (init = -0.003283162)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:     -0.00144645 (init = -0.001217675)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:     -0.00259746 (init = -0.002580625)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:     -0.00151575 (init = -0.00167337)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.11984326 (init = -0.1118497)
+    B:       -0.00375590 (init = -0.004612082)
+    C:        1.3174e-04 (init = 0.0001463352)
+    D:       -7.1153e-07 (init = -6.462032e-07)
+    E:       -1.7011e-09 (init = -1.546215e-09)
+
+Integrals: 
+6.204596976971629 +/- 3.5387950176628173
+13.942614856509532 +/- 5.286824592861707
+2.656786252963574 +/- 1.3575115276730418
+4.909552398397626 +/- 1.54686060560257
+13.816535368365654 +/- 4.215861433552928
+5.924670978443929 +/- 2.9690442858480965
+10.63918368250037 +/- 0.7855429099677818
+6.208518199298874 +/- 0.9541569817488037
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 16
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 892
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 0.12981016
+    reduced chi-square = 6.5827e-05
+    Akaike info crit   = -19168.6835
+    Bayesian info crit = -19051.1382
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    C:        at boundary
+    D:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:     -9.6165e-04 (init = -0.001161549)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:     -0.00239171 (init = -0.002440526)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:     -7.4740e-04 (init = -0.0006431225)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:     -7.5891e-04 (init = -0.000710999)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:     -0.00300559 (init = -0.002984628)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:     -0.00119975 (init = -0.001272664)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:     -0.00193486 (init = -0.002028144)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:     -0.00127975 (init = -0.001485228)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.10485627 (init = -0.09914415)
+    B:       -0.00281861 (init = -0.003493498)
+    C:        1.1857e-04 (init = 0.0001317557)
+    D:       -7.8268e-07 (init = -7.119778e-07)
+    E:       -1.8712e-09 (init = -1.700649e-09)
+
+Integrals: 
+3.9389283316115042 +/- 1.9300251910575186
+9.796409432264246 +/- 3.0125338163703947
+3.061339506957324 +/- 1.0746619990718422
+3.108494479349273 +/- 1.0919464490805777
+12.31087382467232 +/- 2.7136562432881854
+4.914173079010062 +/- 2.092521828659225
+7.9251742335699955 +/- 0.6464728481563797
+5.241866630549357 +/- 0.8206426462604975
+
+------------------------------
+FIT RANGE: 116.44-73.24
+I: 1 P: 17
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 849
+    # data points      = 1993
+    # variables        = 21
+    chi-square         = 1.03661728
+    reduced chi-square = 5.2567e-04
+    Akaike info crit   = -15027.9370
+    Bayesian info crit = -14910.3917
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    shift_2:  at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    shift_5:  at initial value
+    shift_6:  at initial value
+    shift_7:  at initial value
+    shift_8:  at initial value
+    C:        at boundary
+    D:        at boundary
+    E:        at initial value
+    E:        at boundary
+[[Variables]]
+    shift_1:  76.1871722 (init = 76.18717)
+    k_1:     -0.00242801 (init = -0.002256017)
+    lw_1:     2.291019 (fixed)
+    ph_1:    -0.05794843 (fixed)
+    xg_1:     0.5499599 (fixed)
+    shift_2:  80.0307153 (init = 80.03072)
+    k_2:     -0.00615832 (init = -0.006119341)
+    lw_2:     1.319238 (fixed)
+    ph_2:     0.1570796 (fixed)
+    xg_2:     0.210863 (fixed)
+    shift_3:  92.4099912 (init = 92.40999)
+    k_3:     -0.00444705 (init = -0.004558867)
+    lw_3:     2.499986 (fixed)
+    ph_3:     0.1570796 (fixed)
+    xg_3:     0.5065199 (fixed)
+    shift_4:  99.9320735 (init = 99.93207)
+    k_4:     -0.00379088 (init = -0.003836277)
+    lw_4:     2.053803 (fixed)
+    ph_4:     0.0627188 (fixed)
+    xg_4:     1 (fixed)
+    shift_5:  104.072976 (init = 104.073)
+    k_5:     -0.00756113 (init = -0.007580275)
+    lw_5:     1.813251 (fixed)
+    ph_5:    -0.05818048 (fixed)
+    xg_5:     0.3952705 (fixed)
+    shift_6:  108.625217 (init = 108.6252)
+    k_6:     -0.00428607 (init = -0.004202395)
+    lw_6:     2.5 (fixed)
+    ph_6:    -0.1570796 (fixed)
+    xg_6:     0.608356 (fixed)
+    shift_7:  113.410635 (init = 113.4106)
+    k_7:     -0.00390715 (init = -0.00381691)
+    lw_7:     2.178665 (fixed)
+    ph_7:    -0.0158671 (fixed)
+    xg_7:     1 (fixed)
+    shift_8:  115.195551 (init = 115.1956)
+    k_8:     -0.00605850 (init = -0.005870032)
+    lw_8:     2.499739 (fixed)
+    ph_8:    -0.1100567 (fixed)
+    xg_8:     1 (fixed)
+    A:       -0.28231428 (init = -0.2873826)
+    B:        1.2698e-04 (init = 0.0007378763)
+    C:        1.3043e-04 (init = 0.0001185887)
+    D:       -7.0442e-07 (init = -7.818151e-07)
+    E:       -1.8712e-09 (init = -1.871193e-09)
+
+Integrals: 
+9.945116042805044 +/- 7.876535062838201
+25.224435462474666 +/- 8.395015257993535
+18.215095861523455 +/- 4.072026561812347
+15.527433150107798 +/- 1.1961054638592035
+30.97033633195038 +/- 7.137459185830762
+17.555722220391207 +/- 6.812070622072457
+16.00370359702621 +/- 3.483713714009611
+24.815596690103156 +/- 2.7105149419508714
