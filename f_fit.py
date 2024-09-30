@@ -962,7 +962,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
                 #### read
                 if not dofit:
                     param = lmfit.Parameters()
-                    file = open(prev_fit+list_path[idx][:list_path[idx].index('/pdata')]+'/'+new_dir+'popt_sp'+str(idx)+'_I'+str(i)+'_D'+str(j), 'r')
+                    file = open(prev_fit+list_path[idx][:list_path[idx].index('/pdata')]+'/'+new_dir+'popt_sp'+str(idx)+'_I'+str(i)+'_P'+str(j), 'r')
                     param.load(file)
                 ###
             
@@ -972,10 +972,10 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
                 
                 #### write
                 if dofit:
-                    file = open(dir_res+'/'+new_dir+'popt_sp'+str(idx)+'_I'+str(i)+'_D'+str(j), 'w')
+                    file = open(dir_res+'/'+new_dir+'popt_sp'+str(idx)+'_I'+str(i)+'_P'+str(j), 'w')
                     prev_param_compl.dump(file)
                     if prev_fit is not None:
-                        file = open(prev_fit+new_dir+'popt_sp'+str(idx)+'_I'+str(i)+'_D'+str(j), 'w')
+                        file = open(prev_fit+new_dir+'popt_sp'+str(idx)+'_I'+str(i)+'_P'+str(j), 'w')
                         prev_param_compl.dump(file)
                 ####
 
@@ -1366,7 +1366,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
             #### read
             if not dofit:
                 param = lmfit.Parameters()
-                file = open(prev_fit+new_dir+'popt_I'+str(i)+'_D'+str(j), 'r')
+                file = open(prev_fit+new_dir+'popt_I'+str(i)+'_P'+str(j), 'r')
                 param.load(file)
             ###
           
@@ -1376,10 +1376,10 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
             
             #### write
             if dofit:
-                file = open(dir_res+'/'+new_dir+'popt_I'+str(i)+'_D'+str(j), 'w')
+                file = open(dir_res+'/'+new_dir+'popt_I'+str(i)+'_P'+str(j), 'w')
                 prev_param_compl.dump(file)
                 if prev_fit is not None:
-                    file = open(prev_fit+new_dir+'popt_I'+str(i)+'_D'+str(j), 'w')
+                    file = open(prev_fit+new_dir+'popt_I'+str(i)+'_P'+str(j), 'w')
                     prev_param_compl.dump(file)
             ####
 
