@@ -2064,11 +2064,11 @@ def nmr_spectra_1d(path):
 def nmr_spectra_pseudo2d(path):
 
     dic, datare = ng.bruker.read_pdata(path, bin_files=['2rr'])   #read only the real data dic:matrioska di dizionari che racchiude tutti i parametri che ci sono nella cartella dello spettro
-    dic, dataim = ng.bruker.read_pdata(path, bin_files=['2ii'])   #read only the imaginary data
+    #dic, dataim = ng.bruker.read_pdata(path, bin_files=['2ii'])   #read only the imaginary data
 
     #dataim = np.reshape(dataim, datare.shape)
 
-    data = datare + 1j*dataim      #recombine Re and Im to get the complete complex data
+    data = datare + 1j*np.zeros_like(datare)      #recombine Re and Im to get the complete complex data
 
     udic = ng.bruker.guess_udic(dic, data)
     C = ng.convert.converter()
