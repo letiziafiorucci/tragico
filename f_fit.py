@@ -659,7 +659,7 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
 
     return dir_res
 
-def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_guess=False, prev_fit=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, doexp=False, f_int_fit=None, fargs=None): 
+def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_guess=False, prev_fit=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None): 
     
     for i in range(len(delays_list)):
         if 'pdata' not in list_path[i]:
@@ -1119,7 +1119,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
 
     return dir_result
 
-def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_fit=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, doexp=False, f_int_fit=None, fargs=None):    
+def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_fit=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None):    
 
     for i in range(len(delays_list)):
         if 'pdata' not in list_path[i]:
@@ -1372,7 +1372,8 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
           
             peak_int, int_err, prev_param_compl, result, _ = fit_peaks_bsl_I(param, ppm_scale, data[j,:], tensor_red, 
                                                             t_aq, sf1, o1p, td, dw, j, i, dir_res, new_dir, SR=SR, 
-                                                            SI=SI, SW=SW, LB=LB, SSB=SSB, dofit=dofit, fast=fast, L1R=L1R, L2R=L2R)
+                                                            SI=SI, SW=SW, LB=LB, SSB=SSB, dofit=dofit, fast=fast, L1R=L1R, 
+                                                            L2R=L2R, err_conf=err_conf)
             
             #### write
             if dofit:
@@ -1519,7 +1520,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
 
     return dir_res
 
-def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, dw, j, jj, dir_res, new_dir, SR=0, SI=0, SW=0, LB=0, SSB=0, dofit=True, fast=False, IR=False, L1R=None, L2R=None):
+def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, dw, j, jj, dir_res, new_dir, SR=0, SI=0, SW=0, LB=0, SSB=0, dofit=True, fast=False, IR=False, L1R=None, L2R=None, err_conf=0.95):
     
     cal = SR/sf1 - (ppm_scale[0]-ppm_scale[1])
 
@@ -1646,7 +1647,7 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
                         integral_in.append(np.trapz(lor_list[ii]))
                     else:
                         integral_in.append(np.trapz(lor_ph0_list[ii]))
-                    Err = error_calc_num(ppm_scale, res, lor_ph0_list[ii], np.trapz(lor_ph0_list[ii]), sx, dx)
+                    Err = error_calc_num(ppm_scale, res, lor_ph0_list[ii], np.trapz(lor_ph0_list[ii]), sx, dx, confidence=err_conf)
                     int_err.append(Err)
 
         if not result:
