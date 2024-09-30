@@ -968,7 +968,8 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
             
                 peak_int, int_err, prev_param_compl, result, _ = fit_peaks_bsl_I(param, ppm_scale, data[j,:], tensor_red, 
                                                                 t_aq, sf1, o1p, td, dw, j, i, dir_res, new_dir, SR=SR, 
-                                                                SI=SI, SW=SW, LB=LB, SSB=SSB, dofit=dofit,fast=fast, L1R=L1R, L2R=L2R)
+                                                                SI=SI, SW=SW, LB=LB, SSB=SSB, dofit=dofit,fast=fast, L1R=L1R, 
+                                                                L2R=L2R, err_conf=err_conf)
                 
                 #### write
                 if dofit:
