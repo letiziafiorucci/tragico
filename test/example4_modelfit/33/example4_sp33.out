@@ -1,0 +1,908 @@
+SPECTRA PATH: 
+path/to/spectra
+
+CALIBRATION: (1.90000:1.70000) ppm
+in points
+0   1   3   4   4   5   
+in ppm
+0.00000   0.00073   0.00220   0.00293   0.00293   0.00367   
+
+Points:
+1	0.003
+2	0.254
+3	0.549
+4	0.908
+5	1.367
+6	2.003
+
+VCLIST point: 4015.43 T
+
+INPUT1: inp1_2
+n. peak	name	ppm1	ppm2	v	mult
+1	true	7.62200	7.39800	7.48912	3
+1	true	7.62200	7.39800	7.50012	3
+1	true	7.62200	7.39800	7.51332	3
+1	true	7.62200	7.39800	7.52652	3
+2	true	8.06300	7.73800	7.86755	2
+2	true	8.06300	7.73800	7.87635	2
+3	true	8.06300	7.73800	7.92256	1
+3	true	8.06300	7.73800	7.93502	1
+
+INPUT2: inp2_2
+n. peak	i	ppm1	ppm2	k		fwhm		phi		xg		A		B		C		D		E
+1	0	7.6	7.4	7.92099e-08	5.43092e-03	0.00000e+00	2.00000e-01	6.000e-05	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+1	1	7.6	7.4	3.92161e-07	5.57384e-03	0.00000e+00	2.00000e-01	6.000e-05	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+1	2	7.6	7.4	7.98386e-07	7.57471e-03	0.00000e+00	2.00000e-01	6.000e-05	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+1	3	7.6	7.4	2.74846e-07	6.43135e-03	0.00000e+00	2.00000e-01	6.000e-05	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+2	0	8.1	7.7	2.16635e-07	6.09701e-03	0.00000e+00	2.00000e-01	6.000e-05	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+2	1	8.1	7.7	2.78030e-07	6.82632e-03	0.00000e+00	2.00000e-01	6.000e-05	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+3	2	8.1	7.7	4.57947e-07	7.26391e-03	0.00000e+00	2.00000e-01	6.000e-05	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+3	3	8.1	7.7	5.87730e-07	7.26391e-03	0.00000e+00	2.00000e-01	6.000e-05	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+====================================================================================================
+====================================================================================================
+(I: fit interval, P: N. point)
+
+------------------------------
+FIT RANGE: (7.62:7.40) ppm
+I: 1 P: 1
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 5325
+    # data points      = 305
+    # variables        = 22
+    chi-square         = 5.8346e+08
+    reduced chi-square = 2061681.40
+    Akaike info crit   = 4455.57110
+    Bayesian info crit = 4537.41796
+##  Warning: uncertainties could not be estimated:
+    ph_1:     at boundary
+    xg_2:     at boundary
+    xg_4:     at boundary
+[[Variables]]
+    shift_1:  7.48832765 (init = 7.48912)
+    k_1:      1.0271e-07 (init = 7.92099e-08)
+    lw_1:     0.00634752 (init = 0.00543092)
+    ph_1:    -0.15707938 (init = 0)
+    xg_1:     0.96358773 (init = 0.2)
+    shift_2:  7.49971394 (init = 7.50012)
+    k_2:      3.0384e-07 (init = 3.92161e-07)
+    lw_2:     0.00520819 (init = 0.00557384)
+    ph_2:    -0.15691041 (init = 0)
+    xg_2:     1.00000000 (init = 0.2)
+    shift_3:  7.51241617 (init = 7.51332)
+    k_3:      9.0457e-07 (init = 7.98386e-07)
+    lw_3:     0.00720392 (init = 0.00757471)
+    ph_3:     0.10973694 (init = 0)
+    xg_3:     0.18317703 (init = 0.2)
+    shift_4:  7.52578694 (init = 7.52652)
+    k_4:      1.5257e-07 (init = 2.74846e-07)
+    lw_4:     0.00399305 (init = 0.00643135)
+    ph_4:     0.05639764 (init = 0)
+    xg_4:     1.5421e-11 (init = 0.2)
+    A:        7.4109e-05 (init = 6e-05)
+    B:       -6.1698e-05 (init = 0)
+    C:        0 (fixed)
+    D:        0 (fixed)
+    E:        0 (fixed)
+
+n.peak	Shift	Integral
+1    7.488    2409177.085 +/- 116156.006
+
+------------------------------
+FIT RANGE: (7.62:7.40) ppm
+I: 1 P: 2
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 67
+    # data points      = 305
+    # variables        = 10
+    chi-square         = 5.9275e+08
+    reduced chi-square = 2009327.39
+    Akaike info crit   = 4436.39212
+    Bayesian info crit = 4473.59524
+[[Variables]]
+    shift_1:  7.48874060 +/- 1.0857e-04 (0.00%) (init = 7.488328)
+    k_1:      1.4438e-07 +/- 3.8794e-09 (2.69%) (init = 1.027109e-07)
+    lw_1:     0.006347523 (fixed)
+    ph_1:    -0.1570794 (fixed)
+    xg_1:     0.9635877 (fixed)
+    shift_2:  7.49992230 +/- 3.4263e-05 (0.00%) (init = 7.499714)
+    k_2:      3.4996e-07 +/- 3.5012e-09 (1.00%) (init = 3.038418e-07)
+    lw_2:     0.005208186 (fixed)
+    ph_2:    -0.1569104 (fixed)
+    xg_2:     1 (fixed)
+    shift_3:  7.51253235 +/- 3.1483e-05 (0.00%) (init = 7.512416)
+    k_3:      9.2064e-07 +/- 5.6374e-09 (0.61%) (init = 9.045746e-07)
+    lw_3:     0.007203924 (fixed)
+    ph_3:     0.1097369 (fixed)
+    xg_3:     0.183177 (fixed)
+    shift_4:  7.52562886 +/- 1.4957e-04 (0.00%) (init = 7.525787)
+    k_4:      1.0495e-07 +/- 4.5166e-09 (4.30%) (init = 1.525675e-07)
+    lw_4:     0.003993047 (fixed)
+    ph_4:     0.05639764 (fixed)
+    xg_4:     1.542139e-11 (fixed)
+    A:        7.4620e-05 +/- 9.8100e-07 (1.31%) (init = 7.410876e-05)
+    B:       -8.4033e-05 +/- 7.3224e-06 (8.71%) (init = -6.169797e-05)
+    C:        0 (fixed)
+    D:        0 (fixed)
+    E:        0 (fixed)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(A, B)         = -0.8429
+    C(k_1, A)       = -0.2133
+    C(k_2, A)       = -0.1656
+    C(k_3, A)       = -0.1280
+    C(shift_3, k_4) = -0.1154
+    C(k_1, B)       = +0.1016
+
+n.peak	Shift	Integral
+1    7.489    2161512.162 +/- 130399.730
+
+------------------------------
+FIT RANGE: (7.62:7.40) ppm
+I: 1 P: 3
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 78
+    # data points      = 305
+    # variables        = 10
+    chi-square         = 4.6908e+08
+    reduced chi-square = 1590088.15
+    Akaike info crit   = 4365.01890
+    Bayesian info crit = 4402.22201
+[[Variables]]
+    shift_1:  7.48809526 +/- 1.2187e-04 (0.00%) (init = 7.488741)
+    k_1:      1.2742e-07 +/- 3.8485e-09 (3.02%) (init = 1.443776e-07)
+    lw_1:     0.006347523 (fixed)
+    ph_1:    -0.1570794 (fixed)
+    xg_1:     0.9635877 (fixed)
+    shift_2:  7.49960590 +/- 3.5563e-05 (0.00%) (init = 7.499922)
+    k_2:      3.3403e-07 +/- 3.4741e-09 (1.04%) (init = 3.499632e-07)
+    lw_2:     0.005208186 (fixed)
+    ph_2:    -0.1569104 (fixed)
+    xg_2:     1 (fixed)
+    shift_3:  7.51227071 +/- 3.1629e-05 (0.00%) (init = 7.512532)
+    k_3:      9.0961e-07 +/- 5.5961e-09 (0.62%) (init = 9.206377e-07)
+    lw_3:     0.007203924 (fixed)
+    ph_3:     0.1097369 (fixed)
+    xg_3:     0.183177 (fixed)
+    shift_4:  7.52533036 +/- 1.3012e-04 (0.00%) (init = 7.525629)
+    k_4:      1.1976e-07 +/- 4.4870e-09 (3.75%) (init = 1.049529e-07)
+    lw_4:     0.003993047 (fixed)
+    ph_4:     0.05639764 (fixed)
+    xg_4:     1.542139e-11 (fixed)
+    A:        7.5010e-05 +/- 9.7450e-07 (1.30%) (init = 7.462015e-05)
+    B:       -7.7028e-05 +/- 7.2693e-06 (9.44%) (init = -8.403342e-05)
+    C:        0 (fixed)
+    D:        0 (fixed)
+    E:        0 (fixed)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(A, B)         = -0.8431
+    C(k_1, A)       = -0.2157
+    C(k_2, A)       = -0.1671
+    C(k_3, A)       = -0.1292
+    C(shift_3, k_4) = -0.1164
+    C(k_1, B)       = +0.1042
+
+n.peak	Shift	Integral
+1    7.488    1900152.872 +/- 108006.063
+
+------------------------------
+FIT RANGE: (7.62:7.40) ppm
+I: 1 P: 4
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 45
+    # data points      = 305
+    # variables        = 10
+    chi-square         = 4.0841e+08
+    reduced chi-square = 1384442.90
+    Akaike info crit   = 4322.77895
+    Bayesian info crit = 4359.98207
+[[Variables]]
+    shift_1:  7.48808423 +/- 1.3163e-04 (0.00%) (init = 7.488095)
+    k_1:      1.4145e-07 +/- 4.6174e-09 (3.26%) (init = 1.274205e-07)
+    lw_1:     0.006347523 (fixed)
+    ph_1:    -0.1570794 (fixed)
+    xg_1:     0.9635877 (fixed)
+    shift_2:  7.49961284 +/- 4.0574e-05 (0.00%) (init = 7.499606)
+    k_2:      3.5114e-07 +/- 4.1667e-09 (1.19%) (init = 3.340342e-07)
+    lw_2:     0.005208186 (fixed)
+    ph_2:    -0.1569104 (fixed)
+    xg_2:     1 (fixed)
+    shift_3:  7.51213199 +/- 3.4730e-05 (0.00%) (init = 7.512271)
+    k_3:      9.9296e-07 +/- 6.7075e-09 (0.68%) (init = 9.096143e-07)
+    lw_3:     0.007203924 (fixed)
+    ph_3:     0.1097369 (fixed)
+    xg_3:     0.183177 (fixed)
+    shift_4:  7.52536181 +/- 1.5140e-04 (0.00%) (init = 7.52533)
+    k_4:      1.2336e-07 +/- 5.3770e-09 (4.36%) (init = 1.197617e-07)
+    lw_4:     0.003993047 (fixed)
+    ph_4:     0.05639764 (fixed)
+    xg_4:     1.542139e-11 (fixed)
+    A:        8.0013e-05 +/- 1.1686e-06 (1.46%) (init = 7.500973e-05)
+    B:       -7.6763e-05 +/- 8.7168e-06 (11.36%) (init = -7.702825e-05)
+    C:        0 (fixed)
+    D:        0 (fixed)
+    E:        0 (fixed)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(A, B)         = -0.8431
+    C(k_1, A)       = -0.2158
+    C(k_2, A)       = -0.1669
+    C(k_3, A)       = -0.1299
+    C(shift_3, k_4) = -0.1122
+    C(k_1, B)       = +0.1043
+
+n.peak	Shift	Integral
+1    7.488    1595720.276 +/- 101957.987
+
+------------------------------
+FIT RANGE: (7.62:7.40) ppm
+I: 1 P: 5
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 100
+    # data points      = 305
+    # variables        = 10
+    chi-square         = 4.5075e+08
+    reduced chi-square = 1527973.50
+    Akaike info crit   = 4352.86553
+    Bayesian info crit = 4390.06865
+[[Variables]]
+    shift_1:  7.48891598 +/- 1.7997e-04 (0.00%) (init = 7.488084)
+    k_1:      1.4590e-07 +/- 6.4980e-09 (4.45%) (init = 1.414517e-07)
+    lw_1:     0.006347523 (fixed)
+    ph_1:    -0.1570794 (fixed)
+    xg_1:     0.9635877 (fixed)
+    shift_2:  7.50008847 +/- 5.4959e-05 (0.00%) (init = 7.499613)
+    k_2:      3.6553e-07 +/- 5.8655e-09 (1.60%) (init = 3.511448e-07)
+    lw_2:     0.005208186 (fixed)
+    ph_2:    -0.1569104 (fixed)
+    xg_2:     1 (fixed)
+    shift_3:  7.51261233 +/- 4.5459e-05 (0.00%) (init = 7.512132)
+    k_3:      1.0682e-06 +/- 9.4453e-09 (0.88%) (init = 9.929578e-07)
+    lw_3:     0.007203924 (fixed)
+    ph_3:     0.1097369 (fixed)
+    xg_3:     0.183177 (fixed)
+    shift_4:  7.52571380 +/- 1.6242e-04 (0.00%) (init = 7.525362)
+    k_4:      1.6189e-07 +/- 7.5831e-09 (4.68%) (init = 1.233634e-07)
+    lw_4:     0.003993047 (fixed)
+    ph_4:     0.05639764 (fixed)
+    xg_4:     1.542139e-11 (fixed)
+    A:        9.4483e-05 +/- 1.6428e-06 (1.74%) (init = 8.001296e-05)
+    B:       -6.6723e-05 +/- 1.2264e-05 (18.38%) (init = -7.67628e-05)
+    C:        0 (fixed)
+    D:        0 (fixed)
+    E:        0 (fixed)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(A, B)         = -0.8428
+    C(k_1, A)       = -0.2128
+    C(k_2, A)       = -0.1650
+    C(k_3, A)       = -0.1275
+    C(shift_3, k_4) = -0.1152
+    C(k_1, B)       = +0.1009
+
+n.peak	Shift	Integral
+1    7.489    1289359.980 +/- 125744.211
+
+------------------------------
+FIT RANGE: (7.62:7.40) ppm
+I: 1 P: 6
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 100
+    # data points      = 305
+    # variables        = 10
+    chi-square         = 3.9680e+08
+    reduced chi-square = 1345070.86
+    Akaike info crit   = 4313.97935
+    Bayesian info crit = 4351.18247
+[[Variables]]
+    shift_1:  7.48838680 +/- 2.1572e-04 (0.00%) (init = 7.488916)
+    k_1:      1.5750e-07 +/- 8.4148e-09 (5.34%) (init = 1.459022e-07)
+    lw_1:     0.006347523 (fixed)
+    ph_1:    -0.1570794 (fixed)
+    xg_1:     0.9635877 (fixed)
+    shift_2:  7.49960154 +/- 6.6820e-05 (0.00%) (init = 7.500088)
+    k_2:      3.8899e-07 +/- 7.5933e-09 (1.95%) (init = 3.65535e-07)
+    lw_2:     0.005208186 (fixed)
+    ph_2:    -0.1569104 (fixed)
+    xg_2:     1 (fixed)
+    shift_3:  7.51216039 +/- 5.5921e-05 (0.00%) (init = 7.512612)
+    k_3:      1.1242e-06 +/- 1.2229e-08 (1.09%) (init = 1.068193e-06)
+    lw_3:     0.007203924 (fixed)
+    ph_3:     0.1097369 (fixed)
+    xg_3:     0.183177 (fixed)
+    shift_4:  7.52518499 +/- 2.1364e-04 (0.00%) (init = 7.525714)
+    k_4:      1.5933e-07 +/- 9.8163e-09 (6.16%) (init = 1.618918e-07)
+    lw_4:     0.003993047 (fixed)
+    ph_4:     0.05639764 (fixed)
+    xg_4:     1.542139e-11 (fixed)
+    A:        9.7295e-05 +/- 2.1281e-06 (2.19%) (init = 9.448289e-05)
+    B:       -9.1368e-05 +/- 1.5875e-05 (17.37%) (init = -6.672333e-05)
+    C:        0 (fixed)
+    D:        0 (fixed)
+    E:        0 (fixed)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(A, B)         = -0.8431
+    C(k_1, A)       = -0.2145
+    C(k_2, A)       = -0.1665
+    C(k_3, A)       = -0.1292
+    C(shift_3, k_4) = -0.1171
+    C(k_1, B)       = +0.1031
+
+n.peak	Shift	Integral
+1    7.488    982163.636 +/- 115893.080
+
+------------------------------
+FIT RANGE: (8.06:7.74) ppm
+I: 2 P: 1
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 447
+    # data points      = 443
+    # variables        = 22
+    chi-square         = 3.3087e+08
+    reduced chi-square = 785921.552
+    Akaike info crit   = 6034.98817
+    Bayesian info crit = 6125.04670
+[[Variables]]
+    shift_1:  7.86600357 +/- 2.6145e-04 (0.00%) (init = 7.86755)
+    k_1:      1.4049e-07 +/- 1.6934e-08 (12.05%) (init = 2.16635e-07)
+    lw_1:     0.00517123 +/- 2.2950e-04 (4.44%) (init = 0.00609701)
+    ph_1:    -0.03439492 +/- 0.11308033 (328.77%) (init = 0)
+    xg_1:     1.00000000 +/- 0.66980403 (66.98%) (init = 0.2)
+    shift_2:  7.87535986 +/- 2.2056e-04 (0.00%) (init = 7.87635)
+    k_2:      3.5934e-07 +/- 2.1868e-08 (6.09%) (init = 2.7803e-07)
+    lw_2:     0.00732744 +/- 3.6802e-04 (5.02%) (init = 0.00682632)
+    ph_2:     0.05624791 +/- 0.05162387 (91.78%) (init = 0)
+    xg_2:     3.9523e-10 +/- 0.16377767 (41438966987.86%) (init = 0.2)
+    shift_3:  7.92117320 +/- 1.1326e-04 (0.00%) (init = 7.92256)
+    k_3:      2.7725e-07 +/- 1.8081e-08 (6.52%) (init = 4.57947e-07)
+    lw_3:     0.00690830 +/- 1.3374e-04 (1.94%) (init = 0.00726391)
+    ph_3:     0.03544350 +/- 0.03498591 (98.71%) (init = 0)
+    xg_3:     1.00000000 +/- 0.16737928 (16.74%) (init = 0.2)
+    shift_4:  7.93426428 +/- 7.9449e-05 (0.00%) (init = 7.93502)
+    k_4:      6.0778e-07 +/- 2.0095e-08 (3.31%) (init = 5.8773e-07)
+    lw_4:     0.00766799 +/- 1.7047e-04 (2.22%) (init = 0.00726391)
+    ph_4:    -0.02141627 +/- 0.02045865 (95.53%) (init = 0)
+    xg_4:     0.07573263 +/- 0.06289329 (83.05%) (init = 0.2)
+    A:        6.9710e-05 +/- 6.6490e-07 (0.95%) (init = 6e-05)
+    B:       -2.1874e-05 +/- 3.5864e-06 (16.40%) (init = 0)
+    C:        0 (fixed)
+    D:        0 (fixed)
+    E:        0 (fixed)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(shift_1, ph_1)    = -0.9734
+    C(k_3, xg_3)        = +0.9370
+    C(shift_3, ph_3)    = -0.9262
+    C(ph_1, shift_2)    = +0.9153
+    C(k_1, k_2)         = -0.9058
+    C(k_1, xg_1)        = -0.9047
+    C(k_3, k_4)         = -0.9024
+    C(shift_1, shift_2) = -0.8969
+    C(A, B)             = -0.8930
+    C(shift_2, ph_2)    = -0.8801
+    C(xg_3, k_4)        = -0.8243
+    C(shift_1, ph_2)    = +0.8165
+    C(shift_4, ph_4)    = -0.8093
+    C(xg_1, k_2)        = +0.8064
+    C(ph_1, ph_2)       = -0.7677
+    C(ph_2, xg_2)       = +0.7610
+    C(ph_1, xg_1)       = -0.7394
+    C(ph_1, lw_2)       = -0.6881
+    C(shift_3, shift_4) = -0.6861
+    C(xg_1, lw_2)       = +0.6832
+    C(k_4, xg_4)        = -0.6740
+    C(shift_2, xg_2)    = -0.6598
+    C(ph_4, xg_4)       = +0.6598
+    C(shift_1, xg_2)    = +0.6533
+    C(ph_3, shift_4)    = +0.6495
+    C(shift_1, lw_1)    = +0.6488
+    C(shift_1, xg_1)    = +0.6418
+    C(lw_1, ph_1)       = -0.6393
+    C(ph_1, xg_2)       = -0.6195
+    C(ph_3, xg_3)       = +0.6172
+    C(ph_3, lw_4)       = -0.6040
+    C(lw_1, shift_2)    = -0.6011
+    C(k_1, lw_2)        = -0.6009
+    C(xg_1, shift_2)    = -0.5988
+    C(shift_1, lw_2)    = +0.5947
+    C(shift_2, lw_2)    = -0.5945
+    C(lw_1, ph_2)       = +0.5898
+    C(lw_1, xg_1)       = +0.5803
+    C(k_2, lw_2)        = +0.5775
+    C(k_3, xg_4)        = +0.5486
+    C(xg_3, lw_4)       = -0.5475
+    C(k_3, ph_4)        = +0.5384
+    C(ph_3, k_4)        = -0.5369
+    C(lw_2, xg_2)       = +0.5301
+    C(shift_3, ph_4)    = +0.5039
+    C(k_4, B)           = +0.4987
+    C(shift_3, lw_4)    = +0.4985
+    C(ph_1, k_2)        = -0.4970
+    C(lw_3, shift_4)    = -0.4725
+    C(lw_1, xg_2)       = +0.4707
+    C(k_1, ph_1)        = +0.4675
+    C(lw_3, ph_4)       = +0.4609
+    C(k_3, ph_3)        = +0.4576
+    C(k_3, lw_4)        = -0.4556
+    C(k_4, ph_4)        = -0.4462
+    C(shift_3, lw_3)    = +0.4444
+    C(k_4, A)           = -0.4433
+    C(k_3, B)           = -0.4421
+    C(shift_3, xg_3)    = -0.4265
+    C(k_4, lw_4)        = +0.4256
+    C(shift_4, xg_4)    = -0.4200
+    C(k_1, A)           = +0.4151
+    C(lw_3, ph_3)       = -0.4009
+    C(ph_4, B)          = -0.3814
+    C(shift_1, k_2)     = +0.3740
+    C(lw_3, xg_4)       = +0.3721
+    C(xg_3, B)          = -0.3718
+    C(shift_4, lw_4)    = -0.3490
+    C(k_2, A)           = -0.3465
+    C(lw_2, ph_2)       = +0.3456
+    C(ph_3, ph_4)       = -0.3450
+    C(shift_1, k_1)     = -0.3400
+    C(k_2, k_3)         = +0.3397
+    C(k_1, B)           = -0.3388
+    C(xg_4, B)          = -0.3371
+    C(shift_2, k_2)     = -0.3346
+    C(xg_3, xg_4)       = +0.3312
+    C(lw_3, xg_3)       = -0.3236
+    C(xg_4, A)          = +0.3213
+    C(ph_2, A)          = +0.3171
+    C(lw_4, xg_4)       = +0.3050
+    C(shift_3, k_4)     = +0.3047
+    C(k_2, xg_3)        = +0.3021
+    C(k_1, shift_2)     = +0.2977
+    C(lw_1, lw_2)       = +0.2924
+    C(xg_1, A)          = -0.2919
+    C(ph_3, B)          = -0.2888
+    C(ph_2, B)          = -0.2886
+    C(xg_3, ph_4)       = +0.2859
+    C(k_3, A)           = +0.2838
+    C(ph_3, A)          = +0.2733
+    C(k_2, ph_4)        = +0.2635
+    C(shift_3, xg_4)    = +0.2595
+    C(xg_1, ph_2)       = +0.2537
+    C(k_1, lw_1)        = -0.2493
+    C(xg_1, B)          = +0.2470
+    C(xg_2, k_3)        = -0.2446
+    C(k_2, xg_2)        = -0.2443
+    C(shift_3, k_3)     = -0.2336
+    C(xg_3, A)          = +0.2295
+    C(ph_4, A)          = +0.2254
+    C(lw_4, B)          = +0.2215
+    C(lw_3, lw_4)       = +0.2183
+    C(xg_2, xg_3)       = -0.2125
+    C(xg_1, xg_2)       = +0.2044
+    C(lw_2, A)          = -0.1916
+    C(xg_2, ph_4)       = -0.1911
+    C(k_2, k_4)         = -0.1897
+    C(lw_1, k_2)        = +0.1872
+    C(k_2, B)           = +0.1780
+    C(xg_3, shift_4)    = +0.1753
+    C(shift_3, A)       = -0.1727
+    C(xg_2, k_4)        = +0.1722
+    C(lw_4, A)          = -0.1649
+    C(shift_3, B)       = +0.1649
+    C(xg_2, A)          = +0.1570
+    C(shift_4, B)       = +0.1510
+    C(lw_2, B)          = +0.1397
+    C(k_1, xg_2)        = +0.1306
+    C(k_1, k_3)         = -0.1254
+    C(k_1, ph_2)        = +0.1252
+    C(k_1, xg_3)        = -0.1216
+    C(shift_2, B)       = +0.1207
+    C(k_2, shift_4)     = -0.1200
+    C(k_2, lw_4)        = -0.1153
+    C(k_2, xg_4)        = +0.1104
+    C(shift_2, A)       = -0.1094
+    C(xg_2, xg_4)       = -0.1086
+
+n.peak	Shift	Integral
+1    7.866    822696.269 +/- 63553.312
+2    7.875    1456723.537 +/- 80073.267
+
+------------------------------
+FIT RANGE: (8.06:7.74) ppm
+I: 2 P: 2
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 45
+    # data points      = 443
+    # variables        = 10
+    chi-square         = 5.6599e+08
+    reduced chi-square = 1307131.99
+    Akaike info crit   = 6248.80767
+    Bayesian info crit = 6289.74337
+##  Warning: uncertainties could not be estimated:
+    shift_3:  at initial value
+    shift_4:  at initial value
+[[Variables]]
+    shift_1:  7.86617833 (init = 7.866004)
+    k_1:      1.5073e-07 (init = 1.404939e-07)
+    lw_1:     0.005171235 (fixed)
+    ph_1:    -0.03439492 (fixed)
+    xg_1:     1 (fixed)
+    shift_2:  7.87546995 (init = 7.87536)
+    k_2:      3.4339e-07 (init = 3.593351e-07)
+    lw_2:     0.007327442 (fixed)
+    ph_2:     0.05624791 (fixed)
+    xg_2:     3.952262e-10 (fixed)
+    shift_3:  7.92117320 (init = 7.921173)
+    k_3:      3.1457e-07 (init = 2.772517e-07)
+    lw_3:     0.006908304 (fixed)
+    ph_3:     0.0354435 (fixed)
+    xg_3:     1 (fixed)
+    shift_4:  7.93426428 (init = 7.934264)
+    k_4:      5.8405e-07 (init = 6.077803e-07)
+    lw_4:     0.007667989 (fixed)
+    ph_4:    -0.02141627 (fixed)
+    xg_4:     0.07573263 (fixed)
+    A:        7.0270e-05 (init = 6.971049e-05)
+    B:       -3.2235e-05 (init = -2.187445e-05)
+    C:        0 (fixed)
+    D:        0 (fixed)
+    E:        0 (fixed)
+
+n.peak	Shift	Integral
+1    7.866    702697.213 +/- 95257.303
+2    7.875    1277932.796 +/- 131090.225
+
+------------------------------
+FIT RANGE: (8.06:7.74) ppm
+I: 2 P: 3
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 45
+    # data points      = 443
+    # variables        = 10
+    chi-square         = 3.4550e+08
+    reduced chi-square = 797923.680
+    Akaike info crit   = 6030.15273
+    Bayesian info crit = 6071.08843
+##  Warning: uncertainties could not be estimated:
+    k_2:      at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    k_4:      at initial value
+[[Variables]]
+    shift_1:  7.86587283 (init = 7.866178)
+    k_1:      1.3978e-07 (init = 1.507296e-07)
+    lw_1:     0.005171235 (fixed)
+    ph_1:    -0.03439492 (fixed)
+    xg_1:     1 (fixed)
+    shift_2:  7.87503657 (init = 7.87547)
+    k_2:      3.3360e-07 (init = 3.433928e-07)
+    lw_2:     0.007327442 (fixed)
+    ph_2:     0.05624791 (fixed)
+    xg_2:     3.952262e-10 (fixed)
+    shift_3:  7.92117320 (init = 7.921173)
+    k_3:      3.0421e-07 (init = 3.145653e-07)
+    lw_3:     0.006908304 (fixed)
+    ph_3:     0.0354435 (fixed)
+    xg_3:     1 (fixed)
+    shift_4:  7.93426428 (init = 7.934264)
+    k_4:      5.7913e-07 (init = 5.840511e-07)
+    lw_4:     0.007667989 (fixed)
+    ph_4:    -0.02141627 (fixed)
+    xg_4:     0.07573263 (fixed)
+    A:        6.9356e-05 (init = 7.026962e-05)
+    B:       -2.8478e-05 (init = -3.22346e-05)
+    C:        0 (fixed)
+    D:        0 (fixed)
+    E:        0 (fixed)
+
+n.peak	Shift	Integral
+1    7.866    603345.146 +/- 60488.186
+2    7.875    1125863.102 +/- 84445.895
+
+------------------------------
+FIT RANGE: (8.06:7.74) ppm
+I: 2 P: 4
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 34
+    # data points      = 443
+    # variables        = 10
+    chi-square         = 3.7684e+08
+    reduced chi-square = 870301.733
+    Akaike info crit   = 6068.61710
+    Bayesian info crit = 6109.55280
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    k_1:      at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+[[Variables]]
+    shift_1:  7.86587283 (init = 7.865873)
+    k_1:      1.4897e-07 (init = 1.397785e-07)
+    lw_1:     0.005171235 (fixed)
+    ph_1:    -0.03439492 (fixed)
+    xg_1:     1 (fixed)
+    shift_2:  7.87495053 (init = 7.875037)
+    k_2:      3.5703e-07 (init = 3.335968e-07)
+    lw_2:     0.007327442 (fixed)
+    ph_2:     0.05624791 (fixed)
+    xg_2:     3.952262e-10 (fixed)
+    shift_3:  7.92117320 (init = 7.921173)
+    k_3:      3.2397e-07 (init = 3.04209e-07)
+    lw_3:     0.006908304 (fixed)
+    ph_3:     0.0354435 (fixed)
+    xg_3:     1 (fixed)
+    shift_4:  7.93426428 (init = 7.934264)
+    k_4:      6.2099e-07 (init = 5.791259e-07)
+    lw_4:     0.007667989 (fixed)
+    ph_4:    -0.02141627 (fixed)
+    xg_4:     0.07573263 (fixed)
+    A:        7.4586e-05 (init = 6.935618e-05)
+    B:       -3.5803e-05 (init = -2.847799e-05)
+    C:        0 (fixed)
+    D:        0 (fixed)
+    E:        0 (fixed)
+
+n.peak	Shift	Integral
+1    7.866    501856.488 +/- 67207.680
+2    7.875    937206.973 +/- 104963.913
+
+------------------------------
+FIT RANGE: (8.06:7.74) ppm
+I: 2 P: 5
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 67
+    # data points      = 443
+    # variables        = 10
+    chi-square         = 2.8706e+08
+    reduced chi-square = 662963.911
+    Akaike info crit   = 5948.06820
+    Bayesian info crit = 5989.00390
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    k_1:      at initial value
+    shift_3:  at initial value
+    k_3:      at initial value
+    shift_4:  at initial value
+[[Variables]]
+    shift_1:  7.86587283 (init = 7.865873)
+    k_1:      1.4470e-07 (init = 1.489746e-07)
+    lw_1:     0.005171235 (fixed)
+    ph_1:    -0.03439492 (fixed)
+    xg_1:     1 (fixed)
+    shift_2:  7.87516146 (init = 7.874951)
+    k_2:      3.8290e-07 (init = 3.570326e-07)
+    lw_2:     0.007327442 (fixed)
+    ph_2:     0.05624791 (fixed)
+    xg_2:     3.952262e-10 (fixed)
+    shift_3:  7.92117320 (init = 7.921173)
+    k_3:      3.2900e-07 (init = 3.239698e-07)
+    lw_3:     0.006908304 (fixed)
+    ph_3:     0.0354435 (fixed)
+    xg_3:     1 (fixed)
+    shift_4:  7.93426428 (init = 7.934264)
+    k_4:      6.7005e-07 (init = 6.209885e-07)
+    lw_4:     0.007667989 (fixed)
+    ph_4:    -0.02141627 (fixed)
+    xg_4:     0.07573263 (fixed)
+    A:        8.6954e-05 (init = 7.458562e-05)
+    B:       -2.8727e-05 (init = -3.580296e-05)
+    C:        0 (fixed)
+    D:        0 (fixed)
+    E:        0 (fixed)
+
+n.peak	Shift	Integral
+1    7.866    390619.144 +/- 66502.533
+2    7.875    739665.315 +/- 79131.955
+
+------------------------------
+FIT RANGE: (8.06:7.74) ppm
+I: 2 P: 6
+------------------------------
+
+Fit Report: 
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 67
+    # data points      = 443
+    # variables        = 10
+    chi-square         = 2.5023e+08
+    reduced chi-square = 577890.835
+    Akaike info crit   = 5887.22854
+    Bayesian info crit = 5928.16424
+##  Warning: uncertainties could not be estimated:
+    shift_1:  at initial value
+    k_1:      at initial value
+    k_2:      at initial value
+    shift_3:  at initial value
+    shift_4:  at initial value
+    k_4:      at initial value
+[[Variables]]
+    shift_1:  7.86587283 (init = 7.865873)
+    k_1:      1.4652e-07 (init = 1.44701e-07)
+    lw_1:     0.005171235 (fixed)
+    ph_1:    -0.03439492 (fixed)
+    xg_1:     1 (fixed)
+    shift_2:  7.87479506 (init = 7.875161)
+    k_2:      3.7389e-07 (init = 3.829032e-07)
+    lw_2:     0.007327442 (fixed)
+    ph_2:     0.05624791 (fixed)
+    xg_2:     3.952262e-10 (fixed)
+    shift_3:  7.92117320 (init = 7.921173)
+    k_3:      3.4316e-07 (init = 3.290036e-07)
+    lw_3:     0.006908304 (fixed)
+    ph_3:     0.0354435 (fixed)
+    xg_3:     1 (fixed)
+    shift_4:  7.93426428 (init = 7.934264)
+    k_4:      6.7631e-07 (init = 6.700527e-07)
+    lw_4:     0.007667989 (fixed)
+    ph_4:    -0.02141627 (fixed)
+    xg_4:     0.07573263 (fixed)
+    A:        8.9282e-05 (init = 8.695447e-05)
+    B:       -2.9873e-05 (init = -2.872734e-05)
+    C:        0 (fixed)
+    D:        0 (fixed)
+    E:        0 (fixed)
+
+n.peak	Shift	Integral
+1    7.866    279308.244 +/- 53465.236
+2    7.875    547151.909 +/- 73373.635
+
+------------------------------
+N. PEAK: 1
+------------------------------
+
+Fit Parameters:
+
+Mono
+y = a + A exp(-t/T1)
+fit: T1=3.4109e-01, a=7.500e+03, A=2.413e+06
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 11
+    # data points      = 6
+    # variables        = 1
+    chi-square         = 5.1534e+08
+    reduced chi-square = 1.0307e+08
+    Akaike info crit   = 111.611459
+    Bayesian info crit = 111.403219
+[[Variables]]
+    t1:  0.34108869 +/- 0.02816649 (8.26%) (init = 0)
+
+Bi
+y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))
+fit: f=7.386e-01, T1a=3.4109e-01, T1b=3.4109e-01, a=7.503e+03, A=2.413e+06
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 56
+    # data points      = 6
+    # variables        = 3
+    chi-square         = 5.1534e+08
+    reduced chi-square = 1.7178e+08
+    Akaike info crit   = 115.611459
+    Bayesian info crit = 114.986738
+[[Variables]]
+    f:    0.73861638 +/- 22450929.5 (3039592704.56%) (init = 0.5)
+    t1a:  0.34108720 +/- 22797.4644 (6683764.37%) (init = 0)
+    t1b:  0.34108987 +/- 64468.6097 (18900769.28%) (init = 0)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(t1a, t1b) = -1.0000
+    C(f, t1b)   = +0.2026
+    C(f, t1a)   = -0.1992
+
+------------------------------
+N. PEAK: 2
+------------------------------
+
+Fit Parameters:
+
+Mono
+y = a + A exp(-t/T1)
+fit: T1=2.2862e-01, a=4.358e+04, A=7.755e+05
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 11
+    # data points      = 6
+    # variables        = 1
+    chi-square         = 1.2211e+08
+    reduced chi-square = 24421838.9
+    Akaike info crit   = 102.972001
+    Bayesian info crit = 102.763760
+[[Variables]]
+    t1:  0.22862303 +/- 0.02901681 (12.69%) (init = 0)
+
+Bi
+y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))
+fit: f=9.675e-01, T1a=3.0327e-01, T1b=-1.8450e+00, a=-2.728e+04, A=8.565e+05
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 130
+    # data points      = 6
+    # variables        = 3
+    chi-square         = 6873443.00
+    reduced chi-square = 2291147.67
+    Akaike info crit   = 89.7084974
+    Bayesian info crit = 89.0837758
+[[Variables]]
+    f:    0.96752350 +/- 792.924287 (81954.01%) (init = 0.5)
+    t1a:  0.30326791 +/- 0.01690104 (5.57%) (init = 0)
+    t1b: -1.84503553 +/- 52504.4774 (2845716.34%) (init = 0)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(f, t1b)   = +1.0000
+    C(t1a, t1b) = +0.3850
+    C(f, t1a)   = +0.3850
+
+------------------------------
+N. PEAK: 3
+------------------------------
+
+Fit Parameters:
+
+Mono
+y = a + A exp(-t/T1)
+fit: T1=3.2322e-01, a=-2.919e+04, A=1.486e+06
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 11
+    # data points      = 6
+    # variables        = 1
+    chi-square         = 2.6871e+08
+    reduced chi-square = 53742817.8
+    Akaike info crit   = 107.704394
+    Bayesian info crit = 107.496154
+[[Variables]]
+    t1:  0.32321919 +/- 0.03100133 (9.59%) (init = 0)
+
+Bi
+y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))
+fit: f=4.382e-01, T1a=3.2323e-01, T1b=3.2321e-01, a=-2.919e+04, A=1.486e+06
+[[Fit Statistics]]
+    # fitting method   = leastsq
+    # function evals   = 59
+    # data points      = 6
+    # variables        = 3
+    chi-square         = 2.6871e+08
+    reduced chi-square = 89571363.0
+    Akaike info crit   = 111.704394
+    Bayesian info crit = 111.079673
+[[Variables]]
+    f:    0.43815905 +/- 3376990.64 (770722559.61%) (init = 0.5)
+    t1a:  0.32322774 +/- 16108.8481 (4983745.49%) (init = 0)
+    t1b:  0.32321263 +/- 12557.8209 (3885312.52%) (init = 0)
+[[Correlations]] (unreported correlations are < 0.100)
+    C(t1a, t1b) = -1.0000
+====================================================================================================

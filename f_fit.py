@@ -686,8 +686,8 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
 
     #creats directorys inside dir_result with the same names as the spectra in path
     dir_result = new_dir+nome_folder
-    [os.makedirs(dir_result+'/'+list_path[i][:list_path[idx].index('/pdata')]) for i in range(len(list_path))]
-    dir_result_sp = [dir_result+'/'+list_path[i][:list_path[idx].index('/pdata')] for i in range(len(list_path))]  # 'nome_directory_risultato/numero_spettro'
+    [os.makedirs(dir_result+'/'+list_path[i][:list_path[i].index('/pdata')]) for i in range(len(list_path))]
+    dir_result_sp = [dir_result+'/'+list_path[i][:list_path[i].index('/pdata')] for i in range(len(list_path))]  # 'nome_directory_risultato/numero_spettro'
 
     VCLIST = []
     
@@ -703,7 +703,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
 
         datap, ppm_scale, ngdicp = nmr_spectra_pseudo2d(path+list_path[idx]) #(n.delay x TD)
 
-        title = open(path+list_path[idx][:list_path[idx].index('/pdata')]+'/title').readlines()  # format xxx.xxmT
+        title = open(path+list_path[idx]+'/title').readlines()  # format xxx.xxmT
         if VCLIST==[] or field==True:
             for i,line in enumerate(title):
                 if 'The selected field' in line:
