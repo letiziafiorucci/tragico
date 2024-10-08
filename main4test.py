@@ -151,7 +151,7 @@ if 0:
 
     ### maybe this demonstrates that I also need the other term in calibration
 
-    path = 'example4'
+    path = '/home/letizia/Documents/NMR/PPyr0.2mM_MMP12_4uM_TRIS_12_01_23/'
 
     print('MAIN SPECTRA PATH:' )
     print(path)
@@ -182,7 +182,7 @@ if 0:
                 cal_lim = (1.90,1.70), # limits for the calibration
                 fast = True, # if True, the fitting is performed with a faster algorithm
                 dofit = True, # if True, the spectra are fitted
-                prev_fit = None, # directory of the previous fit (if any)
+                prev_fit = None, #'PPyr0.2mM_MMP12_4uM_TRIS_12_01_23_modelfit_ex/',
                 limits1 = lim1, # limits for the fit parameters of the first spectrum
                 limits2 = lim2,  # limits for the fit parameters of the subsequent spectra
                 prev_guess = True, # if True, the previous fit is used as initial guess without asking
@@ -194,6 +194,202 @@ if 0:
                 )
     
     # the limits of integration are ordered from the smallest ppmvalue to the largest (as also stated in the output file)
-    theUltimatePlot('from_example4/', list_path, bi_list=[], colormap = 'hsv', area=True)
+    theUltimatePlot(dir_result, list_path, bi_list=[], colormap = 'hsv', area=True) 
+
+
+
+if 0:
+
+    import klassez as kl
+
+
+    path = '/home/letizia/Documents/Dottorato/Fit_tools/test/Q/DMTP-1_PROTON_nt1_28C_01.fid' 
+
+    S = kl.Spectrum_1D(path, spect="varian")    
+    S.process()
+    sr = S.S
+    ppm_scale = S.ppm
+
+    pprint(S.procs)
+
+    acqupars = {
+                'DE':0,
+                'SW':S.acqus['SW'],
+                'TD':S.acqus['TD']//2,
+                'o1':S.acqus['o1'],
+                'SFO1':S.acqus['SFO1']
+                }
+    
+    procpars = {
+                'SR':0,
+                'SI':len(sr),
+                'LB':S.procs['wf']['lb'],
+                'SSB':S.procs['wf']['ssb']
+                }
+
+    print('MAIN SPECTRA PATH:' )
+    print(path)
+ 
+    list_sp = ['']
+
+    delays = [0.0] #start, stop, n. steps
+
+    lim1 = {'shift':(-1,1), 'lw':(1e-4,2.5), 'ph':(0,0),'A':(0,0), 'B':(0,0), 'C':(0,0), 'D':(0,0), 'E':(0,0)}
+    lim2 = {'shift':(0.9,1.1), 'lw':(0,0), 'ph':(0,0), 'xg':(0,0)} 
+
+    model_fit_1D(
+                path, # path of the main spectra
+                delays, # list of delays (or any x value)
+                list_sp, # list of folders
+                cal_lim = None, # limits for the calibration
+                dofit=True, # if True, the spectra are fitted
+                prev_fit = None, # directory of the previous fit (if any)
+                fast = False, # if True, the fitting is performed with a faster algorithm
+                limits1 = lim1, # limits for the fit parameters of the first spectrum
+                limits2 = lim2,  # limits for the fit parameters of the subsequent spectra
+                L1R = None, # factor for L1 regularization (Lasso)
+                L2R = None, # factor for L2 regularization (Ridge) 
+                doexp=False, # if True, the intensities are fitted with an exponential decay
+                f_int_fit=None, # function for the intensity fit
+                fargs=None, # arguments of the intensity fit, except for x and y
+                Spectra=np.array([sr]), 
+                ppmscale=ppm_scale, 
+                acqupars=acqupars,
+                procpars=procpars
+                )
     
 
+if 1:
+
+    import scipy
+
+    def calc_shift(temp, S1, S2, A_h, J, gammaC=267/4):
+
+        def energy(Si, J):
+            return 1/2*J*(Si*(Si+1))
+
+        #gammaC = 267/4   #672828/1e6  # 2piMHz/T  #-267/10
+        conv = 1.9865e-23 #lo moltiplico per cm-1 per ottenere J
+        kB = scipy.constants.k
+        muB = scipy.constants.physical_constants['Bohr magneton'][0]
+        ge = 2.0023
+        pref = 2*np.pi*ge*muB/(3*kB*gammaC*temp)
+
+        sum1 = 0
+        sum2 = 0
+        for s in np.arange(np.abs(S1-S2), S1+S2+1, 1):
+            sum1 += 1/2*s*(s+1)*(2*s+1)*np.exp(-energy(s, J*conv)/(kB*temp))
+            sum2 += (2*s+1)*np.exp(-energy(s, J*conv)/(kB*temp))
+
+        sum1 *= pref*A_h*1e6
+        shift = sum1/sum2
+
+        return shift
+
+
+    def T_model(param, temp, shift, result=False, T_long=None):
+        
+        S = 5/2
+        par = param.valuesdict()
+        J = par['J']
+        A = [par['A_'+str(i)] for i in range(shift.shape[1])]
+        res = []
+        conshift = np.zeros_like(shift)
+        for i in range(shift.shape[0]):  #per temp
+            for j in range(shift.shape[1]):  #per protone
+                conshift_s = calc_shift(temp[i], S, S, A[j], J)#[j])
+                conshift[i,j] = conshift_s
+                res.append(conshift_s-shift[i,j])
+
+        if result:
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            for i in range(shift.shape[1]):
+                line, = ax.plot(1000/temp, shift[:,i], 'o')
+                ax.plot(1000/temp, conshift[:,i], '--', c=line.get_color())
+            plt.show()
+            plt.close()
+
+            cont_list = []
+            for j in range(shift.shape[1]):
+                cont_list.append([calc_shift(t, S, S, A[j], J) for t in T_long])
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            for i in range(shift.shape[1]):
+                line, = ax.plot(1000/temp, shift[:,i], 'o', label=f'{i+1}: J = {J:.1f} cm-1; A/h = {A[i]:.3f} MHz')
+                ax.plot(1000/temp, conshift[:,i], '--', c=line.get_color())
+                ax.plot(1000/T_long, cont_list[i], lw = 0.7, c='k')
+            plt.legend()
+            plt.xlabel('1000/T (K-1)')
+            plt.ylabel('Shift (ppm)')
+            plt.show()
+            plt.close()
+            return conshift
+        else:
+            return res
+
+
+    def cal_temp(T):
+        #temperature calibration at 1200 MHz
+
+        T_cal = []
+        for t in T:
+            T_cal.append(t*0.955944+9.81982517+2)
+
+        return T_cal
+
+
+    #--------------------------------------#
+    # Temp shift dep FDX2_13C15N_1200_090224
+    #--------------------------------------#
+    path = '/home/letizia/Documents/NMR/FDX2_13C15N_1200_090224_/'
+    num_sp = list(np.arange(23,31,1))   #pochescan
+    list_sp = [str(i)+'/pdata/10' for i in num_sp]
+
+    temp = []
+    for idx in range(len(list_sp)):
+        title = open(path+list_sp[idx]+'/title').readlines()
+        title = title[0].split(' ')
+        temp.append(float(title[2][:title[2].index('K')]))
+
+    temp = cal_temp(temp)  #calibration of the temperature at 1200 MHz
+
+    lim1 = {'shift':(-1,1), 'lw':(1e-4,2.5), 'ph':(-np.pi/20,np.pi/20)}
+    lim2 = {'lw':(0,0), 'ph':(0,0), 'xg':(0,0), 'A':(0.9,1.1), 'B':(0.9,1.1), 'C':(0.9,1.1), 'D':(0.9,1.1), 'E':(0.9,1.1)} 
+
+
+    _, shift_tot = model_fit_1D(
+                                path, 
+                                temp, 
+                                list_sp, 
+                                cal_lim = None, 
+                                dofit=True, 
+                                prev_fit = None, 
+                                fast = False, 
+                                limits1 = lim1,
+                                limits2 = lim2,  
+                                L1R = 1000, 
+                                L2R = None,
+                                Param = "shift",
+                                procpars = {'SSB':2}
+                                )
+    
+    for J in range(150,401,25):
+        A_h = np.ones(8)*0.8
+
+        dia_shift = np.array([40.5, 58, 40.5, 58, 58, 40.5, 58, 58])
+
+        dia_shift = np.tile(dia_shift, (len(temp),1))
+        shift_tot = shift_tot-dia_shift
+        print(shift_tot)
+        param = lmfit.Parameters()
+        param.add('J', value=J, min=0, max=1000, vary=False)
+        [param.add('A_'+str(i), value=A_h[i], min=0, max=2, vary=True) for i in range(len(A_h))]
+        print('shift tot\n',shift_tot)
+        minner = lmfit.Minimizer(T_model, param, fcn_args=(temp, shift_tot))
+        result = minner.minimize(method='leastsq', max_nfev=30000)
+        popt = result.params
+        print(popt.pretty_print())  
+        print(lmfit.fit_report(result))
+        calc_shift = T_model(popt, temp, shift_tot, result=True, T_long=np.arange(200, 20000, 10))
+        print(calc_shift)

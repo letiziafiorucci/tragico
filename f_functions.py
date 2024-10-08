@@ -1689,16 +1689,20 @@ class create_input():
         sl_labels = ['k', r'$\sigma$', r'$\phi$', r'$x_g$']
         radio_label = ['A', 'B', 'C', 'D', 'E']
         poli_coeff = np.zeros(len(radio_label))
-        valmins = [-50, 0, -np.pi, 0]
-        valmaxs = [50, np.abs(max(xtrim)-min(xtrim))/4, np.pi, 1]
-        valinits = [0, 0.05, 0, 0.2]
+        valmins = [-30, 0, -np.pi, 0]
+        valmaxs = [10, np.abs(max(xtrim)-min(xtrim))/4, np.pi, 1]
+        valinits = [-10, np.abs(max(xtrim)-min(xtrim))/8, 0, 0.2]
         orientations = ['horizontal', 'horizontal', 'horizontal', 'horizontal']
 
         for i in range(ns):
-            boxes[i].append(plt.axes([0.6, 0.95-i*0.1, 0.3, 0.02])) # k 0
-            boxes[i].append(plt.axes([0.6, 0.93-i*0.1, 0.3, 0.02])) # sigma 1
-            boxes[i].append(plt.axes([0.6, 0.91-i*0.1, 0.3, 0.02]))
-            boxes[i].append(plt.axes([0.6, 0.89-i*0.1, 0.3, 0.02]))
+            # boxes[i].append(plt.axes([0.6, 0.95-i*0.1, 0.3, 0.02])) # k 0
+            # boxes[i].append(plt.axes([0.6, 0.93-i*0.1, 0.3, 0.02])) # sigma 1
+            # boxes[i].append(plt.axes([0.6, 0.91-i*0.1, 0.3, 0.02]))
+            # boxes[i].append(plt.axes([0.6, 0.89-i*0.1, 0.3, 0.02]))
+            boxes[i].append(plt.axes([0.6, 0.95-i*0.05, 0.3, 0.01])) # k 0  #x,y,larghezza,altezza
+            boxes[i].append(plt.axes([0.6, 0.94-i*0.05, 0.3, 0.01])) # sigma 1
+            boxes[i].append(plt.axes([0.6, 0.93-i*0.05, 0.3, 0.01]))
+            boxes[i].append(plt.axes([0.6, 0.92-i*0.05, 0.3, 0.01]))
 
         radio_box = plt.axes([0.6, 0.02, 0.35, 0.08])
         reset_box = plt.axes([0.05, 0.90, 0.1, 0.04])
@@ -1862,7 +1866,7 @@ class create_input():
 
         for i in range(ns):
 
-            lor = t_voigt(taq, (u[i]-o1p+cal)*sf1, 0.05*2*np.pi*sf1, A=1, phi = 0, x_g = 0.2)
+            lor = t_voigt(taq, (u[i]-o1p+cal)*sf1, np.abs(max(xtrim)-min(xtrim))/8*2*np.pi*sf1, A=2**(-10), phi = 0, x_g = 0.2)
 
             ### processing
             lor *= em(lor, LB, SW)

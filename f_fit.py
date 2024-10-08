@@ -365,7 +365,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
             
     return dir_result
 
-def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs=None):
+def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None):
 
     # series of 1D spectra to be treated as a pseudo2D
 
@@ -423,15 +423,22 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
     #     data_d.append(data)
     #     ppmscale_d.append(ppmscale)
 
-    data_d = []
-    ppmscale_d = []
-    for i in range(len(delays_list)):
-        data, ppmscale, _ = nmr_spectra_1d(path+list_path[i])
-        data_d.append(data)
-        ppmscale_d.append(ppmscale)
+    if Spectra is None:
+        
+        data_d = []
+        ppmscale_d = []
+        for i in range(len(delays_list)):
+            data, ppmscale, _ = nmr_spectra_1d(path+list_path[i])
+            data_d.append(data)
+            ppmscale_d.append(ppmscale)
 
-    data = np.array(data_d)
-    ppm_scale = ppmscale.copy()  
+        data = np.array(data_d)
+        ppm_scale = ppmscale.copy() 
+
+    else:
+
+        data = Spectra
+        ppm_scale = ppmscale 
 
     if cal_lim is not None:
         cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1]) 
@@ -1120,7 +1127,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
 
     return dir_result
 
-def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_fit=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None):    
+def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_fit=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, acqupars=None, procpars=None, Param=None):    
 
     for i in range(len(delays_list)):
         if 'pdata' not in list_path[i]:
@@ -1152,18 +1159,33 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
 
     print('PATH TO SPECTRA: ', path+'/'+dir_res)
 
-    data_d = []
-    ppmscale_d = []
-    for i in range(len(delays_list)):
-        data, ppmscale, ngdicp = nmr_spectra_1d(path+list_path[i])
-        data_d.append(data)
-        ppmscale_d.append(ppmscale)
+    if Spectra is None:
+        data_d = []
+        ppmscale_d = []
+        for i in range(len(delays_list)):
+            data, ppmscale, ngdicp = nmr_spectra_1d(path+list_path[i])
+            data_d.append(data)
+            ppmscale_d.append(ppmscale)
 
-    data = np.array(data_d)
-    ppm_scale = ppmscale.copy()
-    
-    acqupars = param_acq(ngdicp)
-    procpars = param_pr(ngdicp)  #only qsin and em are considered for the apodization
+        data = np.array(data_d)
+        ppm_scale = ppmscale.copy()
+
+        if acqupars is None:
+            acqupars = param_acq(ngdicp)
+        else:
+            acqu_out = acqupars.copy()
+            acqupars = param_acq(ngdicp)
+            acqupars.update(acqu_out)
+
+        if procpars is None:
+            procpars = param_pr(ngdicp)
+        else:
+            proc_out = procpars.copy()
+            procpars = param_pr(ngdicp)    #only qsin and em are considered for the apodization
+            procpars.update(proc_out)
+    else:
+        data = Spectra
+        ppm_scale = ppmscale
 
     DE = acqupars['DE'] 
     SR = procpars['SR']
@@ -1268,7 +1290,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
 
     tensor_red_list = []
 
-    shift_tot = []
+    Param_tot = []
     integral_tot = []
     error_tot = []
     for i in range(len(ppm1_set)):  #per intervallo
@@ -1335,6 +1357,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
 
         integral_tot.append([])
         error_tot.append([])
+        Param_tot.append([])
 
         param0 = param.copy()
         for j in range(data.shape[0]):  #per delay
@@ -1385,6 +1408,9 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
                     prev_param_compl.dump(file)
             ####
 
+            if Param is not None:
+                Param_tot[-1].append([prev_param_compl[Param+'_'+str(jj+1)].value for jj in range(tensor_red_list[ii].shape[0]) if tensor_red_list[ii][jj,0]=='true'])
+
             prev_param = prev_param_compl.copy()
 
             integral_tot[-1].append(peak_int)
@@ -1408,6 +1434,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
                 
     integral=np.concatenate(integral_tot, axis=1)
     error = np.concatenate(error_tot, axis=1) 
+    Param_tot = np.array(Param_tot)
 
     for j in range(integral.shape[1]):
         np.savetxt(dir_res+'/Err_'+str(j+1)+'.txt', error[:,j])
@@ -1519,7 +1546,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
             plt.close()
 
 
-    return dir_res
+    return dir_res, Param_tot
 
 def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, dw, j, jj, dir_res, new_dir, SR=0, SI=0, SW=0, LB=0, SSB=0, dofit=True, fast=False, IR=False, L1R=None, L2R=None, err_conf=0.95):
     
@@ -1531,7 +1558,6 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
     def f_residue(param, ppm_scale, spettro, tensor_red, result=False):
         nonlocal cycle
         cycle += 1
-        print('fit peaks: '+f'{cycle:5g}',end='\r')
         par = param.valuesdict()
 
         lor_list = []
@@ -1548,10 +1574,10 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
         
         for ii in range(tensor_red.shape[0]):  #per ogni voigt
 
-            try:
+            if tensor_red[ii,0]=='true':
                 lor = t_voigt(t_aq, (par['shift_'+str(ii+1)]+cal-o1p)*sf1, 2*np.pi*par['lw_'+str(ii+1)]*sf1,
                                             A=par['k_'+str(ii+1)], phi=par['ph_'+str(ii+1)], x_g=par['xg_'+str(ii+1)])
-            except:
+            else:
                 lor = t_voigt(t_aq, (par['shift_'+str(ii+1)+'_f']+cal-o1p)*sf1, 2*np.pi*par['lw_'+str(ii+1)+'_f']*sf1,
                                             A=par['k_'+str(ii+1)+'_f'], phi=par['ph_'+str(ii+1)+'_f'], x_g=par['xg_'+str(ii+1)+'_f'])
             
@@ -1563,13 +1589,13 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
 
             #mi serve per l'errore 
             if result:
-                try:
+                if tensor_red[ii,0]=='true':
                     lor_ph0 = t_voigt(t_aq, (par['shift_'+str(ii+1)]+cal-o1p)*sf1, 2*np.pi*par['lw_'+str(ii+1)]*sf1,
                                                 A=np.abs(par['k_'+str(ii+1)]), phi=0, x_g=par['xg_'+str(ii+1)])
                     ### processing
                     lor_ph0 = zf(lor_ph0, SI)
                     ###
-                except:
+                else:
                     lor_ph0 = None
 
 
@@ -1622,6 +1648,7 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
         model = cost*(corr_baseline+sim_spectra[sx:dx]) 
 
         res = model.real-spettro[sx:dx].real
+        res2plot = res.copy()
 
         if L1R is not None:
             sum_param = np.sum(np.array([np.abs(par[key]) for key in par.keys()]))/np.max(spettro.real)
@@ -1632,11 +1659,15 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
         else:
             pass
 
+        res = np.concatenate((res, np.gradient(res)))
+
+        print('cycle: '+f'{cycle:5g} | target: {np.sum(res**2):.5e}     ',end='\r')
+
         if cycle%1000==0 or result:
             f_figure_comp(ppm_scale[sx:dx], spettro[sx:dx], model, comp_list, 
                                 name=dir_res+'/'+new_dir+'_P'+str(j+1)+'_I'+str(jj+1), basefig = cost*corr_baseline, 
                                 dic_fig={'h':5.59,'w':4.56, 'sx':tensor_red[0,1], 'dx':tensor_red[0,2]})
-            histogram(res, nbins=100, density=True, f_lims= None, xlabel=None, x_symm=False, name=dir_res+'/'+new_dir+'_P'+str(j+1)+'_I'+str(jj+1)+'_hist')
+            histogram(res2plot, nbins=100, density=True, f_lims= None, xlabel=None, x_symm=False, name=dir_res+'/'+new_dir+'_P'+str(j+1)+'_I'+str(jj+1)+'_hist')
 
         if result:
             integral_in=[]
@@ -1648,7 +1679,7 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
                         integral_in.append(np.trapz(lor_list[ii]))
                     else:
                         integral_in.append(np.trapz(lor_ph0_list[ii]))
-                    Err = error_calc_num(ppm_scale, res, lor_ph0_list[ii], np.trapz(lor_ph0_list[ii]), sx, dx, confidence=err_conf)
+                    Err = error_calc_num(ppm_scale, res2plot, lor_ph0_list[ii], np.trapz(lor_ph0_list[ii]), sx, dx, confidence=err_conf)
                     int_err.append(Err)
 
         if not result:
