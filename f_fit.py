@@ -1409,7 +1409,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
             ####
 
             if Param is not None:
-                Param_tot[-1].append([prev_param_compl[Param+'_'+str(jj+1)].value for jj in range(tensor_red_list[ii].shape[0]) if tensor_red_list[ii][jj,0]=='true'])
+                Param_tot[-1].append([prev_param_compl[Param+'_'+str(jj+1)].value for jj in range(tensor_red.shape[0]) if tensor_red[jj,0]=='true'])
 
             prev_param = prev_param_compl.copy()
 
