@@ -150,7 +150,6 @@ if 0:
     # test for series of pseudo2D 
 
     ### maybe this demonstrates that I also need the other term in calibration
-
     path = 'example4'
 
     print('MAIN SPECTRA PATH:' )
