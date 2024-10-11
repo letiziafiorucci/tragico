@@ -684,7 +684,11 @@ def error_calc_num(ppm_scale, res_tot, lor, Int, sx, dx, confidence=0.90):
     """
 
     point_scale = np.arange(0,len(ppm_scale),1)
-    center = ppmfind(ppm_scale, np.average(ppm_scale, weights=lor))[0]
+    if np.array_equal(lor, np.zeros_like(lor)):
+        weights = np.ones_like(lor)
+    else:
+        weights = lor
+    center = ppmfind(ppm_scale, np.average(ppm_scale, weights=weights))[0]
     lower, upper = Interval(Int, point_scale, lor, center, confidence)
     hole_dx = 0
     hole_sx = 0
