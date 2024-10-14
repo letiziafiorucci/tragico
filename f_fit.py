@@ -1659,7 +1659,7 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
         else:
             pass
 
-        res = np.concatenate((res, np.gradient(res)))
+        #res = np.concatenate((res, np.gradient(res)))
 
         print('cycle: '+f'{cycle:5g} | target: {np.sum(res**2):.5e}     ',end='\r')
 
