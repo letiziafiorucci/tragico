@@ -2193,7 +2193,7 @@ def f_figure_comp(ppmscale, data, model, comp, name=None, basefig=None, dic_fig=
         plt.savefig(name+'.png', dpi=600)
         plt.close()	
 
-def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, name, map='rainbow', dic_fig={'h':5,'w':4,'sx':None,'dx':None}, f_legend=False):
+def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=None, map='rainbow', dic_fig={'h':5,'w':4,'sx':None,'dx':None}, f_legend=False):
 
     #colors from map
     cmap = plt.get_cmap(map)
@@ -2214,6 +2214,9 @@ def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, name, map='r
             ax.plot(ppmscale[sx:dx], data[i,sx:dx]-baseline[sx:dx], lw=0.3,c=colors[i], label=f'D: {delays_list[i]:.2e}')
         else:
             ax.plot(ppmscale[sx:dx], data[i,sx:dx]-baseline[sx:dx], lw=0.3,c=colors[i])
+    if lines:
+        for i in range(len(lines)):
+            ax.axvline(lines[i], c=colors[i], lw=0.3)
     ax.set_xlabel(r'$\delta$ (ppm)', fontsize=8)
     ax.set_ylabel('Intensity (a.u.)', fontsize=8)
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)

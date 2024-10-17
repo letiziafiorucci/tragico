@@ -149,6 +149,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
 
         int_tot = []
         coeff_list = []
+        shift_list = []
         for k in range(len(limits)):
             
             if baseline:
@@ -172,19 +173,20 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
             A,B,C,D,E = coeff
             corr_baseline = E*x**4 + D*x**3 + C*x**2 + B*x + A
 
-            if fig_stack:
-                fig_stacked_plot(ppm_scale, data, corr_baseline, delays_list, limits, dir_res+'/Stack_I'+str(k+1), dic_fig={'h':3.59,'w':2.56,'sx':limits[k][0]-delta,'dx':limits[k][1]+delta})
-
-            corr_baseline = corr_baseline[sx:dx]
-
             intensity = []
-            for iii in range(len(delays)):
+            shift = []
+            for iii in range(len(delays_list)):
                 if area:
-                    intensity.append(np.trapz(data[iii,sx:dx].real - corr_baseline))
+                    intensity.append(np.trapz(data[iii,sx:dx].real - corr_baseline[sx:dx]))
                 else:
-                    intensity.append(np.max(data[iii,sx:dx].real - corr_baseline))
+                    intensity.append(np.max(data[iii,sx:dx].real - corr_baseline[sx:dx]))
+                    shift.append(ppm_scale[sx:dx][np.argmax(data[iii,sx:dx].real - corr_baseline[sx:dx])])
+
+            if fig_stack:
+                fig_stacked_plot(ppm_scale, data, corr_baseline, delays_list, limits, shift, name=dir_res+'/Stack_I'+str(k+1), dic_fig={'h':3.59,'w':2.56,'sx':limits[k][0]-delta,'dx':limits[k][1]+delta})
 
             int_tot.append(intensity)
+            shift_list.append(shift)
 
         old_coeff = coeff_list.copy()
                     
@@ -198,6 +200,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
 
         integral=np.array(int_tot).T
         Coeff = np.array(coeff_list)
+        shift_list = np.array(shift_list).T
 
         #error evaluation
         if err_lims is not None:
@@ -219,6 +222,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
         int_del = np.column_stack((integral, delays))  #(n. delays x [integral[:,0],...,integral[:,n], delays[:]])
         order = int_del[:,-1].argsort()
         int_del = int_del[order]
+        shift_list = shift_list[order]
         if err_lims is not None:
             if area:
                 error = np.array(error)[order,:]
@@ -246,18 +250,27 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
                     f.write('C\t'+f'{Coeff[j,2]:.5e}'+'\n')
                     f.write('D\t'+f'{Coeff[j,3]:.5e}'+'\n')
                     f.write('E\t'+f'{Coeff[j,4]:.5e}'+'\n')
-                if area:
-                    f.write('N. point\tIntegral\n')
+                if err_lims is not None:
+                    if area:
+                        f.write('N. point\tIntegral\tError\n')
+                    else:
+                        f.write('N. point\tIntensity\tError\tShift\n')
                 else:
-                    f.write('N. point\tIntensity\n')
-                for i in range(len(delays)):
+                    if area:
+                        f.write('N. point\tIntegral\n')
+                    else:
+                        f.write('N. point\tIntensity\tShift\n')
+                for i in range(len(delays_list)):
                     if err_lims is not None:
                         if area:
                             f.write(str(i)+'\t'+f'{integral[i,j]:.3f}'+' +/- '+f'{error[i,j]:.3f}'+'\n')
                         else:
-                            f.write(str(i)+'\t'+f'{integral[i,j]:.3f}'+' +/- '+f'{error[i]:.3f}'+'\n')
+                            f.write(str(i)+'\t'+f'{integral[i,j]:.3f}'+' +/- '+f'{error[i]:.3f}'+'\t'+f'{shift_list[i,j]:.3f}'+'\n')
                     else:
-                        f.write(str(i)+'\t'+f'{integral[i,j]:.3f}')
+                        if not area:
+                            f.write(str(i)+'\t'+f'{integral[i,j]:.3f}'+'\t'+f'{shift_list[i,j]:.3f}'+'\n')
+                        else:
+                            f.write(str(i)+'\t'+f'{integral[i,j]:.3f}'+'\t'+'\n')
                 f.write('\n')
 
         if doexp==True:
@@ -499,6 +512,7 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
 
     int_tot = []
     coeff_list = []
+    shift_list = []
     for k in range(len(limits)):
 
         if baseline:
@@ -513,19 +527,21 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
         A,B,C,D,E = coeff
         corr_baseline = E*x**4 + D*x**3 + C*x**2 + B*x + A
 
-        if fig_stack:
-            fig_stacked_plot(ppmscale, data, corr_baseline, delays_list, limits, dir_res+'/Stack_I'+str(k+1), dic_fig={'h':3.59,'w':2.56,'sx':limits[k][0]-delta,'dx':limits[k][1]+delta})
-
-        corr_baseline = corr_baseline[sx:dx]
-
         intensity = []
+        shift = []
         for iii in range(len(delays_list)):
             if area:
-                intensity.append(np.trapz(data[iii,sx:dx].real - corr_baseline))
+                intensity.append(np.trapz(data[iii,sx:dx].real - corr_baseline[sx:dx]))
             else:
-                intensity.append(np.max(data[iii,sx:dx].real - corr_baseline))
+                intensity.append(np.max(data[iii,sx:dx].real - corr_baseline[sx:dx]))
+                shift.append(ppm_scale[sx:dx][np.argmax(data[iii,sx:dx].real - corr_baseline[sx:dx])])
+
+        if fig_stack:
+            fig_stacked_plot(ppm_scale, data, corr_baseline, delays_list, limits, shift, name=dir_res+'/Stack_I'+str(k+1), dic_fig={'h':3.59,'w':2.56,'sx':limits[k][0]-delta,'dx':limits[k][1]+delta})
+
 
         int_tot.append(intensity)
+        shift_list.append(shift)
 
     Coeff = np.array(coeff_list)
 
@@ -554,6 +570,7 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
             f.write(str(ii+1)+'\t'+f'{limits[ii][0]:.4f}'+'\t'+f'{limits[ii][1]:.4f}'+'\n')
 
     integral=np.array(int_tot)
+    shift_list = np.array(shift_list)
 
     with open(dir_res+'/'+nameout, 'a') as f:
         f.write('\n')
@@ -575,18 +592,27 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
             f.write('C\t'+f'{Coeff[j,2]:.5e}'+'\n')
             f.write('D\t'+f'{Coeff[j,3]:.5e}'+'\n')
             f.write('E\t'+f'{Coeff[j,4]:.5e}'+'\n')
-            if area:
-                f.write('N. point\tIntegral\n')
+            if err_lims is not None:
+                if area:
+                    f.write('N. point\tIntegral\tError\n')
+                else:
+                    f.write('N. point\tIntensity\tError\tShift\n')
             else:
-                f.write('N. point\tIntensity\n')
+                if area:
+                    f.write('N. point\tIntegral\n')
+                else:
+                    f.write('N. point\tIntensity\tShift\n')
             for i in range(len(delays_list)):
                 if err_lims is not None:
                     if area:
                         f.write(str(i)+'\t'+f'{integral[j,i]:.3f}'+' +/- '+f'{error[i,j]:.3f}'+'\n')
                     else:
-                        f.write(str(i)+'\t'+f'{integral[j,i]:.3f}'+' +/- '+f'{error[i]:.3f}'+'\n')
+                        f.write(str(i)+'\t'+f'{integral[j,i]:.3f}'+' +/- '+f'{error[i]:.3f}'+'\t'+f'{shift_list[j,i]:.3f}'+'\n')
                 else:
-                    f.write(str(i)+'\t'+f'{integral[j,i]:.3f}')
+                    if not area:
+                        f.write(str(i)+'\t'+f'{integral[j,i]:.3f}'+'\t'+f'{shift_list[j,i]:.3f}'+'\n')
+                    else:
+                        f.write(str(i)+'\t'+f'{integral[j,i]:.3f}'+'\t'+'\n')
             f.write('\n')
 
     int_del = np.column_stack((integral.T, delays_list))  #(n. delays x [integral[:,0],...,integral[:,n], delays[:]])
