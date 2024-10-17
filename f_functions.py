@@ -2193,6 +2193,45 @@ def f_figure_comp(ppmscale, data, model, comp, name=None, basefig=None, dic_fig=
         plt.savefig(name+'.png', dpi=600)
         plt.close()	
 
+def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, name, map='rainbow', dic_fig={'h':5,'w':4,'sx':None,'dx':None}, f_legend=False):
+
+    #colors from map
+    cmap = plt.get_cmap(map)
+    colors = cmap(np.linspace(0, 1, len(delays_list)))
+
+    if dic_fig['sx'] and dic_fig['dx']:
+        sx,dx,_ = find_limits(dic_fig['sx'],dic_fig['dx'],ppmscale)
+    else:
+        sx,dx,_ = find_limits(limits[0],limits[1],ppmscale)
+
+    fig = plt.figure()
+    fig.set_size_inches(dic_fig['h'],dic_fig['w'])   
+    plt.subplots_adjust(left=0.15,bottom=0.15,right=0.95,top=0.90)
+    ax = fig.add_subplot(1,1,1)
+    ax.tick_params(labelsize=6.5)
+    for i in range(len(delays_list)):
+        if f_legend:
+            ax.plot(ppmscale[sx:dx], data[i,sx:dx]-baseline[sx:dx], lw=0.3,c=colors[i], label=f'D: {delays_list[i]:.2e}')
+        else:
+            ax.plot(ppmscale[sx:dx], data[i,sx:dx]-baseline[sx:dx], lw=0.3,c=colors[i])
+    ax.set_xlabel(r'$\delta$ (ppm)', fontsize=8)
+    ax.set_ylabel('Intensity (a.u.)', fontsize=8)
+    ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
+    ax.yaxis.get_offset_text().set_size(7)
+    if dic_fig['sx'] and dic_fig['dx']:
+        ax.set_xlim(dic_fig['dx'],dic_fig['sx'])
+    else:
+        ax.set_xlim(limits[0],limits[1])
+    ax.invert_xaxis()
+    if f_legend:
+        ax.legend(fontsize=5)
+    if name is None:
+        plt.show()
+    else:
+        plt.savefig(name+'.png', dpi=600)
+        plt.close()
+
+
 
 ##############
 class color_term:
