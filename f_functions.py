@@ -544,8 +544,7 @@ def calibration(ppm_scale, data, ppmsx, ppmdx, npoints=80, debug_fig=False):
                 plt.show()
             return par['shift']
 
-    sx = ppmfind(ppm_scale, ppmsx)[0]
-    dx = ppmfind(ppm_scale, ppmdx)[0]
+    sx,dx,_ = find_limits(ppmsx, ppmdx, ppm_scale)
 
     spettro0 = data[0,sx:dx]
     
