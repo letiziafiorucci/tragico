@@ -136,8 +136,8 @@ if 0:
                 cal_lim = None, # limits for the calibration
                 dofit=True, # if True, the spectra are fitted
                 prev_fit = None, # directory of the previous fit (if any)
-                filename1 = None,
-                filename2 = None,
+                file_inp1 = None,
+                file_inp2 = None,
                 fast = True, # if True, the fitting is performed with a faster algorithm
                 limits1 = lim1, # limits for the fit parameters of the first spectrum
                 limits2 = lim2,  # limits for the fit parameters of the subsequent spectra
@@ -184,8 +184,8 @@ if 0:
                 cal_lim = (1.90,1.70), # limits for the calibration
                 fast = True, # if True, the fitting is performed with a faster algorithm
                 dofit = True, # if True, the spectra are fitted
-                filename1 = None,
-                filename2 = None,
+                file_inp1 = None,
+                file_inp2 = None,
                 prev_fit = None, #'PPyr0.2mM_MMP12_4uM_TRIS_12_01_23_modelfit_ex/',
                 limits1 = lim1, # limits for the fit parameters of the first spectrum
                 limits2 = lim2,  # limits for the fit parameters of the subsequent spectra
