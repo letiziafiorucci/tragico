@@ -201,7 +201,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
 
             intensity = []
             shift = []
-            for iii in range(len(delays_list)):
+            for iii in range(len(delays)):
                 if area:
                     intensity.append(np.trapz(data[iii,sx:dx].real - corr_baseline[sx:dx]))
                 else:
@@ -209,7 +209,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
                     shift.append(ppm_scale[sx:dx][np.argmax(data[iii,sx:dx].real - corr_baseline[sx:dx])])
 
             if fig_stack:
-                fig_stacked_plot(ppm_scale, data, corr_baseline, delays_list, limits[k], shift, name=dir_res+'/Stack_I'+str(k+1), dic_fig={'h':5,'w':4,'sx':limits[k,0]-delta,'dx':limits[k,1]+delta}, area=area, map=color_map)
+                fig_stacked_plot(ppm_scale, data, corr_baseline, delays, limits[k], shift, name=dir_res+'/Stack_I'+str(k+1), dic_fig={'h':5,'w':4,'sx':limits[k,0]-delta,'dx':limits[k,1]+delta}, area=area, map=color_map)
 
             int_tot.append(intensity)
             shift_list.append(shift)
@@ -253,7 +253,8 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
         int_del = np.column_stack((integral, delays))  #(n. delays x [integral[:,0],...,integral[:,n], delays[:]])
         order = int_del[:,-1].argsort()
         int_del = int_del[order]
-        shift_list = shift_list[order]
+        if not area: 
+            shift_list = shift_list[order]
         if err_lims is not None:
             if area:
                 error = np.array(error)[order,:]
@@ -1989,7 +1990,7 @@ def fit_exponential(x, y, name= None, err_bar=None, figura=True):
         plt.close()
         return popt1.valuesdict().values(), popt2.valuesdict().values(), func1, func2, err1, (err21, err22)  #for theUltimatePlot
 
-def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=False, VClist=None):
+def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=False, VClist=None, errors=False):
     
     if VClist is None:
         VClist = np.loadtxt(dir_result+'/VCLIST.txt')
@@ -2024,10 +2025,11 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
         for i in range(len(mono)):
             x_tot[idx].append(np.loadtxt(dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]+'/x_'+str(i+1)+'.txt'))
             y_tot[idx].append(np.loadtxt(dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]+'/y_'+str(i+1)+'.txt'))
-            if area:
-                yerr_tot[idx].append(np.loadtxt(dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]+'/Err_'+str(i+1)+'.txt'))
-            else:
-                yerr_tot[idx].append(np.loadtxt(dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]+'/Err.txt'))
+            if errors:
+                if area:
+                    yerr_tot[idx].append(np.loadtxt(dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]+'/Err_'+str(i+1)+'.txt'))
+                else:
+                    yerr_tot[idx].append(np.loadtxt(dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]+'/Err.txt'))
         x_tot[-1] = np.array(x_tot[-1])
         y_tot[-1] = np.array(y_tot[-1])
         yerr_tot[-1] = np.array(yerr_tot[-1])
@@ -2042,7 +2044,8 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
         
         x = x_tot[:,i,:]
         y = y_tot[:,i,:]
-        yerr = yerr_tot[:,i,:]
+        if errors:
+            yerr = yerr_tot[:,i,:]
         
         if bi_list is None:
             biflag = False
@@ -2065,11 +2068,12 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
         R1 = []
         err = []
         for ii in range(len(VClist)):
-            monopar, bipar, func1, func2, err1, err2 = fit_exponential(x[ii], y[ii], figura=False, err_bar=yerr[ii])
+            monopar, bipar, func1, func2, err1, err2 = fit_exponential(x[ii], y[ii], figura=False) #, err_bar=yerr[ii])
             monopar = list(monopar)
             bipar = list(bipar)
             line, = ax.plot(x[ii], y[ii], 'o', markersize=0.7, label = f'{VClist[ii]:.0f}'+' mT', c=hsv_colors[ii])
-            ax.errorbar(x[ii], y[ii], yerr=yerr[ii], fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
+            if errors:
+                ax.errorbar(x[ii], y[ii], yerr=yerr[ii], fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
             if biflag:
                 ax.plot(x[ii], func2, '--', lw=0.7, c=line.get_color(), label='T1a = '+f'{10**bipar[1]:.4e}'+' s T1b = '+f'{10**bipar[2]:.4e}'+' s\n'+'f = '+f'{bipar[0]:.3e}')
                 R1.append([1/10**bipar[1], 1/10**bipar[2]])
