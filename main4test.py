@@ -50,13 +50,16 @@ if 0: #test passed
                                 list_sp, # list of folders
                                 area=True, # if True, the integral of selected regions is considered, otherwise the intensity of the highest point is considered
                                 auto_ph = False, # if True, the phase is automatically adjusted  #not working at the moment
-                                cal_lim = (-72.52,-72.94), # limits for the calibration
-                                baseline=True, # if True, the baseline is subtracted
-                                delta = 2, # expansion of the baseline correction region
+                                cal_lim = (-72.94,-72.52), # limits for the calibration
+                                baseline='bsl_19F', # if True, the baseline interface is activated, if string the coefficients are read from file, if False no bsl is used
+                                delta = 1, # expansion of the baseline correction region and plot
+                                fig_stack = True,
                                 doexp=False, # if True, the intensities are fitted with an exponential decay
                                 f_int_fit=None, # function for the intensity fit
-                                fargs=None # arguments of the intensity fit, except for x and y
-                                )
+                                fargs=None, # arguments of the intensity fit, except for x and y
+                                fileinp='inp1_1D',
+                                err_lims = (-73.75, -73.50),
+                                color_map = 'viridis')
     
 ### FUNCTION 2 ###
 if 0: #test passed
@@ -81,14 +84,17 @@ if 0: #test passed
                                         list_path, # list of folders
                                         prev_lims = True, # if True, the same region of integration is used for all the spectra
                                         prev_coeff = True, # if True, the same coefficients for the baseline are used for all the spectra
-                                        area=True, # if True, the integral of selected regions is considered, otherwise the intensity of the highest point is considered
+                                        area=False, # if True, the integral of selected regions is considered, otherwise the intensity of the highest point is considered
                                         VCLIST=None, # list of fields (can also be just an array of consecutive numbers)
+                                        delta = 1.0, # expansion of the baseline correction region and plot
                                         cal_lim = (1.2,0.888), # limits for the calibration
                                         baseline=True, # if True, the baseline is subtracted
                                         doexp=True, # if True, the intensities are fitted with an exponential decay
                                         f_int_fit=None, # function for the intensity fit
-                                        fargs=None # arguments of the intensity fit, except for x and y
-                                        )
+                                        fargs=None, # arguments of the intensity fit, except for x and y
+                                        fileinp='inp1_pseudo2D',
+                                        err_lims = None,
+                                        color_map = 'viridis')
     # the limits of integration are ordered from the smallest ppmvalue to the largest (as also stated in the output file)
     theUltimatePlot(dir_result, list_path, bi_list=[], colormap = 'hsv', area=True)
 
