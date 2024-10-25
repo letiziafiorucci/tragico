@@ -17,11 +17,6 @@ i.e. heights, intensity, integral, shift and linewidth, either from:
 - a single pseudo2D spectrum, 
 - a series of pseudo2D spectra.
 
-This file contains one example for each of the possible use of this collction of functions, i.e., in this order:
-1. intensity_fit_pseudo2D: fit of the intensity of a series of pseudo2D spectra,
-2. intensity_fit_1D: fit of the intensity of a series of 1D spectra treated as a pseudo2D,
-3. model_fit_1D: fit of a series of 1D spectra through peak modeling treated as a pseudo2D,
-4. model_fit_pseudo2D: fit of a series of pseudo2D spectra through peak modeling.
 
 '''
 
@@ -141,6 +136,8 @@ if 0:
                 cal_lim = None, # limits for the calibration
                 dofit=True, # if True, the spectra are fitted
                 prev_fit = None, # directory of the previous fit (if any)
+                filename1 = None,
+                filename2 = None,
                 fast = True, # if True, the fitting is performed with a faster algorithm
                 limits1 = lim1, # limits for the fit parameters of the first spectrum
                 limits2 = lim2,  # limits for the fit parameters of the subsequent spectra
@@ -187,6 +184,8 @@ if 0:
                 cal_lim = (1.90,1.70), # limits for the calibration
                 fast = True, # if True, the fitting is performed with a faster algorithm
                 dofit = True, # if True, the spectra are fitted
+                filename1 = None,
+                filename2 = None,
                 prev_fit = None, #'PPyr0.2mM_MMP12_4uM_TRIS_12_01_23_modelfit_ex/',
                 limits1 = lim1, # limits for the fit parameters of the first spectrum
                 limits2 = lim2,  # limits for the fit parameters of the subsequent spectra
