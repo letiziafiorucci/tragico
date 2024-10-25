@@ -2193,7 +2193,7 @@ def f_figure_comp(ppmscale, data, model, comp, name=None, basefig=None, dic_fig=
         plt.savefig(name+'.png', dpi=600)
         plt.close()	
 
-def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=None, map='rainbow', dic_fig={'h':5,'w':4,'sx':None,'dx':None}, f_legend=False):
+def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=None, map='rainbow', dic_fig={'h':5,'w':4,'sx':None,'dx':None}, f_legend=False, area=False):
 
     #colors from map
     cmap = plt.get_cmap(map)
@@ -2203,6 +2203,8 @@ def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=
         sx,dx,_ = find_limits(dic_fig['sx'],dic_fig['dx'],ppmscale)
     else:
         sx,dx,_ = find_limits(limits[0],limits[1],ppmscale)
+        
+    sxo,dxo,_ = find_limits(limits[0],limits[1],ppmscale)
 
     fig = plt.figure()
     fig.set_size_inches(dic_fig['h'],dic_fig['w'])   
@@ -2214,15 +2216,20 @@ def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=
             ax.plot(ppmscale[sx:dx], data[i,sx:dx]-baseline[sx:dx], lw=0.3,c=colors[i], label=f'D: {delays_list[i]:.2e}')
         else:
             ax.plot(ppmscale[sx:dx], data[i,sx:dx]-baseline[sx:dx], lw=0.3,c=colors[i])
-    if lines:
+    if area:
+        ax.fill_between(ppmscale[sxo:dxo], np.min(data[:,sx:dx].real-baseline[sx:dx]), np.max(data[:,sx:dx].real-baseline[sx:dx]), color='grey', alpha=0.2)
+    else:
         for i in range(len(lines)):
-            ax.axvline(lines[i], c=colors[i], lw=0.3)
+            ax.plot(lines[i], np.max(data[i,sxo:dxo].real-baseline[sxo:dxo]), 'o', c=colors[i], markersize=1)
     ax.set_xlabel(r'$\delta$ (ppm)', fontsize=8)
     ax.set_ylabel('Intensity (a.u.)', fontsize=8)
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
     ax.yaxis.get_offset_text().set_size(7)
     if dic_fig['sx'] and dic_fig['dx']:
-        ax.set_xlim(dic_fig['dx'],dic_fig['sx'])
+        if dic_fig['sx'] > dic_fig['dx']:
+            ax.set_xlim(dic_fig['dx'],dic_fig['sx'])
+        else:
+            ax.set_xlim(dic_fig['sx'],dic_fig['dx'])
     else:
         ax.set_xlim(limits[0],limits[1])
     ax.invert_xaxis()

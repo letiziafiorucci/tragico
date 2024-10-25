@@ -8,7 +8,7 @@ import os
 import shutil
 
 
-def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev_coeff = False, area=False, auto_ph=False, VCLIST=None, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs=None, fig_stack=True):
+def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev_coeff = False, area=False, auto_ph=False, VCLIST=None, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs=None, fig_stack=True, fileinp='inp1_pseudo2D', err_lims=None, color_map='viridis'):
 
     # series of pseudo2D spectra 
 
@@ -106,6 +106,8 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
         if cal_lim is not None:
             cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1]) 
             with open(dir_res+'/'+nameout, 'w') as f:
+                f.write('\n')
+                f.write('I/O INTERVALS: '+fileinp+'\n')
                 f.write('SPECTRA PATH: \n')
                 f.write(path+'/'+list_path[idx]+'\n')
                 f.write('\n')
@@ -123,6 +125,8 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
                 f.close()
         else:
             with open(dir_res+'/'+nameout, 'w') as f:
+                f.write('\n')
+                f.write('I/O INTERVALS: '+fileinp+'\n')
                 f.write('SPECTRA PATH: \n')
                 f.write(path+'/'+list_path[idx]+'\n')
                 f.write('\n')
@@ -143,7 +147,25 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
             else:
                 pass
         elif idx==0:
-            limits, err_lims = CI.select_regions()
+            if os.path.isfile(fileinp):
+                limits = np.loadtxt(fileinp)
+                if len(limits.shape)==1:
+                    limits = np.array([limits])
+                np.savetxt(dir_res+'/'+fileinp, limits)
+            else:
+                limits, err_lims = CI.select_regions()
+                limits = np.array(limits)
+                np.savetxt(dir_res+'/'+fileinp, limits)
+                np.savetxt(fileinp, limits)
+
+            coeff_array = np.zeros((len(limits),5))
+            if isinstance(baseline, str):
+                coeff_array = np.loadtxt(baseline)
+                np.savetxt(dir_res+'/'+baseline, coeff_array)
+                with open(dir_res+'/'+nameout, 'a') as f:
+                    f.write('\nI/O BASELINE: '+baseline+'\n')
+                    f.close()
+
         elif idx>0 and prev_lims:
             pass
 
@@ -152,22 +174,26 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
         shift_list = []
         for k in range(len(limits)):
             
-            if baseline:
+            if baseline==True:
                 if idx>0 and not prev_coeff:
-                    ans = input('Do you want to select different baseline coefficients for region ('+f'{limits[k][0]:.3f}, {limits[k][1]:.3f}'+') ppm? ([y]|n) ')
+                    ans = input('Do you want to select different baseline coefficients for region ('+f'{limits[k,0]:.3f}, {limits[k,1]:.3f}'+') ppm? ([y]|n) ')
                     if ans=='y' or ans=='':
-                        coeff = CI.make_iguess(limits=[limits[k][0]-delta, limits[k][1]+delta], true_limits=[limits[k][0], limits[k][1]])   
+                        coeff = CI.make_iguess([limits[k,0]-delta, limits[k,1]+delta], [limits[k,0], limits[k,1]])   
                     else:
                         coeff = old_coeff[k]
                 elif idx==0:
-                    coeff = CI.make_iguess(limits=[limits[k][0]-delta, limits[k][1]+delta], true_limits=[limits[k][0], limits[k][1]])
+                    coeff = CI.make_iguess([limits[k,0]-delta, limits[k,1]+delta], [limits[k,0], limits[k,1]])
                 elif idx>0 and prev_coeff:
                     coeff = old_coeff[k]
-            else:
+                coeff_array[k,:] = coeff
+            elif baseline==False:
                 coeff = np.zeros(5)
+            elif isinstance(baseline, str):
+                coeff = coeff_array[k,:]
+
             coeff_list.append(coeff)
 
-            sx, dx, zero = find_limits(limits[k][0], limits[k][1], ppm_scale)  
+            sx, dx, zero = find_limits(limits[k,0], limits[k,1], ppm_scale)  
 
             x = ppm_scale.copy()
             A,B,C,D,E = coeff
@@ -183,12 +209,17 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
                     shift.append(ppm_scale[sx:dx][np.argmax(data[iii,sx:dx].real - corr_baseline[sx:dx])])
 
             if fig_stack:
-                fig_stacked_plot(ppm_scale, data, corr_baseline, delays_list, limits, shift, name=dir_res+'/Stack_I'+str(k+1), dic_fig={'h':3.59,'w':2.56,'sx':limits[k][0]-delta,'dx':limits[k][1]+delta})
+                fig_stacked_plot(ppm_scale, data, corr_baseline, delays_list, limits[k], shift, name=dir_res+'/Stack_I'+str(k+1), dic_fig={'h':5,'w':4,'sx':limits[k,0]-delta,'dx':limits[k,1]+delta}, area=area, map=color_map)
 
             int_tot.append(intensity)
             shift_list.append(shift)
 
         old_coeff = coeff_list.copy()
+        if baseline==True:
+            np.savetxt(dir_res+'/'+'pseudo2D_bsl_coeff', coeff_array)
+            with open(dir_res+'/'+nameout, 'a') as f:
+                f.write('\nI/O BASELINE: pseudo2D_bsl_coeff\n')
+                f.close()
                     
         
         with open(dir_res+'/'+nameout, 'a') as f:
@@ -209,7 +240,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
                 error = []
                 for k in range(len(limits)):
                     error.append([])
-                    sxi, dxi, _ = find_limits(limits[k][0], limits[k][1], ppm_scale) 
+                    sxi, dxi, _ = find_limits(limits[k,0], limits[k,1], ppm_scale) 
                     for iii in range(len(delays)):
                         error[k].append(np.mean(np.abs(data[iii,sx:dx].real))*(dxi-sxi)) 
                 error = np.array(error).T
@@ -406,7 +437,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
             
     return dir_result
 
-def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, fig_stack=True):
+def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, fig_stack=True, fileinp='inp1_1D', err_lims=None, color_map='viridis'):
 
     # series of 1D spectra to be treated as a pseudo2D
 
@@ -495,6 +526,8 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
             f.write('\n\n')
             f.write('Points:\n')
             [f.write(str(r+1)+'\t'+f'{delays_list[r]:.3f}'+'\n') for r in range(len(delays_list))]
+            f.write('\n')
+            f.write('I/O INTERVALS: '+fileinp+'\n')
             f.close()
     else:
         with open(dir_res+'/'+nameout, 'w') as f:
@@ -503,25 +536,47 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
             f.write('\n')
             f.write('Points:\n')
             [f.write(str(r+1)+'\t'+f'{delays_list[r]:.3f}'+'\n') for r in range(len(delays_list))]
+            f.write('I/O INTERVALS: '+fileinp+'\n')
             f.close()
 
     spettro = data[0,:] #change this if you what to make the guess from another spectrum
 
     CI = create_input(ppm_scale, spettro)
-    limits, err_lims = CI.select_regions()
+    if os.path.isfile(fileinp):
+        limits = np.loadtxt(fileinp)
+        if len(limits.shape)==1:
+            limits = np.array([limits])
+        np.savetxt(dir_res+'/'+fileinp, limits)
+    else:
+        limits, err_lims = CI.select_regions()
+        limits = np.array(limits)
+        np.savetxt(dir_res+'/'+fileinp, limits)
+        np.savetxt(fileinp, limits)
+
+    coeff_array = np.zeros((len(limits),5))
+    if isinstance(baseline, str):
+        coeff_array = np.loadtxt(baseline)
+        np.savetxt(dir_res+'/'+baseline, coeff_array)
+        with open(dir_res+'/'+nameout, 'a') as f:
+            f.write('\nI/O BASELINE: '+baseline+'\n')
+            f.close()
 
     int_tot = []
     coeff_list = []
     shift_list = []
     for k in range(len(limits)):
 
-        if baseline:
-            coeff = CI.make_iguess(limits=[limits[k][0]-delta, limits[k][1]+delta], true_limits=[limits[k][0], limits[k][1]])
-        else:
+        if baseline==True:
+            coeff = CI.make_iguess([limits[k,0]-delta, limits[k,1]+delta], [limits[k,0], limits[k,1]])
+            coeff_array[k,:] = coeff
+        elif baseline==False:
             coeff = np.zeros(5)
+        elif isinstance(baseline, str):
+            coeff = coeff_array[k,:]
+
         coeff_list.append(coeff)
 
-        sx, dx, zero = find_limits(limits[k][0], limits[k][1], ppm_scale)  
+        sx, dx, zero = find_limits(limits[k,0], limits[k,1], ppm_scale)  
 
         x = ppm_scale.copy()
         A,B,C,D,E = coeff
@@ -537,13 +592,17 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
                 shift.append(ppm_scale[sx:dx][np.argmax(data[iii,sx:dx].real - corr_baseline[sx:dx])])
 
         if fig_stack:
-            fig_stacked_plot(ppm_scale, data, corr_baseline, delays_list, limits, shift, name=dir_res+'/Stack_I'+str(k+1), dic_fig={'h':3.59,'w':2.56,'sx':limits[k][0]-delta,'dx':limits[k][1]+delta})
+            fig_stacked_plot(ppm_scale, data, corr_baseline, delays_list, limits[k], shift, name=dir_res+'/Stack_I'+str(k+1), dic_fig={'h':5,'w':4,'sx':limits[k,0]-delta,'dx':limits[k,1]+delta}, area=area, map=color_map)
 
 
         int_tot.append(intensity)
         shift_list.append(shift)
 
     Coeff = np.array(coeff_list)
+    if baseline==True:
+        np.savetxt(dir_res+'/'+'1D_bsl_coeff', coeff_array)
+        with open(dir_res+'/'+nameout, 'a') as f:
+            f.write('\nI/O BASELINE: 1D_bsl_coeff\n')
 
     #error evaluation
     if err_lims is not None:
@@ -552,7 +611,7 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
             error = []
             for k in range(len(limits)):
                 error.append([])
-                sxi, dxi, _ = find_limits(limits[k][0], limits[k][1], ppm_scale) 
+                sxi, dxi, _ = find_limits(limits[k,0], limits[k,1], ppm_scale) 
                 for iii in range(len(delays_list)):
                     error[k].append(np.mean(np.abs(data[iii,sx:dx].real))*(dxi-sxi)) 
             error = np.array(error).T
@@ -750,7 +809,7 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
 
     return dir_res
 
-def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_guess=False, prev_fit=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None): 
+def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_guess=False, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None): 
     
     for i in range(len(delays_list)):
         if 'pdata' not in list_path[i]:
@@ -866,14 +925,16 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
                     f.write('VCLIST point: '+f'{VCLIST[idx]:.2f}'+' T\n')
                 f.close()
 
+        CI = create_input(ppm_scale, spettro)
         if idx == 0:  #gli input vengono generati solo su uno spettro, volendo anche uno per serie
             spettro = data[0,:]
-            CI = create_input(ppm_scale, spettro)
-            filename1 = input1_gen(CI)
-            matrix = read_input_INT(filename1)
+            if file_inp1 is None:
+                filename1 = input1_gen(CI)
+            else:
+                filename1 = file_inp1.copy()
             shutil.copy2(filename1, dir_result+'/')
         else:
-            if prev_guess:
+            if prev_guess or file_inp1 is not None:
                 pass
             else:
                 ans = input('Continue with the previous guess? ([y]|n) ')
@@ -894,10 +955,13 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
 
         ##INPUT2 GENERATION##
         if idx==0:
-            filename2 = input2_gen(CI, matrix, acqupars, procpars)
+            if file_inp1 is None:
+                filename2 = input2_gen(CI, matrix, acqupars, procpars)
+            else:
+                filename2 = file_inp2.copy()
             shutil.copy2(filename2, dir_result+'/')
         else:
-            if prev_guess:
+            if prev_guess or file_inp2 is not None:
                 pass
             else:
                 ans = input('Continue with the previous guess? ([y]|n) ')
@@ -905,7 +969,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
                     pass
                 elif ans=='n':
                     filename2 = input("Write new input2 filename: ")
-                    CI.interactive_iguess(matrix[:,:-1], dic, filename2)
+                    CI.interactive_iguess(matrix[:,:-1], acqupars, procpars, filename2)
                     print('New input2 saved in '+color_term.BOLD+filename2+color_term.END+' in current directory')
 
         tensore = read_input_INT2(filename2, matrix[:,:-1])
@@ -1211,7 +1275,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
 
     return dir_result
 
-def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_fit=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, acqupars=None, procpars=None, Param=None):    
+def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, acqupars=None, procpars=None, Param=None):    
 
     for i in range(len(delays_list)):
         if 'pdata' not in list_path[i]:
@@ -1320,14 +1384,20 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
     spettro = data[0,:]  #spectra initial guess
 
     CI = create_input(ppm_scale, spettro)
-    filename1 = input1_gen(CI)
+    if file_inp1 is None:
+        filename1 = input1_gen(CI)
+    else:
+        filename1 = file_inp1.copy()
     matrix = read_input_INT(filename1)
     shutil.copy2(filename1, dir_res+'/')
     matrix = read_input_INT(filename1)
     multiplicity = matrix[:,-1]
 
     ##INPUT2 GENERATION##
-    filename2 = input2_gen(CI, matrix, acqupars, procpars)
+    if file_inp2 is None:
+        filename2 = input2_gen(CI, matrix, acqupars, procpars)
+    else:
+        filename2 = file_inp2.copy()
     shutil.copy2(filename2, dir_res+'/')
     tensore = read_input_INT2(filename2, matrix[:,:-1])
 
@@ -1753,19 +1823,6 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
                                 dic_fig={'h':5.59,'w':4.56, 'sx':tensor_red[0,1], 'dx':tensor_red[0,2]})
             histogram(res2plot, nbins=100, density=True, f_lims= None, xlabel=None, x_symm=False, name=dir_res+'/'+new_dir+'_P'+str(j+1)+'_I'+str(jj+1)+'_hist')
 
-        if result:
-            integral_in=[]
-            int_err = []
-            sx, dx, zero = find_limits(tensor_red[0,1], tensor_red[0,2], ppm_scale)
-            for ii in range(len(lor_list)):
-                if lor_ph0_list[ii] is not None:
-                    if IR:
-                        integral_in.append(np.trapz(lor_list[ii]))
-                    else:
-                        integral_in.append(np.trapz(lor_ph0_list[ii]))
-                    Err = error_calc_num(ppm_scale, res2plot, lor_ph0_list[ii], np.trapz(lor_ph0_list[ii]), sx, dx, confidence=err_conf)
-                    int_err.append(Err)
-
         if not result:
             residuals = res
             x = ppm_scale
@@ -1781,6 +1838,18 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
 
             return residuals
         else:
+            
+            integral_in=[]
+            int_err = []
+            sx, dx, zero = find_limits(tensor_red[0,1], tensor_red[0,2], ppm_scale)
+            for ii in range(len(lor_list)):
+                if lor_ph0_list[ii] is not None:
+                    if IR:
+                        integral_in.append(np.trapz(lor_list[ii]))
+                    else:
+                        integral_in.append(np.trapz(lor_ph0_list[ii]))
+                    Err = error_calc_num(ppm_scale, res2plot, lor_ph0_list[ii], np.trapz(lor_ph0_list[ii]), sx, dx, confidence=err_conf)
+                    int_err.append(Err)
 
             x = ppm_scale[sx:dx]-zero
             corr_baseline = par['E']*x**4 + par['D']*x**3 + par['C']*x**2 + par['B']*x + par['A']
