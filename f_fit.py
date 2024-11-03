@@ -926,9 +926,9 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
                     f.write('VCLIST point: '+f'{VCLIST[idx]:.2f}'+' T\n')
                 f.close()
 
+        spettro = data[0,:]
         CI = create_input(ppm_scale, spettro)
         if idx == 0:  #gli input vengono generati solo su uno spettro, volendo anche uno per serie
-            spettro = data[0,:]
             if file_inp1 is None:
                 filename1 = input1_gen(CI)
             else:
@@ -942,7 +942,6 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
                 if ans=='y' or ans=='':
                     pass
                 elif ans=='n':
-                    spettro = data[0,:]
                     CI = create_input(ppm_scale, spettro)
                     filename1 = input("Write new input1 filename: ")
                     CI.write_input_INT(filename1)
@@ -1991,56 +1990,43 @@ def fit_exponential(x, y, name= None, err_bar=None, figura=True):
         return popt1.valuesdict().values(), popt2.valuesdict().values(), func1, func2, err1, (err21, err22)  #for theUltimatePlot
 
 def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=False, VClist=None, errors=False):
-    
+    #this function reads the files x,y and t1 from each result folder
+    #can be used also for modelfit. To do so put area=True
+
     if VClist is None:
         VClist = np.loadtxt(dir_result+'/VCLIST.txt')
 
     hsv = plt.get_cmap(colormap)
     hsv_colors = [hsv(i / len(VClist)) for i in range(len(VClist))]
     
-    mono_tot = []  # n. campi x n.peaks x ...
-    bi_tot = []
     x_tot = []   # n.campi x n.peaks x (delay, intensity)
     y_tot = []
     yerr_tot = []
+
     for idx in range(len(list_path)):
-        
-        directory = dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]+'/'+'t1.txt'
-        file = open(directory).readlines()
-        mono = []
-        bi = []
-        for i,line in enumerate(file):
-            splitline = line.split('\t')
-            if i>0 and i%2!=0:
-                mono.append([float(el) for el in splitline])
-            elif i>0 and i%2==0:
-                bi.append([float(el) for el in splitline])
-                
-        mono_tot.append(mono)
-        bi_tot.append(bi)
         
         x_tot.append([])
         y_tot.append([])
         yerr_tot.append([])
-        for i in range(len(mono)):
-            x_tot[idx].append(np.loadtxt(dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]+'/x_'+str(i+1)+'.txt'))
-            y_tot[idx].append(np.loadtxt(dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]+'/y_'+str(i+1)+'.txt'))
+        folder = dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]
+        n_peaks = len([file for file in os.listdir(folder) if 'x_' in file])
+        for i in range(n_peaks):
+            x_tot[idx].append(np.loadtxt(folder+'/x_'+str(i+1)+'.txt'))
+            y_tot[idx].append(np.loadtxt(folder+'/y_'+str(i+1)+'.txt'))
             if errors:
                 if area:
-                    yerr_tot[idx].append(np.loadtxt(dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]+'/Err_'+str(i+1)+'.txt'))
+                    yerr_tot[idx].append(np.loadtxt(folder+'/Err_'+str(i+1)+'.txt'))
                 else:
-                    yerr_tot[idx].append(np.loadtxt(dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]+'/Err.txt'))
+                    yerr_tot[idx].append(np.loadtxt(folder+'/Err.txt'))
         x_tot[-1] = np.array(x_tot[-1])
         y_tot[-1] = np.array(y_tot[-1])
         yerr_tot[-1] = np.array(yerr_tot[-1])
-        
-    mono_tot = np.array(mono_tot)  
-    bi_tot = np.array(bi_tot)
+
     x_tot = np.array(x_tot)
     y_tot = np.array(y_tot)
     yerr_tot = np.array(yerr_tot)
 
-    for i in range(mono_tot.shape[1]):
+    for i in range(x_tot.shape[1]):
         
         x = x_tot[:,i,:]
         y = y_tot[:,i,:]
@@ -2146,60 +2132,129 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
 
 #========================================== ON DEV ===============================================
 
-def fit_int(path, dir_result, list_path, delays_list):
+def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors=False):
+    #this function reads the files x,y and t1 from each result folder
+    #can be used also for modelfit. To do so put area=True
 
-    for i in range(len(delays_list)):
-        if 'pdata' not in list_path[i]:
-            list_path[i] = list_path[i]+'/pdata/1'
+    if VClist is None:
+        VClist = np.loadtxt(dir_result+'/VCLIST.txt')
 
-    out_file = [dir_result+'/'+num+'/'+dir_result[:dir_result.index('_modelfit')]+'_sp'+num+'.out' for num in list_path]
-    ppm1_list, ppm2_list = read_lim(out_file[0])
-    
-    t1_intensity = []
-    t1_area = []
-    
-    for i in range(len(out_file)):  
+    x_tot = []   # n.campi x n.peaks x (delay, intensity)
+    y_tot = []
+    yerr_tot = []
+
+    for idx in range(len(list_path)):
         
-        ppm_scale = nmr_spectra_pseudo2d(path+'/'+list_path[i])[1]
+        x_tot.append([])
+        y_tot.append([])
+        yerr_tot.append([])
+        folder = dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]
+        n_peaks = len([file for file in os.listdir(folder) if 'x_' in file])
+        for i in range(n_peaks):
+            x_tot[idx].append(np.loadtxt(folder+'/x_'+str(i+1)+'.txt'))
+            y_tot[idx].append(np.loadtxt(folder+'/y_'+str(i+1)+'.txt'))
+            if errors:
+                if area:
+                    yerr_tot[idx].append(np.loadtxt(folder+'/Err_'+str(i+1)+'.txt'))
+                else:
+                    yerr_tot[idx].append(np.loadtxt(folder+'/Err.txt'))
+        x_tot[-1] = np.array(x_tot[-1])
+        y_tot[-1] = np.array(y_tot[-1])
+        yerr_tot[-1] = np.array(yerr_tot[-1])
 
-        delays = delays_list[i][delays_list[i].argsort()]
+    x_tot = np.array(x_tot)
+    y_tot = np.array(y_tot)
+    yerr_tot = np.array(yerr_tot)
+
+    for i in range(x_tot.shape[1]):
         
-        sp_files = [dir_result+'/'+list_path[i][:list_path[idx].index('/pdata')]+'/spbsl_D'+str(num+1)+'.csv' for num in range(len(delays))]
+        x = x_tot[:,i,:]
+        y = y_tot[:,i,:]
+        if errors:
+            yerr = yerr_tot[:,i,:]
         
-        t1_intensity.append([])
-        t1_area.append([])
+        if bi_list is None:
+            biflag = False
+        else:
+            if i+1 in bi_list:
+                biflag = True
+            else:
+                biflag = False
+
+        R1 = []
+        err = []
+        for ii in range(len(VClist)):
+            folder = dir_result+'/'+list_path[ii][:list_path[ii].index('/pdata')]
+            if errors:
+                monopar, bipar, _, _, err1, err2 = fit_exponential(x[ii], y[ii], figura=True, err_bar=yerr[ii], name=folder+'/'+f'{i+1}_correct')
+            else:
+                monopar, bipar, _, _, err1, err2 = fit_exponential(x[ii], y[ii], figura=True, name=folder+'/'+f'{i+1}_correct')
+            monopar = list(monopar)
+            bipar = list(bipar)
+            if biflag:
+                R1.append([1/10**bipar[1], 1/10**bipar[2]])
+                err_bi = [0, 1]
+                if err2[0] is None:# or (err2[0]/10**bipar[1]*R1[-1][0])>R1[-1][0]/2:
+                    err_bi[0] = np.nan
+                else:
+                    err_bi[0] = err2[0]/10**bipar[1]*R1[-1][0]
+                if err2[1] is None:# or (err2[1]/10**bipar[2]*R1[-1][1])>R1[-1][1]/2:
+                    err_bi[1] = np.nan
+                else:
+                    err_bi[1] = err2[1]/10**bipar[2]*R1[-1][1]
+                err.append(err_bi)
+            else:
+                R1.append(1/10**monopar[0])
+                if err1 is None:# or (err1/10**monopar[0]*R1[-1])>R1[-1]/2:
+                    err.append(np.nan)
+                else:
+                    err.append(err1/10**monopar[0]*R1[-1])
         
-        for j in range(len(ppm1_list)): 
-            
-            file_csv = open(dir_result+'/'+list_path[i][:list_path[idx].index('/pdata')]+'/'+str(j+1)+'.csv', 'w')
-            
-            sx, dx, zero = find_limits(ppm1_list[j], ppm2_list[j], ppm_scale)
-            
-            intensity = []
-            area = []
-            for k in range(len(sp_files)): #per ogni delay
-                
-                spettro = np.loadtxt(sp_files[k])
-                spettro_cut = spettro[sx:dx]
-                
-                intensity.append(np.max(spettro[sx:dx].real))
-                AA = np.trapz(spettro[sx:dx])
-                area.append(AA)
+        R1 = np.array(R1)
+        err = np.array(err)
 
-                file_csv.write(str(delays[k])+'\t'+str(AA)+'\n')
+        fig=plt.figure()
+        fig.set_size_inches(5,3)
+        plt.subplots_adjust(left=0.10,bottom=0.10,right=0.80,top=0.95)
+        ax = fig.add_subplot(1,1,1)
+        ax.tick_params(labelsize=5)
+        ax.set_xlabel('Field (mT)', fontsize=6)
+        ax.set_ylabel(r'$R_1$ ($s^{-1}$)', fontsize=6)
+        ax.ticklabel_format(axis='y', style='scientific', scilimits=(-3,3), useMathText=True)
+        ax.yaxis.get_offset_text().set_size(5)
+        if biflag:
+            ax.plot(VClist, R1[:,0], 'o', c='blue',markersize=1)
+            ax.plot(VClist, R1[:,1], 'o', c='green',markersize=1)
+            ax.errorbar(VClist, R1[:,0], yerr=err[:,0], fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
+            ax.errorbar(VClist, R1[:,1], yerr=err[:,1], fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
+        else:
+            ax.plot(VClist, R1, 'o', c='blue',markersize=1)
+            ax.errorbar(VClist, R1, yerr=err, fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
+        #x log scale
+        ax.set_xscale('log')
+        plt.savefig(dir_result+'/R1_'+str(i+1)+'_correct.png', dpi=600)
+        plt.close()
 
-            file_csv.close()
-            
-            # mono, bi, report1, report2, err1, err2 = fit_exponential(delays, intensity, name =  dir_result+'/'+list_path[i]+'/'+str(j+1)+'_intensitynew')
-            # t1_intensity[i].append(10**tuple(mono)[0])
+        if biflag:
+            column_names = "VCLIST,R1a,err1,R1b,err2"
+            np.savetxt(
+                        f"{dir_result}/R1_"+str(i+1)+"_correct.csv",
+                        np.column_stack((VClist, R1[:,0], err[:,0], R1[:,1], err[:,1])),
+                        delimiter=",",
+                        header=column_names,
+                        comments=""
+                    )
+        else:
+            column_names = "VCLIST,R1,err"
+            np.savetxt(
+                        f"{dir_result}/R1_"+str(i+1)+"_correct.csv",
+                        np.column_stack((VClist, R1, err)),
+                        delimiter=",",
+                        header=column_names,
+                        comments=""
+                    )
 
-            mono, bi, report1, report2, err1, err2 = fit_exponential(delays, area, name =  dir_result+'/'+list_path[i][:list_path[idx].index('/pdata')]+'/'+str(j+1)+'_areanew')
-            t1_area[i].append(10**tuple(mono)[0])
-            #print(tuple(bi))
-            #print(f'{10**tuple(bi)[1]:.6f}\t{err2[0]}\t{10**tuple(bi)[2]:.6f}\t{err2[1]}\t{tuple(bi)[0]:.6f}')
             
-    np.savetxt(dir_result+'/'+'intensity_t1mono.txt', np.array(t1_intensity))
-    np.savetxt(dir_result+'/'+'area_t1mono.txt', np.array(t1_area))
     
 def model_fit_1D_reg(path, delays_list, list_path, cal_lim = None, dofit=True, prev_fit=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, doexp=False, f_int_fit=None, fargs=None, reg_args=None):    
 
