@@ -1989,12 +1989,23 @@ def fit_exponential(x, y, name= None, err_bar=None, figura=True):
         plt.close()
         return popt1.valuesdict().values(), popt2.valuesdict().values(), func1, func2, err1, (err21, err22)  #for theUltimatePlot
 
-def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=False, VClist=None, errors=False):
-    #this function reads the files x,y and t1 from each result folder
+def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=False, VClist=None, errors=False, I_reduce=[], reduce=[]):
+    #I_reduce = list of n. intervals that I want to reduce (count starts from 1) 
+    #reduce = list of delays that I want to remove (count starts from 0)
+    #Hence the modification introduced in this way is applied to all fields  
+    #In case you want to do more complex corrections you have to do it manually
+
+    #this function reads the files x and y from each folder in dir_result
     #can be used also for modelfit. To do so put area=True
 
+    #errors = bool, define if the error bars for the intensities are plotted or not
+    
     if VClist is None:
         VClist = np.loadtxt(dir_result+'/VCLIST.txt')
+
+    for i in range(len(list_path)):
+        if 'pdata' not in list_path[i]:
+            list_path[i] = list_path[i]+'/pdata/1'
 
     hsv = plt.get_cmap(colormap)
     hsv_colors = [hsv(i / len(VClist)) for i in range(len(VClist))]
@@ -2018,20 +2029,38 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
                     yerr_tot[idx].append(np.loadtxt(folder+'/Err_'+str(i+1)+'.txt'))
                 else:
                     yerr_tot[idx].append(np.loadtxt(folder+'/Err.txt'))
-        x_tot[-1] = np.array(x_tot[-1])
-        y_tot[-1] = np.array(y_tot[-1])
-        yerr_tot[-1] = np.array(yerr_tot[-1])
 
-    x_tot = np.array(x_tot)
-    y_tot = np.array(y_tot)
-    yerr_tot = np.array(yerr_tot)
+    # invert the dimensions (I cannot use the arrays since the dimensions are not uniform)
+    X = []
+    Y = []
+    Err = []
+    for i in range(n_peaks):
+        X.append([])
+        Y.append([])
+        Err.append([])
+        for j in range(len(list_path)):
+            X[-1].append(x_tot[j][i])
+            Y[-1].append(y_tot[j][i])
+            if area:
+                Err[-1].append(yerr_tot[j][i])
+            else:
+                Err[-1].append(yerr_tot[j][0])
 
-    for i in range(x_tot.shape[1]):
+    if reduce:
+        for i in range(n_peaks):
+            if i+1 in I_reduce:
+                for j in range(len(list_path)):
+                    X[i][j] = np.delete(X[i][j], reduce)
+                    Y[i][j] = np.delete(Y[i][j], reduce)
+                    Err[i][j] = np.delete(Err[i][j], reduce)
+
+
+    for i in range(n_peaks):
         
-        x = x_tot[:,i,:]
-        y = y_tot[:,i,:]
+        x = X[i]
+        y = Y[i]
         if errors:
-            yerr = yerr_tot[:,i,:]
+            yerr = Err[i]
         
         if bi_list is None:
             biflag = False
@@ -2053,8 +2082,9 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
         ax.set_xscale('log')
         R1 = []
         err = []
-        for ii in range(len(VClist)):
-            monopar, bipar, func1, func2, err1, err2 = fit_exponential(x[ii], y[ii], figura=False) #, err_bar=yerr[ii])
+        for ii in range(len(list_path)):
+
+            monopar, bipar, func1, func2, err1, err2 = fit_exponential(x[ii], y[ii], figura=False)
             monopar = list(monopar)
             bipar = list(bipar)
             line, = ax.plot(x[ii], y[ii], 'o', markersize=0.7, label = f'{VClist[ii]:.0f}'+' mT', c=hsv_colors[ii])
@@ -2132,13 +2162,24 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
 
 #========================================== ON DEV ===============================================
 
-def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors=False):
-    #this function reads the files x,y and t1 from each result folder
+def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors=False, I_reduce=[], reduce=[]):
+    #I_reduce = list of n. intervals that I want to reduce (count starts from 1) 
+    #reduce = list of delays that I want to remove (count starts from 0)
+    #Hence the modification introduced in this way is applied to all fields  
+    #In case you want to do more complex corrections you have to do it manually
+
+    #this function reads the files x and y from each folder in dir_result
     #can be used also for modelfit. To do so put area=True
+
+    #errors = bool, define if the error bars for the intensities are plotted or not
 
     if VClist is None:
         VClist = np.loadtxt(dir_result+'/VCLIST.txt')
 
+    for i in range(len(list_path)):
+        if 'pdata' not in list_path[i]:
+            list_path[i] = list_path[i]+'/pdata/1'
+    
     x_tot = []   # n.campi x n.peaks x (delay, intensity)
     y_tot = []
     yerr_tot = []
@@ -2158,20 +2199,38 @@ def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors
                     yerr_tot[idx].append(np.loadtxt(folder+'/Err_'+str(i+1)+'.txt'))
                 else:
                     yerr_tot[idx].append(np.loadtxt(folder+'/Err.txt'))
-        x_tot[-1] = np.array(x_tot[-1])
-        y_tot[-1] = np.array(y_tot[-1])
-        yerr_tot[-1] = np.array(yerr_tot[-1])
 
-    x_tot = np.array(x_tot)
-    y_tot = np.array(y_tot)
-    yerr_tot = np.array(yerr_tot)
+    # invert the dimensions (I cannot use the arrays since the dimensions are not uniform)
+    X = []
+    Y = []
+    Err = []
+    for i in range(n_peaks):
+        X.append([])
+        Y.append([])
+        Err.append([])
+        for j in range(len(list_path)):
+            X[-1].append(x_tot[j][i])
+            Y[-1].append(y_tot[j][i])
+            if area:
+                Err[-1].append(yerr_tot[j][i])
+            else:
+                Err[-1].append(yerr_tot[j][0])
 
-    for i in range(x_tot.shape[1]):
+    if reduce:
+        for i in range(n_peaks):
+            if i+1 in I_reduce:
+                for j in range(len(list_path)):
+                    X[i][j] = np.delete(X[i][j], reduce)
+                    Y[i][j] = np.delete(Y[i][j], reduce)
+                    Err[i][j] = np.delete(Err[i][j], reduce)
+
+
+    for i in range(n_peaks):
         
-        x = x_tot[:,i,:]
-        y = y_tot[:,i,:]
+        x = X[i]
+        y = Y[i]
         if errors:
-            yerr = yerr_tot[:,i,:]
+            yerr = Err[i]
         
         if bi_list is None:
             biflag = False
@@ -2183,7 +2242,7 @@ def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors
 
         R1 = []
         err = []
-        for ii in range(len(VClist)):
+        for ii in range(len(list_path)):
             folder = dir_result+'/'+list_path[ii][:list_path[ii].index('/pdata')]
             if errors:
                 monopar, bipar, _, _, err1, err2 = fit_exponential(x[ii], y[ii], figura=True, err_bar=yerr[ii], name=folder+'/'+f'{i+1}_correct')
@@ -2254,8 +2313,7 @@ def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors
                         comments=""
                     )
 
-            
-    
+ 
 def model_fit_1D_reg(path, delays_list, list_path, cal_lim = None, dofit=True, prev_fit=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, doexp=False, f_int_fit=None, fargs=None, reg_args=None):    
 
     new_dir = os.path.basename(os.path.normpath(path))
