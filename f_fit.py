@@ -8,7 +8,7 @@ import os
 import shutil
 
 
-def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev_coeff = False, area=False, auto_ph=False, VCLIST=None, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs=None, fig_stack=True, fileinp='inp1_pseudo2D', err_lims=None, color_map='viridis'):
+def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev_coeff = False, area=False, auto_ph=False, VCLIST=None, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs=None, fig_stack=True, fileinp='inp1_pseudo2D', err_lims_out=None, color_map='viridis'):
 
     # series of pseudo2D spectra 
 
@@ -139,6 +139,8 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
 
         spettro = data[0,:]
 
+        err_lims = None
+
         CI = create_input(ppm_scale, spettro)
         if idx>0 and not prev_lims:
             ans = input('Do you want to select different regions? ([y]|n) ')
@@ -165,6 +167,9 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
                 with open(dir_res+'/'+nameout, 'a') as f:
                     f.write('\nI/O BASELINE: '+baseline+'\n')
                     f.close()
+
+        if err_lims is None:
+            err_lims = err_lims_out
 
         elif idx>0 and prev_lims:
             pass
@@ -232,7 +237,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
         integral=np.array(int_tot).T
         Coeff = np.array(coeff_list)
         shift_list = np.array(shift_list).T
-
+        print(err_lims)
         #error evaluation
         if err_lims is not None:
             if area:
@@ -1990,8 +1995,8 @@ def fit_exponential(x, y, name= None, err_bar=None, figura=True):
         return popt1.valuesdict().values(), popt2.valuesdict().values(), func1, func2, err1, (err21, err22)  #for theUltimatePlot
 
 def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=False, VClist=None, errors=False, I_reduce=[], reduce=[]):
-    #I_reduce = list of n. intervals that I want to reduce (count starts from 1) 
-    #reduce = list of delays that I want to remove (count starts from 0)
+    #I_reduce = list of n. intervals that I want to reduce (count starts from 1) (list of integers)
+    #reduce = list of delays that I want to remove (count starts from 0) (list of integers)
     #Hence the modification introduced in this way is applied to all fields  
     #In case you want to do more complex corrections you have to do it manually
 
@@ -1999,7 +2004,7 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
     #can be used also for modelfit. To do so put area=True
 
     #errors = bool, define if the error bars for the intensities are plotted or not
-    
+
     if VClist is None:
         VClist = np.loadtxt(dir_result+'/VCLIST.txt')
 
@@ -2163,8 +2168,8 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
 #========================================== ON DEV ===============================================
 
 def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors=False, I_reduce=[], reduce=[]):
-    #I_reduce = list of n. intervals that I want to reduce (count starts from 1) 
-    #reduce = list of delays that I want to remove (count starts from 0)
+    #I_reduce = list of n. intervals that I want to reduce (count starts from 1) (list of integers)
+    #reduce = list of delays that I want to remove (count starts from 0) (list of integers)
     #Hence the modification introduced in this way is applied to all fields  
     #In case you want to do more complex corrections you have to do it manually
 
