@@ -443,7 +443,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
             
     return dir_result
 
-def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, fig_stack=True, fileinp='inp1_1D', err_lims=None, color_map='viridis'):
+def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, fig_stack=True, fileinp='inp1_1D', err_lims_out=None, color_map='viridis'):
 
     # series of 1D spectra to be treated as a pseudo2D
 
@@ -547,6 +547,8 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
 
     spettro = data[0,:] #change this if you what to make the guess from another spectrum
 
+    err_lims = None
+
     CI = create_input(ppm_scale, spettro)
     if os.path.isfile(fileinp):
         limits = np.loadtxt(fileinp)
@@ -566,6 +568,9 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
         with open(dir_res+'/'+nameout, 'a') as f:
             f.write('\nI/O BASELINE: '+baseline+'\n')
             f.close()
+
+    if err_lims is None:
+        err_lims = err_lims_out
 
     int_tot = []
     coeff_list = []
@@ -2046,10 +2051,11 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
         for j in range(len(list_path)):
             X[-1].append(x_tot[j][i])
             Y[-1].append(y_tot[j][i])
-            if area:
-                Err[-1].append(yerr_tot[j][i])
-            else:
-                Err[-1].append(yerr_tot[j][0])
+            if errors:
+                if area:
+                    Err[-1].append(yerr_tot[j][i])
+                else:
+                    Err[-1].append(yerr_tot[j][0])
 
     if reduce:
         for i in range(n_peaks):
@@ -2057,7 +2063,8 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
                 for j in range(len(list_path)):
                     X[i][j] = np.delete(X[i][j], reduce)
                     Y[i][j] = np.delete(Y[i][j], reduce)
-                    Err[i][j] = np.delete(Err[i][j], reduce)
+                    if errors:
+                        Err[i][j] = np.delete(Err[i][j], reduce)
 
 
     for i in range(n_peaks):
@@ -2216,10 +2223,11 @@ def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors
         for j in range(len(list_path)):
             X[-1].append(x_tot[j][i])
             Y[-1].append(y_tot[j][i])
-            if area:
-                Err[-1].append(yerr_tot[j][i])
-            else:
-                Err[-1].append(yerr_tot[j][0])
+            if errors:
+                if area:
+                    Err[-1].append(yerr_tot[j][i])
+                else:
+                    Err[-1].append(yerr_tot[j][0])
 
     if reduce:
         for i in range(n_peaks):
@@ -2227,7 +2235,8 @@ def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors
                 for j in range(len(list_path)):
                     X[i][j] = np.delete(X[i][j], reduce)
                     Y[i][j] = np.delete(Y[i][j], reduce)
-                    Err[i][j] = np.delete(Err[i][j], reduce)
+                    if errors:
+                        Err[i][j] = np.delete(Err[i][j], reduce)
 
 
     for i in range(n_peaks):
