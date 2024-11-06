@@ -2059,7 +2059,14 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
 
     if reduce:
         for i in range(n_peaks):
-            if i+1 in I_reduce:
+            if I_reduce:
+                if i+1 in I_reduce:
+                    for j in range(len(list_path)):
+                        X[i][j] = np.delete(X[i][j], reduce)
+                        Y[i][j] = np.delete(Y[i][j], reduce)
+                        if errors:
+                            Err[i][j] = np.delete(Err[i][j], reduce)
+            else:
                 for j in range(len(list_path)):
                     X[i][j] = np.delete(X[i][j], reduce)
                     Y[i][j] = np.delete(Y[i][j], reduce)
@@ -2231,7 +2238,14 @@ def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors
 
     if reduce:
         for i in range(n_peaks):
-            if i+1 in I_reduce:
+            if I_reduce:
+                if i+1 in I_reduce:
+                    for j in range(len(list_path)):
+                        X[i][j] = np.delete(X[i][j], reduce)
+                        Y[i][j] = np.delete(Y[i][j], reduce)
+                        if errors:
+                            Err[i][j] = np.delete(Err[i][j], reduce)
+            else:
                 for j in range(len(list_path)):
                     X[i][j] = np.delete(X[i][j], reduce)
                     Y[i][j] = np.delete(Y[i][j], reduce)
