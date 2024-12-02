@@ -1073,12 +1073,12 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
                                 name_var = key+'_'+str(jj+1)
                             else:
                                 name_var = key+'_'+str(jj+1)+'_f'
-                            if limits1[key][0] == limits1[key][1]:
+                            if limits1[key][0] == limits1[key][1] or param[name_var].min == param[name_var].max:
                                 param[name_var].set(vary=False)
                             else:
                                 param[name_var].set(min=param[name_var].value+limits1[key][0], max=param[name_var].value+limits1[key][1])
                     elif key=='A' or key=='B' or key=='C' or key=='D' or key=='E':
-                        if limits1[key][0] == limits1[key][1]:
+                        if limits1[key][0] == limits1[key][1] or param[name_var].min == param[name_var].max:
                             param[key].set(vary=False)
                         else:
                             param[key].set(min=limits1[key][0], max=limits1[key][1])
@@ -1088,7 +1088,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
                                 name_var = key+'_'+str(jj+1)
                             else:
                                 name_var = key+'_'+str(jj+1)+'_f'
-                            if limits1[key][0] == limits1[key][1]:
+                            if limits1[key][0] == limits1[key][1] or param[name_var].min == param[name_var].max:
                                 param[name_var].set(vary=False)
                             else:
                                 param[name_var].set(min=limits1[key][0], max=limits1[key][1])
@@ -1107,7 +1107,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
                     if limits2 is not None:
                         for key in limits2.keys():
                             if key=='A' or key=='B' or key=='C' or key=='D' or key=='E':
-                                if limits2[key][0] == limits2[key][1]:
+                                if limits2[key][0] == limits2[key][1] or param[name_var].min == param[name_var].max:
                                     param[key].set(vary=False)
                                 else:
                                     param[key].set(min=param[key].value*limits2[key][0], max=param[key].value*limits2[key][1])
@@ -1117,7 +1117,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
                                         name_var = key+'_'+str(jj+1)
                                     else:
                                         name_var = key+'_'+str(jj+1)+'_f'
-                                    if limits2[key][0] == limits2[key][1]:
+                                    if limits2[key][0] == limits2[key][1] or param[name_var].min == param[name_var].max:
                                         param[name_var].set(vary=False)
                                     else:
                                         param[name_var].set(min=param[name_var].value*limits2[key][0], max=param[name_var].value*limits2[key][1])
@@ -1168,6 +1168,8 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
 
             integral_tot[-1]=np.array(integral_tot[-1])
             error_tot[-1]=np.array(error_tot[-1])
+
+            print("\n")
 
         integral=np.concatenate(integral_tot, axis=1)
         error = np.concatenate(error_tot, axis=1) 
@@ -1499,12 +1501,12 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
                             name_var = key+'_'+str(jj+1)
                         else:
                             name_var = key+'_'+str(jj+1)+'_f'
-                        if limits1[key][0] == limits1[key][1]:
+                        if limits1[key][0] == limits1[key][1] or param[name_var].min == param[name_var].max:
                             param[name_var].set(vary=False)
                         else:
                             param[name_var].set(min=param[name_var].value+limits1[key][0], max=param[name_var].value+limits1[key][1])
                 elif key=='A' or key=='B' or key=='C' or key=='D' or key=='E':
-                    if limits1[key][0] == limits1[key][1]:
+                    if limits1[key][0] == limits1[key][1] or param[name_var].min == param[name_var].max:
                         param[key].set(vary=False)
                     else:
                         param[key].set(min=limits1[key][0], max=limits1[key][1])
@@ -1514,7 +1516,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
                             name_var = key+'_'+str(jj+1)
                         else:
                             name_var = key+'_'+str(jj+1)+'_f'
-                        if limits1[key][0] == limits1[key][1]:
+                        if limits1[key][0] == limits1[key][1] or param[name_var].min == param[name_var].max:
                             param[name_var].set(vary=False)
                         else:
                             param[name_var].set(min=limits1[key][0], max=limits1[key][1])
@@ -1534,7 +1536,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
                 if limits2 is not None:
                     for key in limits2.keys():
                         if key=='A' or key=='B' or key=='C' or key=='D' or key=='E':
-                            if limits2[key][0] == limits2[key][1]:
+                            if limits2[key][0] == limits2[key][1] or param[name_var].min == param[name_var].max:
                                 param[key].set(vary=False)
                             else:
                                 param[key].set(min=param[key].value*limits2[key][0], max=param[key].value*limits2[key][1])
@@ -1544,7 +1546,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
                                     name_var = key+'_'+str(jj+1)
                                 else:
                                     name_var = key+'_'+str(jj+1)+'_f'
-                                if limits2[key][0] == limits2[key][1]:
+                                if limits2[key][0] == limits2[key][1] or param[name_var].min == param[name_var].max:
                                     param[name_var].set(vary=False)
                                 else:
                                     param[name_var].set(min=param[name_var].value*limits2[key][0], max=param[name_var].value*limits2[key][1])
@@ -1595,7 +1597,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
                 for jj in range(len(peak_int)):
                     f.write(f'{jj+1}    {peaks_shift[jj]:.3f}    {peak_int[jj]:.3f} +/- {np.abs(int_err[jj]):.3f}\n')
                 f.close()
-                
+        print("\n")           
     integral=np.concatenate(integral_tot, axis=1)
     error = np.concatenate(error_tot, axis=1) 
     Param_tot = np.array(Param_tot)
@@ -1883,7 +1885,6 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
             result = minner.minimize(method='leastsq', max_nfev=10000)
     else:
         result = minner.minimize(method='Nelder', max_nfev=0)
-    
     popt = result.params
     peak_int, int_err, sim_spectra, spettro_corrbsl = f_residue(popt, ppm_scale, spettro, tensor_red, result=True)
     
