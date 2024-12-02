@@ -1599,11 +1599,13 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
     integral=np.concatenate(integral_tot, axis=1)
     error = np.concatenate(error_tot, axis=1) 
     Param_tot = np.array(Param_tot)
+    Param_tot = np.concatenate(Param_tot, axis=1)
 
     for j in range(integral.shape[1]):
         np.savetxt(dir_res+'/Err_'+str(j+1)+'.txt', error[:,j])
         np.savetxt(dir_res+'/y_'+str(j+1)+'.txt', integral[:,j])
         np.savetxt(dir_res+'/x_'+str(j+1)+'.txt', delays)
+    np.savetxt(dir_res+'/Param.txt', Param_tot)
 
     int_del = np.column_stack((integral, delays))  #(n. delays x [integral[:,0],...,integral[:,n], delays[:]])
     order = int_del[:,-1].argsort()
@@ -1709,8 +1711,10 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
             plt.savefig(dir_res+'/Peak_'+str(ii+1)+'.png', dpi=600)
             plt.close()
 
-
-    return dir_res, Param_tot
+    if Param is not None:
+        return dir_res, Param_tot, delays
+    else:
+        return dir_res
 
 def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, dw, j, jj, dir_res, new_dir, SR=0, SI=0, SW=0, LB=0, SSB=0, dofit=True, fast=False, IR=False, L1R=None, L2R=None, err_conf=0.95):
     
