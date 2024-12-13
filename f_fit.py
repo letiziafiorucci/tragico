@@ -942,7 +942,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
             if file_inp1 is None:
                 filename1 = input1_gen(CI)
             else:
-                filename1 = file_inp1.copy()
+                filename1 = file_inp1
             shutil.copy2(filename1, dir_result+'/')
         else:
             if prev_guess or file_inp1 is not None:
@@ -968,7 +968,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
             if file_inp1 is None:
                 filename2 = input2_gen(CI, matrix, acqupars, procpars)
             else:
-                filename2 = file_inp2.copy()
+                filename2 = file_inp2
             shutil.copy2(filename2, dir_result+'/')
         else:
             if prev_guess or file_inp2 is not None:
@@ -1182,10 +1182,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
         int_del = np.column_stack((integral, delays))  #(n. delays x [integral[:,0],...,integral[:,n], delays[:]])
         order = int_del[:,-1].argsort()
         int_del = int_del[order]
-        try:
-            error = np.reshape(error[order], (len(error),))
-        except:
-            error = np.reshape(error[order], (len(error),error.shape[-1]))
+        error = np.reshape(error[order], (len(error),error.shape[-1]))
         
         if doexp==True:
 
@@ -1399,7 +1396,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
     if file_inp1 is None:
         filename1 = input1_gen(CI)
     else:
-        filename1 = file_inp1.copy()
+        filename1 = file_inp1
     matrix = read_input_INT(filename1)
     shutil.copy2(filename1, dir_res+'/')
     matrix = read_input_INT(filename1)
@@ -1409,7 +1406,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
     if file_inp2 is None:
         filename2 = input2_gen(CI, matrix, acqupars, procpars)
     else:
-        filename2 = file_inp2.copy()
+        filename2 = file_inp2
     shutil.copy2(filename2, dir_res+'/')
     tensore = read_input_INT2(filename2, matrix[:,:-1])
 

@@ -3,7 +3,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-github repository: letiziafiorucci/RELAXID
+github repository: letiziafiorucci/TRAGICO
 Last update: 30/09/2024
 
 !!! DISCLAIMER !!!
@@ -135,7 +135,7 @@ if 0:
                 list_sp, # list of folders
                 cal_lim = None, # limits for the calibration
                 dofit=True, # if True, the spectra are fitted
-                prev_fit = None, # directory of the previous fit (if any)
+                prev_fit = None, # directory of the previous fit (if any), mandaroty if dofit = False
                 file_inp1 = None,
                 file_inp2 = None,
                 fast = True, # if True, the fitting is performed with a faster algorithm
@@ -149,11 +149,11 @@ if 0:
                 ) 
 
 ### FUNCTION 4 ###
-if 0: 
+if 1: 
     # test for series of pseudo2D 
 
     ### maybe this demonstrates that I also need the other term in calibration
-    path = 'example4'
+    path = '/home/letizia/Documents/Dottorato/Programma_new/relax/data600/dati_olio600/'
 
     print('MAIN SPECTRA PATH:' )
     print(path)
@@ -182,11 +182,11 @@ if 0:
                 delays_list, # list of delays (or any x value)
                 list_path, # list of folders
                 cal_lim = (1.90,1.70), # limits for the calibration
-                fast = True, # if True, the fitting is performed with a faster algorithm
-                dofit = True, # if True, the spectra are fitted
                 file_inp1 = None,
                 file_inp2 = None,
-                prev_fit = None, #'PPyr0.2mM_MMP12_4uM_TRIS_12_01_23_modelfit_ex/',
+                fast = True, # if True, the fitting is performed with a faster algorithm
+                dofit = True, # if True, the spectra are fitted
+                prev_fit = None, #'folder/', mandatory if dofit = False
                 limits1 = lim1, # limits for the fit parameters of the first spectrum
                 limits2 = lim2,  # limits for the fit parameters of the subsequent spectra
                 prev_guess = True, # if True, the previous fit is used as initial guess without asking
