@@ -1982,8 +1982,8 @@ def fit_exponential(x, y, name= None, err_bar=None, figura=True):
                 label_mod2+=f'{10**values.value:.5e}'+r' $\pm$ Nan'
                 err22 = None
 
-    ax.plot(x, func1, 'r--', lw=0.7, label='y = a + A exp(-t/T1)\nfit: T1 = '+label_mod+' sec\n'+r'$\chi^2$ red: '+f'{result1.redchi:.5e}')
-    ax.plot(x, func2, 'g--', lw=0.7, label='y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))\nfit: T1a = '+label_mod1+' sec, T1b = '+label_mod2+' sec\n'+r'$\chi^2$ red: '+f'{result2.redchi:.5e}')
+    ax.plot(x, func1, 'r--', lw=0.7, label='y = a + A exp(-t/T1)\nfit: T1 = '+label_mod+' sec\n'+r'$\chi^2$ red: '+f'{result1.redchi:.5e}'+r', RMSE: '+f'{np.sqrt(np.mean((y-func1)**2)):.5e}')
+    ax.plot(x, func2, 'g--', lw=0.7, label='y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))\nfit: T1a = '+label_mod1+' sec, T1b = '+label_mod2+' sec\n'+r'$\chi^2$ red: '+f'{result2.redchi:.5e}'+r', RMSE: '+f'{np.sqrt(np.mean((y-func2)**2)):.5e}')
     ax.set_xlabel('Delay (s)', fontsize=6)
     ax.set_ylabel('Intensity (a.u.)', fontsize=6)
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(-3,3), useMathText=True)
