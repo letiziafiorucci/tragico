@@ -1606,9 +1606,9 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
     integral=np.concatenate(integral_tot, axis=1)
     error = np.concatenate(error_tot, axis=1) 
     if Param is not None:
-        Param_tot = np.array(Param_tot)
+        # Param_tot = np.array(Param_tot)
         Param_tot = np.concatenate(Param_tot, axis=1)
-        Param_tot_err = np.array(Param_tot_err)
+        # Param_tot_err = np.array(Param_tot_err)
         Param_tot_err = np.concatenate(Param_tot_err, axis=1)
 
     for j in range(integral.shape[1]):
