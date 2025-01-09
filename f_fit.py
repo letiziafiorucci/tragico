@@ -1459,6 +1459,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
     tensor_red_list = []
 
     Param_tot = []
+    Param_tot_err = []
     integral_tot = []
     error_tot = []
     for i in range(len(ppm1_set)):  #per intervallo
@@ -1526,6 +1527,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
         integral_tot.append([])
         error_tot.append([])
         Param_tot.append([])
+        Param_tot_err.append([])
 
         param0 = param.copy()
         for j in range(data.shape[0]):  #per delay
@@ -1578,6 +1580,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
 
             if Param is not None:
                 Param_tot[-1].append([prev_param_compl[Param+'_'+str(jj+1)].value for jj in range(tensor_red.shape[0]) if tensor_red[jj,0]=='true'])
+                Param_tot_err[-1].append([prev_param_compl[Param+'_'+str(jj+1)].stderr for jj in range(tensor_red.shape[0]) if tensor_red[jj,0]=='true'])
 
             prev_param = prev_param_compl.copy()
 
@@ -1605,6 +1608,8 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
     if Param is not None:
         Param_tot = np.array(Param_tot)
         Param_tot = np.concatenate(Param_tot, axis=1)
+        Param_tot_err = np.array(Param_tot_err)
+        Param_tot_err = np.concatenate(Param_tot_err, axis=1)
 
     for j in range(integral.shape[1]):
         np.savetxt(dir_res+'/Err_'+str(j+1)+'.txt', error[:,j])
@@ -1612,6 +1617,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
         np.savetxt(dir_res+'/x_'+str(j+1)+'.txt', delays)
     if Param is not None:
         np.savetxt(dir_res+'/Param.txt', Param_tot)
+        np.savetxt(dir_res+'/Param_err.txt', Param_tot_err)
 
     int_del = np.column_stack((integral, delays))  #(n. delays x [integral[:,0],...,integral[:,n], delays[:]])
     order = int_del[:,-1].argsort()
@@ -1720,7 +1726,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
             plt.close()
 
     if Param is not None:
-        return dir_res, Param_tot, delays
+        return dir_res, (Param_tot, Param_tot_err), delays
     else:
         return dir_res
 
