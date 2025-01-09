@@ -322,11 +322,11 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
                 n_peak += 1
                 if err_lims is not None:
                     if area:
-                        mono, bi, report1, report2, err1, err2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}',err_bar=error[:,ii])
+                        mono, bi, report1, report2, err1, err2, RMSE1, RMSE2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}',err_bar=error[:,ii])
                     else:
-                        mono, bi, report1, report2, err1, err2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}',err_bar=error)
+                        mono, bi, report1, report2, err1, err2, RMSE1, RMSE2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}',err_bar=error)
                 else:
-                    mono, bi, report1, report2, err1, err2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}')
+                    mono, bi, report1, report2, err1, err2, RMSE1, RMSE2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}')
 
                 
                 with open(dir_res+'/'+nameout, 'a') as f:
@@ -336,11 +336,13 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
                     [f.write('-') for r in range(30)]
                     f.write('\n')
                     f.write('\nFit Parameters:\n')
-                    f.write('\nMono\n')
+                    f.write('\nMONOEXPONENTIAL\n')
                     f.write('y = a + A exp(-t/T1)\nfit: T1=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(mono))
+                    f.write('RMSE: %8.7e\n' % RMSE1)
                     f.write(report1+'\n')
-                    f.write('\nBi\n')
+                    f.write('\nBIEXPONENTIAL\n')
                     f.write('y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))\nfit: f=%5.3e, T1a=%5.4e, T1b=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(bi))
+                    f.write('RMSE: %8.7e\n' % RMSE2)
                     f.write(report2+'\n')
                     f.close()
 
@@ -706,11 +708,11 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
             n_peak += 1
             if err_lims is not None:
                 if area:
-                    mono, bi, report1, report2, err1, err2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}',err_bar=error[:,ii])
+                    mono, bi, report1, report2, err1, err2, RMSE1, RMSE2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}',err_bar=error[:,ii])
                 else:
-                    mono, bi, report1, report2, err1, err2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}',err_bar=error)
+                    mono, bi, report1, report2, err1, err2, RMSE1, RMSE2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}',err_bar=error)
             else:
-                mono, bi, report1, report2, err1, err2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}')
+                mono, bi, report1, report2, err1, err2, RMSE1, RMSE2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}')
 
             with open(dir_res+'/'+nameout, 'a') as f:
                 f.write('\n')
@@ -719,11 +721,13 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
                 [f.write('-') for r in range(30)]
                 f.write('\n')
                 f.write('\nFit Parameters:\n')
-                f.write('\nMono\n')
+                f.write('\nMONOEXPONENTIAL\n')
                 f.write('y = a + A exp(-t/T1)\nfit: T1=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(mono))
+                f.write('RMSE: %8.7e\n' % RMSE1)
                 f.write(report1+'\n')
-                f.write('\nBi\n')
+                f.write('\nBIEXPONENTIAL\n')
                 f.write('y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))\nfit: f=%5.3e, T1a=%5.4e, T1b=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(bi))
+                f.write('RMSE: %8.7e\n' % RMSE2)
                 f.write(report2+'\n')
                 f.close()
 
@@ -1027,7 +1031,6 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
 
         tensor_red_list = []
 
-        shift_tot = []
         integral_tot = []
         error_tot = []
         for i in range(len(ppm1_set)):  #per intervallo
@@ -1194,7 +1197,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
             fitparameter_f = []
             for ii in range(int_del.shape[-1]-1):
                 n_peak += 1
-                mono, bi, report1, report2, err1, err2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}', err_bar=error[:,ii])
+                mono, bi, report1, report2, err1, err2, RMSE1, RMSE2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}', err_bar=error[:,ii])
                 
                 with open(dir_res+'/'+nameout, 'a') as f:
                     f.write('\n')
@@ -1203,11 +1206,13 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
                     [f.write('-') for r in range(30)]
                     f.write('\n')
                     f.write('\nFit Parameters:\n')
-                    f.write('\nMono\n')
+                    f.write('\nMONOEXPONENTIAL\n')
                     f.write('y = a + A exp(-t/T1)\nfit: T1=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(mono))
+                    f.write('RMSE: %8.7e\n' % RMSE1)
                     f.write(report1+'\n')
-                    f.write('\nBi\n')
+                    f.write('\nBIEXPONENTIAL\n')
                     f.write('y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))\nfit: f=%5.3e, T1a=%5.4e, T1b=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(bi))
+                    f.write('RMSE: %8.7e\n' % RMSE2)
                     f.write(report2+'\n')
                     f.close()
 
@@ -1597,14 +1602,16 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
         print("\n")           
     integral=np.concatenate(integral_tot, axis=1)
     error = np.concatenate(error_tot, axis=1) 
-    Param_tot = np.array(Param_tot)
-    Param_tot = np.concatenate(Param_tot, axis=1)
+    if Param is not None:
+        Param_tot = np.array(Param_tot)
+        Param_tot = np.concatenate(Param_tot, axis=1)
 
     for j in range(integral.shape[1]):
         np.savetxt(dir_res+'/Err_'+str(j+1)+'.txt', error[:,j])
         np.savetxt(dir_res+'/y_'+str(j+1)+'.txt', integral[:,j])
         np.savetxt(dir_res+'/x_'+str(j+1)+'.txt', delays)
-    np.savetxt(dir_res+'/Param.txt', Param_tot)
+    if Param is not None:
+        np.savetxt(dir_res+'/Param.txt', Param_tot)
 
     int_del = np.column_stack((integral, delays))  #(n. delays x [integral[:,0],...,integral[:,n], delays[:]])
     order = int_del[:,-1].argsort()
@@ -1625,7 +1632,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
         fitparameter_f = []
         for ii in range(int_del.shape[-1]-1):
             n_peak += 1
-            mono, bi, report1, report2, err1, err2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}', err_bar=error)
+            mono, bi, report1, report2, err1, err2, RMSE1, RMSE2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}', err_bar=error)
             
             with open(dir_res+'/'+nameout, 'a') as f:
                 f.write('\n')
@@ -1634,11 +1641,13 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
                 [f.write('-') for r in range(30)]
                 f.write('\n')
                 f.write('\nFit Parameters:\n')
-                f.write('\nMono\n')
+                f.write('\nMONOEXPONENTIAL\n')
                 f.write('y = a + A exp(-t/T1)\nfit: T1=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(mono))
+                f.write('RMSE: %8.7e\n' % RMSE1)
                 f.write(report1+'\n')
-                f.write('\nBi\n')
+                f.write('\nBIEXPONENTIAL\n')
                 f.write('y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))\nfit: f=%5.3e, T1a=%5.4e, T1b=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(bi))
+                f.write('RMSE: %8.7e\n' % RMSE2)
                 f.write(report2+'\n')
                 f.close()
 
@@ -1946,6 +1955,10 @@ def fit_exponential(x, y, name= None, err_bar=None, figura=True):
     popt2.add('a', value=a)
     popt2.add('A', value=A)
 
+    #compute the mean squared deviation of the experimental points from the model function
+    RMSE1 = np.sqrt(np.mean((y-func1)**2))
+    RMSE2 = np.sqrt(np.mean((y-func2)**2))
+
     fig=plt.figure()
     fig.set_size_inches(3.59,2.56)
     plt.subplots_adjust(left=0.15,bottom=0.15,right=0.95,top=0.80)
@@ -1982,8 +1995,8 @@ def fit_exponential(x, y, name= None, err_bar=None, figura=True):
                 label_mod2+=f'{10**values.value:.5e}'+r' $\pm$ Nan'
                 err22 = None
 
-    ax.plot(x, func1, 'r--', lw=0.7, label='y = a + A exp(-t/T1)\nfit: T1 = '+label_mod+' sec\n'+r'$\chi^2$ red: '+f'{result1.redchi:.5e}'+r', RMSE: '+f'{np.sqrt(np.mean((y-func1)**2)):.5e}')
-    ax.plot(x, func2, 'g--', lw=0.7, label='y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))\nfit: T1a = '+label_mod1+' sec, T1b = '+label_mod2+' sec\n'+r'$\chi^2$ red: '+f'{result2.redchi:.5e}'+r', RMSE: '+f'{np.sqrt(np.mean((y-func2)**2)):.5e}')
+    ax.plot(x, func1, 'r--', lw=0.7, label='y = a + A exp(-t/T1)\nfit: T1 = '+label_mod+' sec\n'+r'$\chi^2$ red: '+f'{result1.redchi:.5e}'+r', RMSE: '+f'{RMSE1:.5e}')
+    ax.plot(x, func2, 'g--', lw=0.7, label='y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))\nfit: T1a = '+label_mod1+' sec, T1b = '+label_mod2+' sec\n'+r'$\chi^2$ red: '+f'{result2.redchi:.5e}'+r', RMSE: '+f'{RMSE2:.5e}')
     ax.set_xlabel('Delay (s)', fontsize=6)
     ax.set_ylabel('Intensity (a.u.)', fontsize=6)
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(-3,3), useMathText=True)
@@ -1996,7 +2009,7 @@ def fit_exponential(x, y, name= None, err_bar=None, figura=True):
             plt.savefig(name+'.png', dpi=600)
             plt.close()
 
-        return popt1.valuesdict().values(), popt2.valuesdict().values(), report1, report2, err1, (err21, err22)
+        return popt1.valuesdict().values(), popt2.valuesdict().values(), report1, report2, err1, (err21, err22), RMSE1, RMSE2
     else:
         plt.close()
         return popt1.valuesdict().values(), popt2.valuesdict().values(), func1, func2, err1, (err21, err22)  #for theUltimatePlot
@@ -2275,9 +2288,9 @@ def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors
         for ii in range(len(list_path)):
             folder = dir_result+'/'+list_path[ii][:list_path[ii].index('/pdata')]
             if errors:
-                monopar, bipar, _, _, err1, err2 = fit_exponential(x[ii], y[ii], figura=True, err_bar=yerr[ii], name=folder+'/'+f'{i+1}_correct')
+                monopar, bipar, _, _, err1, err2, RMSE1, RMSE2 = fit_exponential(x[ii], y[ii], figura=True, err_bar=yerr[ii], name=folder+'/'+f'{i+1}_correct')
             else:
-                monopar, bipar, _, _, err1, err2 = fit_exponential(x[ii], y[ii], figura=True, name=folder+'/'+f'{i+1}_correct')
+                monopar, bipar, _, _, err1, err2, RMSE1, RMSE2 = fit_exponential(x[ii], y[ii], figura=True, name=folder+'/'+f'{i+1}_correct')
             monopar = list(monopar)
             bipar = list(bipar)
             if biflag:
@@ -2581,7 +2594,7 @@ def model_fit_1D_reg(path, delays_list, list_path, cal_lim = None, dofit=True, p
         fitparameter_f = []
         for ii in range(int_del.shape[-1]-1):
             n_peak += 1
-            mono, bi, report1, report2, err1, err2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}', err_bar=error)
+            mono, bi, report1, report2, err1, err2, RMSE1, RMSE2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}', err_bar=error)
             
             with open(dir_res+'/'+nameout, 'a') as f:
                 f.write('\n')
@@ -2590,11 +2603,13 @@ def model_fit_1D_reg(path, delays_list, list_path, cal_lim = None, dofit=True, p
                 [f.write('-') for r in range(30)]
                 f.write('\n')
                 f.write('\nFit Parameters:\n')
-                f.write('\nMono\n')
+                f.write('\nMONOEXPONENTIAL\n')
                 f.write('y = a + A exp(-t/T1)\nfit: T1=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(mono))
+                f.write('RMSE: %8.7e\n' % RMSE1)
                 f.write(report1+'\n')
-                f.write('\nBi\n')
+                f.write('\nBIEXPONENTIAL\n')
                 f.write('y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))\nfit: f=%5.3e, T1a=%5.4e, T1b=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(bi))
+                f.write('RMSE: %8.7e\n' % RMSE2)
                 f.write(report2+'\n')
                 f.close()
 
