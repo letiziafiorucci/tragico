@@ -857,7 +857,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, VCLIST=None
     
     if VCLIST is None:
         VCLIST = []
-        
+    field = False    
     for idx, dir_res in enumerate(dir_result_sp):  #per ogni campo
 
         print('DIR: ', color_term.CYAN+dir_res+color_term.END)
