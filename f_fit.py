@@ -107,7 +107,8 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
             cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1]) 
             with open(dir_res+'/'+nameout, 'w') as f:
                 f.write('\n')
-                f.write('I/O INTERVALS: '+fileinp+'\n')
+                if fileinp is not None:
+                    f.write('I/O INTERVALS: '+fileinp+'\n')
                 f.write('SPECTRA PATH: \n')
                 f.write(path+'/'+list_path[idx]+'\n')
                 f.write('\n')
@@ -824,7 +825,7 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
 
     return dir_res
 
-def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_guess=False, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None): 
+def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, VCLIST=None, dofit=True, prev_guess=False, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None): 
     
     for i in range(len(delays_list)):
         if 'pdata' not in list_path[i]:
@@ -853,9 +854,10 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, dofit=True,
     dir_result = new_dir+nome_folder
     [os.makedirs(dir_result+'/'+list_path[i][:list_path[i].index('/pdata')]) for i in range(len(list_path))]
     dir_result_sp = [dir_result+'/'+list_path[i][:list_path[i].index('/pdata')] for i in range(len(list_path))]  # 'nome_directory_risultato/numero_spettro'
-
-    VCLIST = []
     
+    if VCLIST is None:
+        VCLIST = []
+        
     for idx, dir_res in enumerate(dir_result_sp):  #per ogni campo
 
         print('DIR: ', color_term.CYAN+dir_res+color_term.END)
