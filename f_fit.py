@@ -8,7 +8,7 @@ import os
 import shutil
 
 
-def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev_coeff = False, area=False, auto_ph=False, VCLIST=None, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs=None, fig_stack=True, fileinp='inp1_pseudo2D', err_lims_out=None, color_map='viridis'):
+def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev_coeff = False, area=False, auto_ph=False, VCLIST=None, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs={}, fig_stack=True, fileinp='inp1_pseudo2D', err_lims_out=None, color_map='viridis'):
 
     # series of pseudo2D spectra 
 
@@ -378,13 +378,15 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
                 n_peak += 1
                 #f_int_fit must return a dictionary with the fit parameters and the model
                 if err_lims is not None:
-                    parameters, model = f_int_fit(int_del[:,-1], int_del[:,ii], **fargs, err_bar=error)
+                    if area:
+                        parameters, model, *_ = f_int_fit(int_del[:,-1], int_del[:,ii], err_bar=error[:,ii], **fargs)
+                    else:
+                        parameters, model, *_ = f_int_fit(int_del[:,-1], int_del[:,ii], err_bar=error, **fargs)
                 else:
-                    parameters, model = f_int_fit(int_del[:,-1], int_del[:,ii], **fargs)
+                    parameters, model, *_ = f_int_fit(int_del[:,-1], int_del[:,ii], **fargs)
 
                 fig = plt.figure()
                 ax = fig.add_subplot(111)
-                ax.errorbar(int_del[:,-1], int_del[:,ii], yerr=error, fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
                 ax.plot(int_del[:,-1], int_del[:,ii], 'o', c='blue')
                 ax.plot(int_del[:,-1], model, 'r--', lw=0.7)
                 if err_lims is not None:
@@ -399,6 +401,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
                         ax.set_ylabel('Integral')
                     else:
                         ax.set_ylabel('Intensity')
+
                 ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
                 plt.savefig(dir_res+'/Interval_'+str(ii+1)+'_sp'+str(idx+1)+'.png', dpi=600)
                 plt.close()
@@ -437,8 +440,6 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
                 ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
                 plt.savefig(dir_res+'/Interval_'+str(ii+1)+'_sp'+str(idx+1)+'.png', dpi=600)
                 plt.close()
-
-        
 
     if len(VCLIST)>0:        
         VCLIST = np.array(VCLIST)
@@ -763,13 +764,17 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
             n_peak += 1
             #f_int_fit must return a dictionary with the fit parameters and the model
             if err_lims is not None:
-                parameters, model = f_int_fit(int_del[:,-1], int_del[:,ii], **fargs, err_bar=error)
+                if area:
+                    parameters, model, *_ = f_int_fit(int_del[:,-1], int_del[:,ii], err_bar=error[:,ii], **fargs)
+                else:
+                    parameters, model, *_ = f_int_fit(int_del[:,-1], int_del[:,ii], err_bar=error, **fargs)
             else:
-                parameters, model = f_int_fit(int_del[:,-1], int_del[:,ii], **fargs)
+                parameters, model, *_ = f_int_fit(int_del[:,-1], int_del[:,ii], **fargs)
 
             fig = plt.figure()
             ax = fig.add_subplot(111)
-            ax.set_xlabel('Time (s)')
+            ax.plot(int_del[:,-1], int_del[:,ii], 'o', c='blue')
+            ax.plot(int_del[:,-1], model, 'r--', lw=0.7)
 
             if err_lims is not None:
                 if area:
@@ -784,8 +789,6 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
                 else:
                     ax.set_ylabel('Intensity')
 
-            ax.plot(int_del[:,-1], int_del[:,ii], 'o', c='blue')
-            ax.plot(int_del[:,-1], model, 'r--', lw=0.7)
             ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
             plt.savefig(dir_res+'/Interval_'+str(ii+1)+'.png', dpi=600)
             plt.close()
@@ -825,7 +828,7 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
 
     return dir_res
 
-def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, VCLIST=None, dofit=True, prev_guess=False, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None): 
+def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, VCLIST=None, dofit=True, prev_guess=False, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None): 
     
     for i in range(len(delays_list)):
         if 'pdata' not in list_path[i]:
@@ -858,7 +861,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, VCLIST=None
     if VCLIST is None:
         VCLIST = []
     field = False    
-    for idx, dir_res in enumerate(dir_result_sp):  #per ogni campo
+    for idx, dir_res in enumerate(dir_result_sp): 
 
         print('DIR: ', color_term.CYAN+dir_res+color_term.END)
 
@@ -903,11 +906,14 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, VCLIST=None
         o1p = o1/sf1
         t_aq = np.linspace(0, td*dw, td) + DE
 
-        data = np.array([datap[r,:] for r in range(datap.shape[0]) if sum(datap[r,:]) != 0+1j*0])  #tolgo eventuali spettri non acquisiti
+        data = np.array([datap[r,:] for r in range(datap.shape[0]) if sum(datap[r,:]) != 0+1j*0])  # removes not acquired spectra
         print('DATA SHAPE: ', data.shape)
 
         to_order = np.hstack((np.reshape(delays,(len(delays),1)),data))
-        to_order = to_order[to_order[:,0].argsort()]    #to_order = to_order[to_order[:,0].argsort()[::-1]]    #to_order = to_order[to_order[:,0].argsort()]    #scelta spettro guess iniziale in base all'ordine
+        if IR:
+            to_order = to_order[to_order[:,0].argsort()]   
+        else:
+            to_order = to_order[to_order[:,0].argsort()[::-1]]
 
         data = to_order[:,1:]
         delays = to_order[:,0].real
@@ -944,7 +950,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, VCLIST=None
 
         spettro = data[0,:]
         CI = create_input(ppm_scale, spettro)
-        if idx == 0:  #gli input vengono generati solo su uno spettro, volendo anche uno per serie
+        if idx == 0:  
             if file_inp1 is None:
                 filename1 = input1_gen(CI)
             else:
@@ -1035,7 +1041,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, VCLIST=None
 
         integral_tot = []
         error_tot = []
-        for i in range(len(ppm1_set)):  #per intervallo
+        for i in range(len(ppm1_set)):  # for each interval
 
             ppm1 = ppm1_set[i]
             ppm2 = ppm2_set[i]
@@ -1291,7 +1297,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, VCLIST=None
 
     return dir_result
 
-def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, acqupars=None, procpars=None, Param=None):    
+def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=True, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, acqupars=None, procpars=None, Param=None):    
 
     for i in range(len(delays_list)):
         if 'pdata' not in list_path[i]:
@@ -1368,7 +1374,10 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, dofit=True, prev_
 
     to_order = np.hstack((np.reshape(delays_list,(len(delays_list),1)),data))
 
-    to_order = to_order[to_order[:,0].argsort()[::-1]]	
+    if IR:
+        to_order = to_order[to_order[:,0].argsort()]   
+    else:
+        to_order = to_order[to_order[:,0].argsort()[::-1]]	
 
     data = to_order[:,1:]
     delays = to_order[:,0].real
@@ -1907,6 +1916,71 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
 #------------------------------------------------------------#
 #                       TAILORED FUNCTIONS                   #
 #------------------------------------------------------------#
+
+def fit_IR(x, y, name= None, err_bar=None, figura=True):
+
+    def IR_curve(t, t1):
+        return 1-2*np.exp(-t/t1)
+
+    def IR_residue(param, t, exp, result=False):
+        par = param.valuesdict()
+        t1 = 10**par['t1']
+        model = IR_curve(t, t1)
+        den = np.mean(model**2)-np.mean(model)**2
+        a = (np.mean(model**2)*np.mean(y)-np.mean(model*y)*np.mean(model))/den
+        A = (np.mean(model*y)-(np.mean(model)*np.mean(y)))/den
+        if not result:
+            return (a + A*model)-exp
+        else:
+            return a+A*model, A, a
+
+    param = lmfit.Parameters()
+    param.add('t1', value=0, min=-4, max=1)
+    minner = lmfit.Minimizer(IR_residue, param, fcn_args=(x, y))
+    result1 = minner.minimize(method='leastsq', max_nfev=10000, xtol=1e-8, ftol=1e-8)
+    popt1 = result1.params
+    report1 = lmfit.fit_report(result1)
+
+    func1, A, a = IR_residue(popt1, x, y, result=True)
+    popt1.add('A', value=A)
+    popt1.add('a', value=a)
+
+    #compute the mean squared deviation of the experimental points from the model function
+    RMSE1 = np.sqrt(np.mean((y-func1)**2))
+
+    fig=plt.figure()
+    fig.set_size_inches(3.59,2.56)
+    ax = fig.add_subplot(1,1,1)
+    ax.tick_params(labelsize=12)
+    ax.plot(x, y, 'o', c='k', markersize=4)
+    #ax.set_xscale('log')
+    if err_bar is not None:
+        ax.errorbar(x, y, yerr=err_bar, fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
+    label_mod = ''
+    for key, values in popt1.items():
+        if key=='t1':
+            try:
+                label_mod+=f'{10**values.value:.5e}'+r' $\pm$ '+f'{np.abs(10**values.value*values.stderr/values.value):.5e}'
+                err1 = np.abs(10**values.value*values.stderr/values.value)
+            except:
+                label_mod+=f'{10**values.value:.5e}'+r' $\pm$ Nan'
+                err1 =  None
+
+    ax.plot(x, func1, 'r--', lw=1, label='y = a + A (1 - 2 exp(-t/T1))\nfit: T1 = '+label_mod+' sec\n'+r'$\chi^2$ red: '+f'{result1.redchi:.5e}'+r', RMSE: '+f'{RMSE1:.5e}')
+    ax.set_xlabel('Delay (s)', fontsize=12)
+    ax.set_ylabel('Intensity (a.u.)', fontsize=12)
+    ax.ticklabel_format(axis='y', style='scientific', scilimits=(-3,3), useMathText=True)
+    ax.yaxis.get_offset_text().set_size(11)
+    ax.legend(fontsize=10)
+    plt.tight_layout()
+    if figura:
+        if name is None:
+            plt.show()
+        else:
+            plt.savefig(name+'.png', dpi=600)
+            plt.close()
+
+        return popt1.valuesdict(), func1, report1, err1, RMSE1
 
 def fit_exponential(x, y, name= None, err_bar=None, figura=True):
 

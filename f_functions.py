@@ -518,11 +518,13 @@ def calibration(ppm_scale, data, ppmsx, ppmdx, npoints=80, debug_fig=False):
 
     print('Performing calibration...')
 
+    normalization = np.max(data[0,:])
+
     def residue(param, ppm_scale, spettro0, spettro1, sx, dx, risultato=False):
         par = param.valuesdict()
         roll_spettro1 = np.roll(spettro1, int(par['shift']))
-        if risultato==False:
-            res = spettro0.real/max(spettro0.real)-roll_spettro1.real/max(roll_spettro1.real)
+        if not risultato:
+            res = np.abs(spettro0.real/normalization)-np.abs(roll_spettro1.real/normalization)
             return res[npoints:-npoints]
         else:
             if debug_fig:
@@ -532,9 +534,9 @@ def calibration(ppm_scale, data, ppmsx, ppmdx, npoints=80, debug_fig=False):
                 plt.subplots_adjust(left=0.15,bottom=0.15,right=0.95,top=0.90)
                 ax = fig.add_subplot(1,1,1)
                 ax.tick_params(labelsize=6.5)
-                ax.plot(ppm_scale[sx:dx], spettro0.real/max(spettro0.real), lw=0.5, label='spectra_0')
-                ax.plot(ppm_scale[sx:dx], roll_spettro1.real/max(roll_spettro1.real), lw=0.5, label='spectra_1')
-                ax.plot(ppm_scale[sx:dx], spettro1.real/max(spettro1.real), lw=0.5, label='spectra_1 prima')
+                ax.plot(ppm_scale[sx:dx], spettro0.real/normalization, lw=0.5, label='spectra_0')
+                ax.plot(ppm_scale[sx:dx], roll_spettro1.real/normalization, lw=0.5, label='spectra_1')
+                ax.plot(ppm_scale[sx:dx], spettro1.real/normalization, lw=0.5, label='spectra_1 prima')
                 ax.set_xlabel(r'$\delta \, ^1$H (ppm)', fontsize=8)
                 ax.set_ylabel('Intensity (a.u.)', fontsize=8)
                 ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
