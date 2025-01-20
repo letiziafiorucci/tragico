@@ -8,7 +8,7 @@ import os
 import shutil
 
 
-def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev_coeff = False, area=False, auto_ph=False, VCLIST=None, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs={}, fig_stack=True, fileinp='inp1_pseudo2D', err_lims_out=None, color_map='viridis'):
+def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, IR=False, prev_coeff = False, area=False, auto_ph=False, VCLIST=None, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs={}, fig_stack=True, fileinp='inp1_pseudo2D', err_lims_out=None, color_map='viridis'):
 
     # series of pseudo2D spectra 
 
@@ -97,7 +97,13 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
             data = np.array(data_p)
 
         to_order = np.hstack((np.reshape(delays,(len(delays),1)),data))
-        to_order = to_order[to_order[:,0].argsort()]#[::-1]]
+
+        if IR:
+            # print('true',to_order[:,0].argsort()[::-1])
+            to_order = to_order[to_order[:,0].argsort()[::-1]]   
+        else:
+            # print('false', to_order[:,0].argsort())
+            to_order = to_order[to_order[:,0].argsort()]
 
         data = to_order[:,1:]
         delays = to_order[:,0].real
@@ -447,7 +453,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, prev
             
     return dir_result
 
-def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, fig_stack=True, fileinp='inp1_1D', err_lims_out=None, color_map='viridis'):
+def intensity_fit_1D(path, delays_list, list_path, area=False, IR=False, auto_ph=False, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, fig_stack=True, fileinp='inp1_1D', err_lims_out=None, color_map='viridis'):
 
     # series of 1D spectra to be treated as a pseudo2D
 
@@ -521,6 +527,16 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, auto_ph=False, ca
 
         data = Spectra
         ppm_scale = ppmscale 
+
+    to_order = np.hstack((np.reshape(delays_list,(len(delays_list),1)),data))
+
+    if IR:
+        to_order = to_order[to_order[:,0].argsort()[::-1]]   
+    else:
+        to_order = to_order[to_order[:,0].argsort()]	
+
+    data = to_order[:,1:]
+    delays = to_order[:,0].real
 
     if cal_lim is not None:
         cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1]) 
@@ -911,9 +927,9 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
 
         to_order = np.hstack((np.reshape(delays,(len(delays),1)),data))
         if IR:
-            to_order = to_order[to_order[:,0].argsort()]   
+            to_order = to_order[to_order[:,0].argsort()[::-1]]   
         else:
-            to_order = to_order[to_order[:,0].argsort()[::-1]]
+            to_order = to_order[to_order[:,0].argsort()]
 
         data = to_order[:,1:]
         delays = to_order[:,0].real
@@ -949,6 +965,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
                 f.close()
 
         spettro = data[0,:]
+
         CI = create_input(ppm_scale, spettro)
         if idx == 0:  
             if file_inp1 is None:
@@ -1375,9 +1392,9 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
     to_order = np.hstack((np.reshape(delays_list,(len(delays_list),1)),data))
 
     if IR:
-        to_order = to_order[to_order[:,0].argsort()]   
+        to_order = to_order[to_order[:,0].argsort()[::-1]]   
     else:
-        to_order = to_order[to_order[:,0].argsort()[::-1]]	
+        to_order = to_order[to_order[:,0].argsort()]	
 
     data = to_order[:,1:]
     delays = to_order[:,0].real
