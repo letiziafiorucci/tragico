@@ -538,6 +538,8 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, IR=False, auto_ph
     data = to_order[:,1:]
     delays = to_order[:,0].real
 
+    #fancy_plot(ppm_scale, data, delays, lims=(-76,-70))
+
     if cal_lim is not None:
         cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1]) 
         with open(dir_res+'/'+nameout, 'w') as f:

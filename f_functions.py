@@ -2243,7 +2243,59 @@ def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=
         plt.savefig(name+'.png', dpi=600)
         plt.close()
 
+def fancy_plot(ppm_scale, data, delays, lims=None, lims_t = None):
+    # lims = (ppm_min, ppm_max)
+    # lims_t = (time_min, time_max)
 
+    from mpl_toolkits.mplot3d.art3d import Line3DCollection
+
+    time = delays  # y-axis: time
+    data = data.real # z-axis: Intensity
+
+    if lims is not None:
+        sx,dx,_ = find_limits(lims[0], lims[1], ppm_scale)
+        ppm_scale = ppm_scale[sx:dx]
+        data = data[:,sx:dx]
+
+    if lims_t is not None:
+        time = time[lims_t[0]:lims_t[1]]
+        data = data[lims_t[0]:lims_t[1],:]
+
+    fig = plt.figure(figsize=(10, 7))
+    ax = fig.add_subplot(111, projection='3d')
+
+    for i, t in enumerate(time):
+        x_values = ppm_scale
+        y_values = np.full_like(x_values, t) 
+        z_values = data[i, :] 
+
+        norm = plt.Normalize(data.min(), data.max())  
+        colors = plt.cm.viridis(norm(z_values))  
+
+        # Define line segments for the plot
+        points = np.array([x_values, y_values, z_values]).T.reshape(-1, 1, 3)
+        segments = np.hstack([points[:-1], points[1:]])
+
+        # Create a Line3DCollection for the gradient
+        lc = Line3DCollection(segments, cmap='viridis', norm=norm, linewidth=0.8)
+        lc.set_array(z_values)  
+        ax.add_collection3d(lc, zs=t, zdir='y')  
+
+    ax.set_xlabel("Frequency scale / ppm")
+    ax.set_ylabel("Delays / s")
+    ax.set_zlabel("Intensity / a.u.")
+
+    # white background
+    ax.set_facecolor('white')
+    fig.patch.set_facecolor('white')
+
+    # Set axis limits
+    ax.set_xlim(ppm_scale.min(), ppm_scale.max())
+    ax.set_ylim(time.min(), time.max())
+    ax.set_zlim(0, data.max())
+
+    plt.savefig('fancy_plot.png', dpi=600)
+    exit()
 
 ##############
 class color_term:
