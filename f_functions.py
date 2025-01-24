@@ -585,6 +585,10 @@ def calibration(ppm_scale, data, ppmsx, ppmdx, npoints=80, debug_fig=False):
 
 #=========================================================================================#
 
+#-------------------------------------------------------------------#
+#                      functions from TRAGICO                       #
+#-------------------------------------------------------------------#
+
 def find_limits(ppm1, ppm2, ppmscale):
     """
     Finds the limits of the interval between two given ppm values.
