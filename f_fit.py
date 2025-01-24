@@ -1647,6 +1647,8 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
         np.savetxt(dir_res+'/x_'+str(j+1)+'.txt', delays)
     if Param is not None:
         np.savetxt(dir_res+'/Param.txt', Param_tot)
+        #replace in the Param_tot_err the None values with -1
+        Param_tot_err = np.where(Param_tot_err==None, -1, Param_tot_err)
         np.savetxt(dir_res+'/Param_err.txt', Param_tot_err)
 
     int_del = np.column_stack((integral, delays))  #(n. delays x [integral[:,0],...,integral[:,n], delays[:]])

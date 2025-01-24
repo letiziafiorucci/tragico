@@ -1921,7 +1921,7 @@ class create_input():
         plt.show()
         plt.close()
 
-        return 2**np.array(k),fwhm, phi, xg, poli_coeff[0], poli_coeff[1], poli_coeff[2], poli_coeff[3], poli_coeff[4]
+        return 2.0**np.array(k),fwhm, phi, xg, poli_coeff[0], poli_coeff[1], poli_coeff[2], poli_coeff[3], poli_coeff[4]
 
     def interactive_iguess(self, matrix, filename, acqupars, procpars, completebsl=False):
         """
@@ -2140,23 +2140,23 @@ def histogram(data, nbins=100, density=True, f_lims= None, xlabel=None, x_symm=F
     fit_g = A / (np.sqrt(2 * np.pi) * s) * np.exp(-0.5 * ((lnspc - m) / s)**2) # Gaussian lineshape
 
     fig = plt.figure()
-    fig.set_size_inches(4.96, 3.78)
+    fig.set_size_inches(3.2,2.8)
     ax = fig.add_subplot(1,1,1)
     ax.hist(data, color='tab:blue', density=density, bins=bin_edges)
     ax.plot(lnspc, fit_g, c='r', lw=0.6, label = r'$\mu = ${:.3g}'.format(m)+'\n'+r'$\sigma = ${:.3g}'.format(s))
-    ax.tick_params(labelsize=7)
+    ax.tick_params(labelsize=8)
     ax.ticklabel_format(axis='both', style='scientific', scilimits=(-3,3), useMathText=True)
-    ax.yaxis.get_offset_text().set_size(7)
-    ax.xaxis.get_offset_text().set_size(7)
+    ax.yaxis.get_offset_text().set_size(9)
+    ax.xaxis.get_offset_text().set_size(9)
     if density:
-        ax.set_ylabel('Normalized count', fontsize=8)
+        ax.set_ylabel('Normalized count', fontsize=9.5)
     else:
-        ax.set_ylabel('Count', fontsize=8)
+        ax.set_ylabel('Count', fontsize=9.5)
     if xlabel:
-        ax.set_xlabel(xlabel, fontsize=8)
+        ax.set_xlabel(xlabel, fontsize=9.5)
     if f_lims:
         ax.set_xlim(f_lims)
-    ax.legend(loc='upper right', fontsize=6)
+    ax.legend(loc='upper right', fontsize=9)
     fig.tight_layout()
     if name:
         plt.savefig(name+'.png', format='png', dpi=600)
@@ -2170,10 +2170,11 @@ def histogram(data, nbins=100, density=True, f_lims= None, xlabel=None, x_symm=F
 def f_figure_comp(ppmscale, data, model, comp, name=None, basefig=None, dic_fig={'h':3.59,'w':2.56,'sx':None,'dx':None}):
 	
     fig = plt.figure()
-    fig.set_size_inches(dic_fig['h'],dic_fig['w'])   #3.59,2.56
-    plt.subplots_adjust(left=0.15,bottom=0.15,right=0.95,top=0.90)
+    #fig.set_size_inches(dic_fig['h'],dic_fig['w'])   #3.59,2.56
+    fig.set_size_inches(3.2,2.8)
+    #plt.subplots_adjust(left=0.15,bottom=0.15,right=0.95,top=0.90)
     ax = fig.add_subplot(1,1,1)
-    ax.tick_params(labelsize=6.5)
+    ax.tick_params(labelsize=7)
     if basefig is not None:
         ax.plot(ppmscale, basefig, 'r',lw=0.5, label='baseline')
     ax.plot(ppmscale, data, lw=0.5, label='experiment')
@@ -2181,14 +2182,17 @@ def f_figure_comp(ppmscale, data, model, comp, name=None, basefig=None, dic_fig=
     ax.plot(ppmscale, data-model, lw=0.5, label='residue')
     for i in range(len(comp)):
         ax.plot(ppmscale, comp[i], '--', lw=0.4, label='comp. '+str(i+1))
-    ax.set_xlabel(r'$\delta$ (ppm)', fontsize=8)
-    ax.set_ylabel('Intensity (a.u.)', fontsize=8)
+    ax.set_xlabel(r'$\delta$ (ppm)', fontsize=8.5)
+    ax.set_ylabel('Intensity (a.u.)', fontsize=8.5)
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
     ax.yaxis.get_offset_text().set_size(7)
     if dic_fig['sx'] and dic_fig['dx']:
         ax.set_xlim(dic_fig['dx'],dic_fig['sx'])
     ax.invert_xaxis()
-    ax.legend(fontsize=6)
+    #set spacing between ticks
+    #ax.xaxis.set_major_locator(plt.MaxNLocator(5))
+    ax.legend(fontsize=7)
+    plt.tight_layout()
     if name is None:
         plt.show()
     else:
