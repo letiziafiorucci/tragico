@@ -937,7 +937,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
         delays = to_order[:,0].real
 
         if cal_lim is not None:
-            cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1]) 
+            cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1])#, debug_fig=True)   # uncomment to see the calibration plots
             with open(dir_res+'/'+nameout, 'w') as f:
                 f.write('SPECTRA PATH: \n')
                 f.write(path+list_path[0]+'\n')
@@ -1161,10 +1161,10 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
                     param.load(file)
                 ###
             
-                peak_int, int_err, prev_param_compl, result, _ = fit_peaks_bsl_I(param, ppm_scale, data[j,:], tensor_red, 
+                peak_int, int_err, prev_param_compl, result, *_ = fit_peaks_bsl_I(param, ppm_scale, data[j,:], tensor_red, 
                                                                 t_aq, sf1, o1p, td, dw, j, i, dir_res, new_dir, SR=SR, 
                                                                 SI=SI, SW=SW, LB=LB, SSB=SSB, dofit=dofit,fast=fast, L1R=L1R, 
-                                                                L2R=L2R, err_conf=err_conf)
+                                                                L2R=L2R, err_conf=err_conf, IR=IR)
                 
                 #### write
                 if dofit:
@@ -1273,11 +1273,11 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
             for ii in range(int_del.shape[-1]-1):
                 n_peak += 1
                 #f_int_fit must return a dictionary with the fit parameters and the model
-                parameters, model = f_int_fit(int_del[:,-1], int_del[:,ii], **fargs, err_bar=error)
+                parameters, model, *_ = f_int_fit(int_del[:,-1], int_del[:,ii], **fargs, err_bar=error[:,ii])
 
                 fig = plt.figure()
                 ax = fig.add_subplot(111)
-                ax.errorbar(int_del[:,-1], int_del[:,ii], yerr=error, fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
+                ax.errorbar(int_del[:,-1], int_del[:,ii], yerr=error[:,ii], fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
                 ax.plot(int_del[:,-1], int_del[:,ii], 'o', c='blue')
                 ax.plot(int_del[:,-1], model, 'r--', lw=0.7)
                 #ax.set_xlabel('Time (s)')
@@ -1400,6 +1400,8 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
 
     data = to_order[:,1:]
     delays = to_order[:,0].real
+
+    data_sim = np.zeros_like(data.real)
 
     if cal_lim is not None:
         cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1]) 
@@ -1594,11 +1596,11 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
                 param.load(file)
             ###
           
-            peak_int, int_err, prev_param_compl, result, _ = fit_peaks_bsl_I(param, ppm_scale, data[j,:], tensor_red, 
+            peak_int, int_err, prev_param_compl, result, _, sim_spectra = fit_peaks_bsl_I(param, ppm_scale, data[j,:], tensor_red, 
                                                             t_aq, sf1, o1p, td, dw, j, i, dir_res, new_dir, SR=SR, 
                                                             SI=SI, SW=SW, LB=LB, SSB=SSB, dofit=dofit, fast=fast, L1R=L1R, 
-                                                            L2R=L2R, err_conf=err_conf)
-            
+                                                            L2R=L2R, err_conf=err_conf, IR=IR)
+            data_sim[j,:] += sim_spectra
             #### write
             if dofit:
                 file = open(dir_res+'/'+new_dir+'popt_I'+str(i)+'_P'+str(j), 'w')
@@ -1758,9 +1760,9 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
             plt.close()
 
     if Param is not None:
-        return dir_res, (Param_tot, Param_tot_err), delays
+        return dir_res, (data, data_sim), (Param_tot, Param_tot_err), delays, ppm_scale
     else:
-        return dir_res
+        return dir_res, (data, data_sim), delays, ppm_scale
 
 def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, dw, j, jj, dir_res, new_dir, SR=0, SI=0, SW=0, LB=0, SSB=0, dofit=True, fast=False, IR=False, L1R=None, L2R=None, err_conf=0.95):
     
@@ -1906,9 +1908,10 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
                 if lor_ph0_list[ii] is not None:
                     if IR:
                         integral_in.append(np.trapz(lor_list[ii]))
+                        Err = error_calc_num(ppm_scale, res2plot, lor_list[ii], np.trapz(lor_list[ii]), sx, dx, confidence=err_conf)
                     else:
                         integral_in.append(np.trapz(lor_ph0_list[ii]))
-                    Err = error_calc_num(ppm_scale, res2plot, lor_ph0_list[ii], np.trapz(lor_ph0_list[ii]), sx, dx, confidence=err_conf)
+                        Err = error_calc_num(ppm_scale, res2plot, lor_ph0_list[ii], np.trapz(lor_ph0_list[ii]), sx, dx, confidence=err_conf)
                     int_err.append(Err)
 
             x = ppm_scale[sx:dx]-zero
@@ -1916,7 +1919,7 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
             model = cost*(corr_baseline+sim_spectra_tot[sx:dx])
             #f_fun.f_figure(ppm_scale[sx:dx], spettro[sx:dx], model, name=dir_res+'/'+new_dir+'_D'+str(j+1)+'_I'+str(jj+1), basefig = cost*corr_baseline)
 
-            return integral_in, int_err, sim_spectra, spettro[sx:dx]-corr_baseline*cost
+            return integral_in, int_err, sim_spectra*cost, spettro[sx:dx]-corr_baseline*cost
         
    
     minner = lmfit.Minimizer(f_residue, param, fcn_args=(ppm_scale, spettro, tensor_red))
@@ -1932,7 +1935,7 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
     popt = result.params
     peak_int, int_err, sim_spectra, spettro_corrbsl = f_residue(popt, ppm_scale, spettro, tensor_red, result=True)
     
-    return peak_int, int_err, popt, result, spettro_corrbsl
+    return peak_int, int_err, popt, result, spettro_corrbsl, sim_spectra
 
 #------------------------------------------------------------#
 #                       TAILORED FUNCTIONS                   #
@@ -2458,542 +2461,3 @@ def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors
                         header=column_names,
                         comments=""
                     )
-
- 
-def model_fit_1D_reg(path, delays_list, list_path, cal_lim = None, dofit=True, prev_fit=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, doexp=False, f_int_fit=None, fargs=None, reg_args=None):    
-
-    new_dir = os.path.basename(os.path.normpath(path))
-    nome_folder = '_modelfitR'   
-    try:
-        os.mkdir(new_dir+nome_folder)
-    except:
-        ans = input('\nThe directory '+color_term.BOLD+new_dir+nome_folder+color_term.END+' already exists.\nDo you want to:\n[overwrite the existing directory (1)]\ncreate a new directory (2)\ncontinue writing in the existing directory (3)\n>')
-        if ans=='1' or ans == '':
-            shutil.rmtree(new_dir+nome_folder)           # Removes all the subdirectories!
-            os.makedirs(new_dir+nome_folder)
-        elif ans=='2':
-            new_dir = input('Write new directory name: ')
-            os.makedirs(new_dir+nome_folder)
-        elif ans=='3':
-            pass
-        else:
-            print('\nINVALID INPUT')
-            exit()
-    print('Writing directory '+color_term.BOLD+new_dir+nome_folder+color_term.END)
-
-    dir_res = new_dir+nome_folder
-    print('DIR: ', color_term.CYAN+dir_res+color_term.END)
-
-    nameout = new_dir+'.out'
-
-    print('PATH TO SPECTRA: ', path+'/'+dir_res)
-
-    data_d = []
-    ppmscale_d = []
-    for i in range(len(delays_list)):
-        data, ppmscale, ngdicp = nmr_spectra_1d(path+list_path[i])
-        data_d.append(data)
-        ppmscale_d.append(ppmscale)
-
-    data = np.array(data_d)
-    ppm_scale = ppmscale.copy()
-    
-    acqupars = param_acq(ngdicp)
-    procpars = param_pr(ngdicp)  #only qsin and em are considered for the apodization
-
-    DE = acqupars['DE'] 
-    SR = procpars['SR']
-    SI = procpars['SI'] 
-    SW = acqupars['SW'] 
-    LB = procpars['LB']
-    SSB = procpars['SSB']
-    TD = acqupars['TD']
-    o1 = acqupars['o1']
-    sf1 = acqupars['SFO1']
-    
-    dw = 1/(SW)
-    td = TD//2
-    o1p = o1/sf1
-    t_aq = np.linspace(0, td*dw, td) + DE
-
-    to_order = np.hstack((np.reshape(delays_list,(len(delays_list),1)),data))
-
-    to_order = to_order[to_order[:,0].argsort()[::-1]]	
-
-    data = to_order[:,1:]
-    delays = to_order[:,0].real
-
-    if cal_lim is not None:
-        cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1]) 
-        with open(dir_res+'/'+nameout, 'w') as f:
-            f.write('SPECTRA PATH: \n')
-            f.write(path+'\n')
-            f.write('\n')
-            f.write('CALIBRATION: ('+f'{cal_lim[0]:.5f}'+':'+f'{cal_lim[1]:.5f}'+') ppm\n')
-            f.write('in points\n')
-            [f.write(str(cal_shift[ii])+'   ') for ii in range(len(cal_shift))]
-            f.write('\nin ppm\n')
-            [f.write(f'{cal_shift_ppm[ii]:.5f}'+'   ') for ii in range(len(cal_shift_ppm))]
-            f.write('\n\n')
-            f.write('Points:\n')
-            [f.write(str(r+1)+'\t'+f'{delays[r]:.3f}'+'\n') for r in range(len(delays))]
-            f.close()
-    else:
-        with open(dir_res+'/'+nameout, 'w') as f:
-            f.write('SPECTRA PATH: \n')
-            f.write(path+'\n')
-            f.write('\n')
-            f.write('Points:\n')
-            [f.write(str(r+1)+'\t'+f'{delays[r]:.3f}'+'\n') for r in range(len(delays))]
-            f.close()
-
-    spettro = data[0,:]  #spectra initial guess
-
-    CI = create_input(ppm_scale, spettro)
-    filename1 = input1_gen(CI)
-    matrix = read_input_INT(filename1)
-    shutil.copy2(filename1, dir_res+'/')
-    matrix = read_input_INT(filename1)
-    multiplicity = matrix[:,-1]
-
-    ##INPUT2 GENERATION##
-    filename2 = input2_gen(CI, matrix, acqupars, procpars)
-    shutil.copy2(filename2, dir_res+'/')
-    tensore = read_input_INT2(filename2, matrix[:,:-1])
-
-    name_peak = np.zeros(tensore.shape[0], dtype='int64')
-    name=0
-    prev = 0
-    for i in range(tensore.shape[0]):
-        if multiplicity[i]==0:
-            name += 1
-            name_peak[i] = name
-            prev=0
-        elif multiplicity[i]!=0:
-            if prev==multiplicity[i]:
-                name_peak[i] = name
-            else:
-                prev = multiplicity[i]
-                name += 1
-                name_peak[i] = name
-
-    with open(dir_res+'/'+nameout, 'a') as f:
-        f.write('\nINPUT1: '+filename1+'\n')
-        file = open(filename1).readlines()
-        f.write('n. peak\t'+file[0])
-        [f.write(str(name_peak[r-1])+'\t'+file[r]) for r in range(1,len(file))]
-        f.write('\nINPUT2: '+filename2+'\n')
-        file = open(filename2).readlines()
-        f.write('n. peak\t'+file[0])
-        [f.write(str(name_peak[r-1])+'\t'+file[r]) for r in range(1,len(file))]
-        [f.write('=') for r in range(100)]
-        f.write('\n')
-        [f.write('=') for r in range(100)]
-        f.write('\n')
-        f.write('(I: fit interval, P: N. point)\n')
-        f.close()
-
-    ppm1 = matrix[:,1]
-    ppm2 = matrix[:,2]
-    ppm1_set = list(set(ppm1))
-    ppm2_set = list(set(ppm2))
-    ppm1_set.sort()
-    ppm2_set.sort()
-
-    tensore = np.append(tensore, np.reshape(multiplicity, (len(multiplicity),1)), axis=1)
-
-    tensor_red_list = []
-
-    shift_tot = []
-    integral_tot = []
-    error_tot = []
-    for i in range(len(ppm1_set)):  #per intervallo
-
-        ppm1 = ppm1_set[i]
-        ppm2 = ppm2_set[i]
-        print('FIT RANGE: ({:.2f}:{:.2f}) ppm'.format(ppm1, ppm2))
-
-        tensor_red = np.array([tensore[ii,:] for ii in range(tensore.shape[0]) if tensore[ii,1]==ppm1 and tensore[ii,2]==ppm2])
-        tensor_red_list.append(tensor_red)
-
-        param = lmfit.Parameters()
-        for j in range(tensor_red.shape[0]):
-
-            if tensor_red[j,0]=='true':
-                param.add('shift_'+str(j+1), value=tensor_red[j,3], min=tensor_red[j,3]-delta, max=tensor_red[j,3]+delta)
-                param.add('k_'+str(j+1), value=tensor_red[j,4])
-                param.add('lw_'+str(j+1), value=tensor_red[j,5],  min=1e-4, max = 3.5)
-                param.add('ph_'+str(j+1), value=tensor_red[j,6], min=-np.pi, max=np.pi)
-                param.add('xg_'+str(j+1), value=0.2, min=0, max=1)
-            else:
-                param.add('shift_'+str(j+1)+'_f', value=tensor_red[j,3], min=tensor_red[j,3]-delta, max=tensor_red[j,3]+delta)
-                param.add('k_'+str(j+1)+'_f', value=tensor_red[j,4])
-                param.add('lw_'+str(j+1)+'_f', value=tensor_red[j,5],  min=1e-4, max = 3.5)
-                param.add('ph_'+str(j+1)+'_f', value=tensor_red[j,6], min=-np.pi, max=np.pi)
-                param.add('xg_'+str(j+1)+'_f', value=0.2, min=0, max=1)
-
-        param.add('A', value=tensor_red[-1,7])
-        param.add('B', value=tensor_red[-1,8])
-        param.add('C', value=tensor_red[-1,9]) 
-        param.add('D', value=tensor_red[-1,10])
-        param.add('E', value=tensor_red[-1,11])
-
-        #### read
-        if not dofit:
-            param = lmfit.Parameters()
-            file = open(new_dir+'popt_I'+str(i), 'r')
-            param.load(file)
-        ###
-        
-        peak_int, int_err, prev_param_compl, result, _ = fit_peaks_bsl_reg(param, ppm_scale, data, tensor_red, 
-                                                        t_aq, sf1, o1p, td, dw, i, dir_res, new_dir, SR=SR, 
-                                                        SI=SI, SW=SW, LB=LB, SSB=SSB, dofit=dofit, L1R=L1R, L2R=L2R,
-                                                        f_reg=f_reg, reg_args=reg_args)
-        
-        #### write
-        if dofit:
-            file = open(dir_res+'/'+new_dir+'popt_I'+str(i), 'w')
-            prev_param_compl.dump(file)
-            file = open(new_dir+'popt_I'+str(i), 'w')
-            prev_param_compl.dump(file)
-        ####
-
-        integral_tot.append(peak_int)
-        error_tot.append(int_err)
-        
-        with open(dir_res+'/'+nameout, 'a') as f:
-            f.write('\n')
-            [f.write('-') for r in range(30)]
-            f.write('\nFIT RANGE: ({:.2f}:{:.2f}) ppm'.format(ppm1, ppm2)+'\n')
-            f.write('I: '+str(i+1)+'\n')
-            [f.write('-') for r in range(30)]
-            f.write('\n')
-            f.write('\nFit Report: \n')
-            f.write(lmfit.fit_report(result)+'\n')
-            f.write('\nIntegrals: \n')
-            for jj in range(len(peak_int)):
-                f.write(str(peak_int[jj])+' +/- '+str(np.abs(int_err[jj]))+'\n')
-            f.close()
-                
-    integral=np.array(integral_tot)
-    error = np.array(error_tot) 
-
-    int_del = np.column_stack((integral, delays))  #(n. delays x [integral[:,0],...,integral[:,n], delays[:]])
-    order = int_del[:,-1].argsort()
-    int_del = int_del[order]
-    try:
-        error = np.reshape(error[order], (len(error),))
-    except:
-        error = np.reshape(error[order], (len(error),error.shape[-1]))
-        error = error[:,0]
-    
-    if doexp==True:
-
-        n_peak = 0
-        mono_fit = []
-        bi_fit = []
-        errmono_fit = []
-        errbi_fit = []
-        fitparameter_f = []
-        for ii in range(int_del.shape[-1]-1):
-            n_peak += 1
-            mono, bi, report1, report2, err1, err2, RMSE1, RMSE2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}', err_bar=error)
-            
-            with open(dir_res+'/'+nameout, 'a') as f:
-                f.write('\n')
-                [f.write('-') for r in range(30)]
-                f.write('\nN. PEAK: '+f'{n_peak}'+'\n')
-                [f.write('-') for r in range(30)]
-                f.write('\n')
-                f.write('\nFit Parameters:\n')
-                f.write('\nMONOEXPONENTIAL\n')
-                f.write('y = a + A exp(-t/T1)\nfit: T1=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(mono))
-                f.write('RMSE: %8.7e\n' % RMSE1)
-                f.write(report1+'\n')
-                f.write('\nBIEXPONENTIAL\n')
-                f.write('y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))\nfit: f=%5.3e, T1a=%5.4e, T1b=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(bi))
-                f.write('RMSE: %8.7e\n' % RMSE2)
-                f.write(report2+'\n')
-                f.close()
-
-            mono_fit.append(10**tuple(mono)[0])
-            errmono_fit.append(err1)
-            bi_fit.append((10**tuple(bi)[1], 10**tuple(bi)[2]))
-            errbi_fit.append(err2)
-            fitparameter_f.append(tuple(bi)[0])
-            
-            
-        with open(dir_res+'/'+'t1.txt', 'w') as f:
-            f.write('n.peak\tT1 (s)\terr (s)\tf\n')
-            for ii in range(len(mono_fit)):
-                try:
-                    f.write(str(ii+1)+'\t'+f'{mono_fit[ii]:.4e}'+'\t'+f'{errmono_fit[ii]:.4e}'+'\n')
-                except:
-                    f.write(str(ii+1)+'\t'+f'{mono_fit[ii]:.4e}'+'\t'+'Nan'+'\n')
-                try:
-                    f.write(str(ii+1)+'\t'+f'{bi_fit[ii][0]:.4e}'+'\t'+f'{errbi_fit[ii][0]:.4e}'+'\t'+f'{bi_fit[ii][1]:.4e}'+'\t'+f'{errbi_fit[ii][1]:.4e}'+'\t'+f'{fitparameter_f[ii]:.4f}'+'\n')
-                except:
-                    f.write(str(ii+1)+'\t'+f'{bi_fit[ii][0]:.4e}'+'\t'+'Nan'+'\t'+f'{bi_fit[ii][1]:.4e}'+'\t'+'Nan\t'+f'{fitparameter_f[ii]:.4f}'+'\n')
-            f.close()
-        with open(dir_res+'/'+nameout, 'a') as f:
-            for r in range(100):
-                f.write('=')
-            f.close()
-
-    elif f_int_fit is not None and doexp==False:
-
-        n_peak = 0
-        for ii in range(int_del.shape[-1]-1):
-            n_peak += 1
-            #f_int_fit must return a dictionary with the fit parameters and the model
-            parameters, model = f_int_fit(int_del[:,-1], int_del[:,ii], **fargs, err_bar=error)
-
-            fig = plt.figure()
-            ax = fig.add_subplot(111)
-            ax.errorbar(int_del[:,-1], int_del[:,ii], yerr=error, fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
-            ax.plot(int_del[:,-1], int_del[:,ii], 'o', c='blue')
-            ax.plot(int_del[:,-1], model, 'r--', lw=0.7)
-            
-            #ax.set_xlabel('Time (s)')
-            ax.set_ylabel('Intensity')
-            ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
-            plt.savefig(dir_res+'/Peak_'+str(ii+1)+'.png', dpi=600)
-            plt.close()
-
-            with open(dir_res+'/'+nameout, 'a') as f:
-                f.write('\n')
-                [f.write('-') for r in range(30)]
-                f.write('\nN. PEAK: '+f'{n_peak}'+'\n')
-                [f.write('-') for r in range(30)]
-                f.write('\n')
-                f.write('\nFit Parameters:\n')
-                f.write('\n')
-                f.write(' '.join([f'{key}={val}' for key, val in parameters.items()])+'\n')
-                f.close()
-
-    else:
-
-        for ii in range(int_del.shape[-1]-1):
-            fig = plt.figure()
-            ax = fig.add_subplot(111)
-            ax.errorbar(int_del[:,-1], int_del[:,ii], yerr=error, fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
-            ax.plot(int_del[:,-1], int_del[:,ii], 'o', c='blue')
-            #ax.set_xlabel('Time (s)')
-            ax.set_ylabel('Intensity')
-            ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
-            plt.savefig(dir_res+'/Peak_'+str(ii+1)+'.png', dpi=600)
-            plt.close()
-
-
-    return dir_res
-
-def fit_peaks_bsl_reg(param, ppm_scale, spettro0, tensor_red, t_aq, sf1, o1p, td, dw, j, jj, dir_res, new_dir, SR=0, SI=0, SW=0, LB=0, SSB=0, dofit=True, IR=False, L1R=None, L2R=None, f_reg=None, reg_args=None):
-
-    cal = np.abs(ppm_scale[0]-ppm_scale[1])+SR/sf1
-
-    cycle = -1
-    def f_residue(param, ppm_scale, data, tensor_red_list, delays, result=False):
-        nonlocal cycle
-        cycle += 1
-        print('fit peaks: '+f'{cycle:5g}',end='\r')
-
-        par = param.valuesdict()
-
-        integral_list_global = []
-        err_list_global = []
-        residuals_global = []
-
-        for idx in range(data.shape[0]):  #per delay
-
-            lor_list = []
-            lor_ph0_list = []
-            comp_list = []
-            prev=0
-            spettro = data[idx,:].copy()
-            sim_spectra_tot = np.zeros_like(spettro, dtype='float64')
-
-            res_tot = []
-            res_tot_gradient = []
-
-            for ii in range(len(tensor_red_list)):  #per ogni intervallo
-                
-                tensor_red = tensor_red_list[ii]
-                mult = tensor_red[:,-1]
-                
-                lor_list.append([])
-                lor_ph0_list.append([])
-                comp_list.append([])
-
-                sx, dx, _ = f_fun.find_limits(tensor_red[0,1], tensor_red[0,2], ppm_scale)
-
-                sim_spectra = np.zeros_like(spettro, dtype='float64')
-                
-                for jj in range(tensor_red.shape[0]):  #per ogni voigt
-
-                    lor = f_fun.t_voigt(t_aq, (par['shift_I'+str(ii+1)+'_V'+str(jj+1)+'_'+str(idx)]-cal-o1p)*sf1, 2*np.pi*par['lw_I'+str(ii+1)+'_V'+str(jj+1)+'_'+str(idx)]*sf1,
-                                                    A=par['k_I'+str(ii+1)+'_V'+str(jj+1)+'_'+str(idx)], phi=par['ph_I'+str(ii+1)+'_V'+str(jj+1)+'_'+str(idx)], x_g=par['xg_I'+str(ii+1)+'_V'+str(jj+1)+'_'+str(idx)])
-
-                    ### processing
-                    lor *= f_fun.em(lor, LB, SW)
-                    lor *= f_fun.qsin(lor, SSB)
-                    lor = f_fun.zf(lor, SI)
-                    ###
-
-                    #mi serve per l'errore 
-                    lor_ph0 = f_fun.t_voigt(t_aq, (par['shift_I'+str(ii+1)+'_V'+str(jj+1)+'_'+str(idx)]-cal-o1p)*sf1, 2*np.pi*par['lw_I'+str(ii+1)+'_V'+str(jj+1)+'_'+str(idx)]*sf1,
-                                                A=np.abs(par['k_I'+str(ii+1)+'_V'+str(jj+1)+'_'+str(idx)]), phi=0, x_g=par['xg_I'+str(ii+1)+'_V'+str(jj+1)+'_'+str(idx)])
-                    ### processing
-                    lor_ph0 = f_fun.zf(lor_ph0, SI)
-                    ###
-
-                    lor = f_fun.ft(lor, SI, dw, o1p, sf1)[0]
-                    lor = np.conj(lor)[::-1].real
-
-                    sim_spectra += lor
-                    comp_list[ii].append(lor[sx:dx])
-
-                    lor_ph0 = f_fun.ft(lor_ph0, SI, dw, o1p, sf1)[0]
-                    lor_ph0 = np.conj(lor_ph0[::-1]).real
-
-                    m=mult[jj]
-                    if m==0:
-                        prev=0
-                        lor_list[ii].append(lor)
-                        lor_ph0_list[ii].append(lor_ph0)
-                    elif m!=0:
-                        if m==prev:
-                            lor_m = lor+lor_list[ii][-1]
-                            lor_m_int = lor_ph0+lor_ph0_list[ii][-1]
-                            del lor_list[ii][-1]
-                            lor_list[ii].append(lor_m)
-                            del lor_ph0_list[ii][-1]
-                            lor_ph0_list[ii].append(lor_m_int)
-                        else:
-                            prev = m
-                            lor_list[ii].append(lor)
-                            lor_ph0_list[ii].append(lor_ph0_list)
-
-                sim_spectra_tot += sim_spectra
-
-                x = ppm_scale[sx:dx]
-                corr_baseline = par['E_'+str(idx)]*x**4 + par['D_'+str(idx)]*x**3 + par['C_'+str(idx)]*x**2 + par['B_'+str(idx)]*x + par['A_'+str(idx)]
-
-                if ii==0:
-                    #cost deve essere per forza unico, altrimenti non posso definire la baseline totale
-                    cost = np.sum((sim_spectra[sx:dx]+corr_baseline)*spettro[sx:dx].real)/np.sum((sim_spectra[sx:dx]+corr_baseline)**2)
-
-                lor_ph0_list[ii] = np.array(lor_ph0_list[ii])*np.abs(cost)  
-                lor_list[ii] = np.array(lor_list[ii])*cost
-                comp_list[ii] = np.array(comp_list[ii])*cost
-
-                model = cost*(corr_baseline+sim_spectra[sx:dx]) 
-
-                res = model-spettro[sx:dx]
-
-                res_tot.append(res/max(spettro[sx:dx]))
-                res_tot_gradient.append((np.gradient(model)-np.gradient(spettro[sx:dx]))/max(np.gradient(spettro[sx:dx])))
-
-                if cycle%1000==0 or result:
-                    # f_fun.f_figure_comp(ppm_scale[sx:dx], spettro[sx:dx], model, comp_list[ii], 
-                                        # name=dir_res+'/'+new_dir+'_D'+str(idx+1)+'_I'+str(ii+1)+'_2ndround', basefig = cost*corr_baseline, 
-                                        # dic_fig={'h':5.59,'w':4.56, 'sx':tensor_red[0,1], 'dx':tensor_red[0,2]})
-                    f_fun.f_figure_comp(ppm_scale[sx:dx], spettro[sx:dx], model, comp_list[ii], 
-                                    name=dir_res+'/'+new_dir+'_D'+str(idx+1)+'_I'+str(ii+1)+'_2ndround', basefig = cost*corr_baseline, 
-                                    dic_fig={'h':5.59,'w':4.56, 'sx':tensor_red[0,1], 'dx':tensor_red[0,2]})
-                    f_fun.f_figure_comp(ppm_scale[sx:dx], np.gradient(spettro[sx:dx]), np.gradient(model), [np.gradient(comp_list[ii][qq]) for qq in range(len(comp_list[ii]))], 
-                                    name=dir_res+'/'+new_dir+'_D'+str(idx+1)+'_I'+str(ii+1)+'_deriv'+'_2ndround', basefig = cost*np.gradient(corr_baseline), 
-                                    dic_fig={'h':5.59,'w':4.56, 'sx':tensor_red[0,1], 'dx':tensor_red[0,2]})
-            
-            integral_in=[]
-            int_err = []
-            for ii in range(len(tensor_red_list)):  #per intervallo
-                integral_in.append([])
-                int_err.append([])
-                tensor_red = tensor_red_list[ii]
-                sx, dx, _ = f_fun.find_limits(tensor_red[0,1], tensor_red[0,2], ppm_scale)
-                for jj in range(len(lor_list[ii])):  #per voigt
-                    integral_in[ii].append(np.trapz(lor_list[ii][jj]))
-                    Err = error_calc_num(ppm_scale, res_tot[ii]*max(spettro[sx:dx]), lor_ph0_list[ii][jj], np.trapz(lor_ph0_list[ii][jj]), par['shift_I'+str(ii+1)+'_V'+str(jj+1)+'_'+str(idx)], sx, dx)
-                    int_err[ii].append(Err)
-                    
-
-            integral_list_global.append(integral_in)  #delay, interval, peak
-            err_list_global.append(int_err)
-
-            residuals = []
-            for idxr,r in enumerate(res_tot):
-                residuals = np.concatenate([residuals, r])
-                residuals = np.concatenate([residuals, res_tot_gradient[idxr]])
-
-            x = ppm_scale
-            corr_baseline = par['E_'+str(idx)]*x**4 + par['D_'+str(idx)]*x**3 + par['C_'+str(idx)]*x**2 + par['B_'+str(idx)]*x + par['A_'+str(idx)]
-            model = cost*(corr_baseline+sim_spectra_tot)
-            deriv = (np.gradient(corr_baseline) + np.gradient(np.gradient(corr_baseline))*1e2 + np.gradient(np.gradient(np.gradient(corr_baseline)))*1e4)
-                
-            if cycle%1000==0 or result:
-                f_fun.f_figure(ppm_scale, spettro, model, name=dir_res+'/'+new_dir+'_D'+str(idx+1)+'_2ndround', basefig = cost*corr_baseline)
-                
-            
-            # if bsl_range is not None:
-            #     bsl_sect = []
-            #     for lims in bsl_range:
-            #         sx, dx, _ = f_fun.find_limits(lims[0], lims[1], ppm_scale)
-            #         x = ppm_scale[sx:dx]
-            #         corr_baseline = par['E_'+str(idx)]*x**4 + par['D_'+str(idx)]*x**3 + par['C_'+str(idx)]*x**2 + par['B_'+str(idx)]*x + par['A_'+str(idx)]
-            #         bsl_sect.append(corr_baseline*cost-spettro[sx:dx])
-            #     bsl_sect = np.concatenate(bsl_sect)
-            #     residuals = np.concatenate((residuals/max(spettro)))#, deriv, bsl_sect*cost/max(spettro)/10))  #non ci ho messo la regolarizzazione con derivata perché ho già la regolarizzazione con il t1
-            # else:
-            #     residuals = np.concatenate((residuals/max(spettro)))#, deriv))
-            # residuals_global.append(residuals)
-        
-            # residuals = np.concatenate((residuals, deriv))
-            residuals_global.append(residuals)
-        
-        integral_list_global = np.array([item for sublist in integral_list_global for item in sublist])
-        err_list_global = np.array([item for sublist in err_list_global for item in sublist])
-
-        #### inversion recovery fit    
-        R1_list = []
-        res_tot = []
-        fmodel_list = []
-        for idx in range(integral_list_global.shape[1]):  #per ogni picco
-            res, fmodel = IR_residue(delays, 10**par['t1_'+str(idx+1)], integral_list_global[:,idx])
-            res_tot.append(res*10)
-            R1_list.append(1/10**par['t1_'+str(idx+1)])
-            fmodel_list.append(fmodel)
-
-        fmodel_list = np.array(fmodel_list)
-
-        res_IR = np.concatenate(res_tot)
-        residuals_global.append(res_IR)
-
-        if cycle%1000==0 or result:
-
-            print(R1_list)
-
-            fig = plt.figure()
-            ax = fig.add_subplot(121)
-            ax.plot(np.concatenate(residuals_global))
-            ax = fig.add_subplot(122)
-            ax.plot(res_IR)
-            plt.savefig('res_global.png')
-            plt.close()
-
-            f_fun.f_figure_decays(delays, integral_list_global, exp_model = fmodel_list, R1_list=R1_list, name=dir_res+'/'+new_dir+'_IR', logscale=False)
-            
-        if not result:
-            return np.concatenate(residuals_global)
-        else:
-            return integral_list_global, err_list_global, R1_list
-           
-    minner = lmfit.Minimizer(f_residue, param, fcn_args=(ppm_scale, data, tensor_red_list, delays))
-    # result = minner.minimize(method='differential_evolution', max_nfev=30000)
-    result = minner.minimize(method='Nelder', max_nfev=10000)#, xtol=1e-7, ftol=1e-7)
-    params = result.params
-    result = minner.minimize(params=params, method='leastsq', max_nfev=30000)#, xtol=1e-7, ftol=1e-7)
-    
-    popt = result.params
-    Int, Err, R1 = f_residue(popt, ppm_scale, data, tensor_red_list, delays, result=True)
-    
-    return Int, Err, R1
