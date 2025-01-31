@@ -922,7 +922,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
         dw = 1/(SW)
         td = TD//2
         o1p = o1/sf1
-        t_aq = np.linspace(0, td*dw, td) + DE
+        t_aq = np.linspace(0, SI*dw, SI) + DE
 
         data = np.array([datap[r,:] for r in range(datap.shape[0]) if sum(datap[r,:]) != 0+1j*0])  # removes not acquired spectra
         print('DATA SHAPE: ', data.shape)
@@ -1075,13 +1075,13 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
                 if tensor_red[j,0]=='true':
                     param.add('shift_'+str(j+1), value=tensor_red[j,3], min=tensor_red[j,3]-2, max=tensor_red[j,3]+2)
                     param.add('k_'+str(j+1), value=tensor_red[j,4], min=-1, max=1)
-                    param.add('lw_'+str(j+1), value=tensor_red[j,5],  min=1e-4, max = 3.5)
+                    param.add('lw_'+str(j+1), value=tensor_red[j,5],  min=0, max = 10)
                     param.add('ph_'+str(j+1), value=tensor_red[j,6], min=-np.pi, max=np.pi)
                     param.add('xg_'+str(j+1), value=tensor_red[j,7], min=0, max=1)
                 else:
                     param.add('shift_'+str(j+1)+'_f', value=tensor_red[j,3], min=tensor_red[j,3]-2, max=tensor_red[j,3]+2)
                     param.add('k_'+str(j+1)+'_f', value=tensor_red[j,4], min=-1, max=1)
-                    param.add('lw_'+str(j+1)+'_f', value=tensor_red[j,5],  min=1e-4, max = 3.5)
+                    param.add('lw_'+str(j+1)+'_f', value=tensor_red[j,5],  min=0, max = 10)
                     param.add('ph_'+str(j+1)+'_f', value=tensor_red[j,6], min=-np.pi, max=np.pi)
                     param.add('xg_'+str(j+1)+'_f', value=tensor_red[j,7], min=0, max=1)
 
@@ -1389,7 +1389,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
     dw = 1/(SW)
     td = TD//2
     o1p = o1/sf1
-    t_aq = np.linspace(0, td*dw, td) + DE
+    t_aq = np.linspace(0, SI*dw, SI) + DE
 
     to_order = np.hstack((np.reshape(delays_list,(len(delays_list),1)),data))
 
@@ -1509,13 +1509,13 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
             if tensor_red[j,0]=='true':
                 param.add('shift_'+str(j+1), value=tensor_red[j,3], min=tensor_red[j,3]-2, max=tensor_red[j,3]+2)
                 param.add('k_'+str(j+1), value=tensor_red[j,4], min=-1, max=1)
-                param.add('lw_'+str(j+1), value=tensor_red[j,5],  min=1e-4, max = 3.5)
+                param.add('lw_'+str(j+1), value=tensor_red[j,5],  min=0, max = 10)
                 param.add('ph_'+str(j+1), value=tensor_red[j,6], min=-np.pi, max=np.pi)
                 param.add('xg_'+str(j+1), value=tensor_red[j,7], min=0, max=1)
             else:
                 param.add('shift_'+str(j+1)+'_f', value=tensor_red[j,3], min=tensor_red[j,3]-2, max=tensor_red[j,3]+2)
                 param.add('k_'+str(j+1)+'_f', value=tensor_red[j,4], min=-1, max=1)
-                param.add('lw_'+str(j+1)+'_f', value=tensor_red[j,5],  min=1e-4, max = 3.5)
+                param.add('lw_'+str(j+1)+'_f', value=tensor_red[j,5],  min=0, max = 10)
                 param.add('ph_'+str(j+1)+'_f', value=tensor_red[j,6], min=-np.pi, max=np.pi)
                 param.add('xg_'+str(j+1)+'_f', value=tensor_red[j,7], min=0, max=1)
 
@@ -1767,8 +1767,6 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
 def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, dw, j, jj, dir_res, new_dir, SR=0, SI=0, SW=0, LB=0, SSB=0, dofit=True, fast=False, IR=False, L1R=None, L2R=None, err_conf=0.95):
     
     cal = SR/sf1 - (ppm_scale[0]-ppm_scale[1])
-
-    #spettro = spettro0/np.max(spettro0.real)
     
     cycle = -1   
     def f_residue(param, ppm_scale, spettro, tensor_red, result=False):
@@ -1800,7 +1798,7 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
             ### processing
             lor *= em(lor, LB, SW)
             lor *= qsin(lor, SSB)
-            lor = zf(lor, SI)
+            # lor = zf(lor, SI)
             ###
 
             #mi serve per l'errore 

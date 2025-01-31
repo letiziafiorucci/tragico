@@ -1801,7 +1801,7 @@ class create_input():
                 ### processing
                 lor *= em(lor, LB, SW)
                 lor *= qsin(lor, SSB)
-                lor = zf(lor, SI)
+                #lor = zf(lor, SI)
                 ###
                 pv[i] = ft(lor, SI, dw, o1p, sf1)[0]
                 pv[i] = np.conj(pv[i])[::-1]
@@ -1880,7 +1880,7 @@ class create_input():
             ### processing
             lor *= em(lor, LB, SW)
             lor *= qsin(lor, SSB)
-            lor = zf(lor, SI)
+            #lor = zf(lor, SI)
             ###
 
             pv[i] = ft(lor, SI, dw, o1p, sf1)[0]
@@ -1971,7 +1971,7 @@ class create_input():
         dw = 1/(SW)
         td = TD//2
         o1p = o1/sf1
-        taq = np.linspace(0, td*dw, td) + DE
+        taq = np.linspace(0, SI*dw, SI) + DE  # I have to use SI instead of TD//2 since zf() gives problems 
         cal2 = SR/sf1
 
         for it in range(len(ppm1_set)):
