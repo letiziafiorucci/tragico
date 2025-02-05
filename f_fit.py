@@ -1108,7 +1108,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
                             else:
                                 param[name_var].set(min=param[name_var].value+limits1[key][0], max=param[name_var].value+limits1[key][1])
                     elif key=='A' or key=='B' or key=='C' or key=='D' or key=='E':
-                        if limits1[key][0] == limits1[key][1] or param[name_var].min == param[name_var].max:
+                        if limits1[key][0] == limits1[key][1] or param[key].min == param[key].max:
                             param[key].set(vary=False)
                         else:
                             param[key].set(min=limits1[key][0], max=limits1[key][1])
@@ -1137,9 +1137,9 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
                     if limits2 is not None:
                         for key in limits2.keys():
                             if key=='A' or key=='B' or key=='C' or key=='D' or key=='E':
-                                if limits2[key][0] == limits2[key][1] or param[name_var].min == param[name_var].max:
+                                if limits2[key][0] == limits2[key][1] or param[key].min == param[key].max:
                                     param[key].set(vary=False)
-                                else:
+                                elif np.abs(param[key].value)>1e-15:
                                     param[key].set(min=param[key].value*limits2[key][0], max=param[key].value*limits2[key][1])
                             else:
                                 for jj in range(tensor_red.shape[0]):
@@ -1541,7 +1541,7 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
                         else:
                             param[name_var].set(min=param[name_var].value+limits1[key][0], max=param[name_var].value+limits1[key][1])
                 elif key=='A' or key=='B' or key=='C' or key=='D' or key=='E':
-                    if limits1[key][0] == limits1[key][1] or param[name_var].min == param[name_var].max:
+                    if limits1[key][0] == limits1[key][1] or param[key].min == param[key].max:
                         param[key].set(vary=False)
                     else:
                         param[key].set(min=limits1[key][0], max=limits1[key][1])
@@ -1572,9 +1572,9 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
                 if limits2 is not None:
                     for key in limits2.keys():
                         if key=='A' or key=='B' or key=='C' or key=='D' or key=='E':
-                            if limits2[key][0] == limits2[key][1] or param[name_var].min == param[name_var].max:
+                            if limits2[key][0] == limits2[key][1] or param[key].min == param[key].max:
                                 param[key].set(vary=False)
-                            else:
+                            elif np.abs(param[key].value)>1e-15:
                                 param[key].set(min=param[key].value*limits2[key][0], max=param[key].value*limits2[key][1])
                         else:
                             for jj in range(tensor_red.shape[0]):
