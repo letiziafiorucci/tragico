@@ -1774,7 +1774,7 @@ def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal
 
 def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, dw, j, jj, dir_res, new_dir, SR=0, SI=0, SW=0, LB=0, SSB=0, dofit=True, fast=False, IR=False, L1R=None, L2R=None, err_conf=0.95):
     
-    cal = SR/sf1 #- (ppm_scale[0]-ppm_scale[1])
+    cal = SR/sf1 - (ppm_scale[0]-ppm_scale[1])
     
     cycle = -1   
     def f_residue(param, ppm_scale, spettro, tensor_red, result=False):
