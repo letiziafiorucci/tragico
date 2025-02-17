@@ -368,7 +368,7 @@ def find_nearest(array, value):
     return array[idx]
 
 def ppmfind(ppm_1h, value):
-    #from classf.py
+
     avgstep = np.abs((ppm_1h[0]-ppm_1h[1])/2)
     for i, delta in enumerate(ppm_1h):
         if delta >= value-avgstep and delta < value+avgstep:
@@ -377,8 +377,11 @@ def ppmfind(ppm_1h, value):
             break
         else:
             continue
-
-    return I, V
+    try:
+        return I, V
+    except UnboundLocalError:
+        print(value)
+        exit()
 
 def trim_data(ppm_scale, y, sx, dx):
     # Trims the frequency scale and correspondant
@@ -583,6 +586,32 @@ def calibration(ppm_scale, data, ppmsx, ppmdx, npoints=80, debug_fig=False):
 
     return shift_cal, shift_cal_ppm, data_roll
 
+def read_1D_FID(path):
+
+    if '/pdata/' in path: 
+        path = path[:path.index('/pdata/')]
+    else:
+        pass
+    dic, data = ng.bruker.read(path)
+
+    return dic, data    
+
+def pknl(data, grpdly):
+
+    data_ft, _ = ft(data)
+
+    datap_ft, _ = ps(data_ft, p1=360*grpdly)
+    datap = ift(datap_ft)
+
+    return datap
+
+def f_qsin(td, SSB=2):
+    qsin = np.zeros((td))
+    for i in range(td):
+        qsin[i] = np.sin((np.pi-(np.pi/SSB))*i/td+(np.pi/SSB))**2
+    
+    return qsin
+
 #=========================================================================================#
 
 #-------------------------------------------------------------------#
@@ -693,7 +722,7 @@ def error_calc_num(ppm_scale, res_tot, lor, Int, sx, dx, confidence=0.90):
         weights = np.ones_like(lor)
     else:
         weights = lor
-    center = ppmfind(ppm_scale, np.average(ppm_scale, weights=weights))[0]
+    center = ppmfind(ppm_scale[sx:dx], np.average(ppm_scale[sx:dx], weights=weights[sx:dx]+np.abs(np.min(weights[sx:dx]))))[0]
     lower, upper = Interval(Int, point_scale, lor, center, confidence)
     hole_dx = 0
     hole_sx = 0
@@ -828,7 +857,7 @@ def t_voigt(t, v, s, A=1, phi=0, x_g=0):
     S = A * np.exp(1j*phi) * (t_gaussian_v(t, v/2, s/2.355, A=x_g) * t_lorentzian_v(t, v/2, s, A=1-x_g))   
     return S
 
-def ft(fid, td = 65536, dw = 1e-6, o1p = 4.7, sfo1 = 1200):
+def ft(fid_in, td = 65536, dw = 1e-6, o1p = 4.7, sfo1 = 1200):
     """
     Fourier transform of the FID.
     --------
@@ -848,6 +877,7 @@ def ft(fid, td = 65536, dw = 1e-6, o1p = 4.7, sfo1 = 1200):
     - data :1darray
         Transformed data
     """
+    fid = fid_in.copy()
     data = np.zeros_like(fid)
     fid[0] /= 2
     data = np.fft.fftshift(np.fft.fft(fid))
@@ -884,7 +914,7 @@ def param_acq(ngdic):
         'GRPDLY' : ngdic['acqus']['GRPDLY'],
         'P1' : ngdic['acqus']['P'][1]*1e-6,
         'omega_nut': 1/(4*ngdic['acqus']['P'][1]*1e-6),
-        'DE' : 0, #ngdic['acqus']['DE']*1e-6,
+        'DE' : ngdic['acqus']['DE']*1e-6,
         'BF1' : ngdic['acqus']['BF1']
     }
     return dict 
@@ -2091,7 +2121,7 @@ def nmr_spectra_pseudo2d(path):
     ppm_scale = uc.ppm_scale()
 
     return data, ppm_scale, dic
-    
+
 def histogram(data, nbins=100, density=True, f_lims= None, xlabel=None, x_symm=False, name=None, ret_stats=False):
     """
     Computes an histogram of 'data' and tries to fit it with a gaussian lineshape.

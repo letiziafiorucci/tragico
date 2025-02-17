@@ -1316,7 +1316,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
 
     return dir_result
 
-def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=True, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, acqupars=None, procpars=None, Param=None):    
+def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal_lim = None, IR=False, dofit=True, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, acqupars=None, procpars=None, Param=None):    
 
     for i in range(len(delays_list)):
         if 'pdata' not in list_path[i]:
@@ -1327,12 +1327,18 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
     try:
         os.mkdir(new_dir+nome_folder)
     except:
-        ans = input('\nThe directory '+color_term.BOLD+new_dir+nome_folder+color_term.END+' already exists.\nDo you want to:\n[overwrite the existing directory (1)]\ncreate a new directory (2)\ncontinue writing in the existing directory (3)\n>')
+        if option is None:
+            ans = input('\nThe directory '+color_term.BOLD+new_dir+nome_folder+color_term.END+' already exists.\nDo you want to:\n[overwrite the existing directory (1)]\ncreate a new directory (2)\ncontinue writing in the existing directory (3)\n>')
+        else:
+            ans = str(option)
         if ans=='1' or ans == '':
             shutil.rmtree(new_dir+nome_folder)           # Removes all the subdirectories!
             os.makedirs(new_dir+nome_folder)
         elif ans=='2':
-            new_dir = input('Write new directory name: ')
+            if dir_name is None:
+                new_dir = input('Write new directory name: ')
+            else:
+                new_dir = dir_name
             os.makedirs(new_dir+nome_folder)
         elif ans=='3':
             pass
@@ -1401,7 +1407,8 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
     data = to_order[:,1:]
     delays = to_order[:,0].real
 
-    data_sim = np.zeros_like(data.real)
+    data_sim = np.zeros_like(data)
+    FID_sim = np.zeros_like(data)
 
     if cal_lim is not None:
         cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1]) 
@@ -1596,11 +1603,12 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
                 param.load(file)
             ###
           
-            peak_int, int_err, prev_param_compl, result, _, sim_spectra = fit_peaks_bsl_I(param, ppm_scale, data[j,:], tensor_red, 
+            peak_int, int_err, prev_param_compl, result, _, sim_spectra, sim_fid = fit_peaks_bsl_I(param, ppm_scale, data[j,:], tensor_red, 
                                                             t_aq, sf1, o1p, td, dw, j, i, dir_res, new_dir, SR=SR, 
                                                             SI=SI, SW=SW, LB=LB, SSB=SSB, dofit=dofit, fast=fast, L1R=L1R, 
                                                             L2R=L2R, err_conf=err_conf, IR=IR)
             data_sim[j,:] += sim_spectra
+            FID_sim[j,:] += sim_fid
             #### write
             if dofit:
                 file = open(dir_res+'/'+new_dir+'popt_I'+str(i)+'_P'+str(j), 'w')
@@ -1760,13 +1768,13 @@ def model_fit_1D(path, delays_list, list_path, cal_lim = None, IR=False, dofit=T
             plt.close()
 
     if Param is not None:
-        return dir_res, (data, data_sim), (Param_tot, Param_tot_err), delays, ppm_scale
+        return dir_res, (data, data_sim, FID_sim), (Param_tot, Param_tot_err), delays, ppm_scale
     else:
-        return dir_res, (data, data_sim), delays, ppm_scale
+        return dir_res, (data, data_sim, FID_sim), delays, ppm_scale
 
 def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, dw, j, jj, dir_res, new_dir, SR=0, SI=0, SW=0, LB=0, SSB=0, dofit=True, fast=False, IR=False, L1R=None, L2R=None, err_conf=0.95):
     
-    cal = SR/sf1 - (ppm_scale[0]-ppm_scale[1])
+    cal = SR/sf1 #- (ppm_scale[0]-ppm_scale[1])
     
     cycle = -1   
     def f_residue(param, ppm_scale, spettro, tensor_red, result=False):
@@ -1778,13 +1786,13 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
         lor_ph0_list = []
         comp_list = []
         prev=0
-        sim_spectra_tot = np.zeros_like(spettro, dtype='float64')
 
         mult = tensor_red[:,-1]
 
         sx, dx, zero = find_limits(tensor_red[0,1], tensor_red[0,2], ppm_scale)
 
-        sim_spectra = np.zeros_like(spettro, dtype='float64')
+        sim_spectra = np.zeros_like(spettro, dtype='complex128')
+        sim_fid = np.zeros_like(spettro, dtype='complex128')
         
         for ii in range(tensor_red.shape[0]):  #per ogni voigt
 
@@ -1812,8 +1820,9 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
                 else:
                     lor_ph0 = None
 
-
+            sim_fid += lor.copy()
             lor = ft(lor, SI, dw, o1p, sf1)[0]
+            sim_spectra += np.conj(lor)[::-1]
             lor = np.conj(lor)[::-1].real
 
             if np.isnan(lor).any():
@@ -1821,7 +1830,6 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
                 print(ii, par['shift_'+str(ii+1)], par['lw_'+str(ii+1)], par['k_'+str(ii+1)], par['ph_'+str(ii+1)], par['xg_'+str(ii+1)])
 
 
-            sim_spectra += lor
             comp_list.append(lor[sx:dx])
             
             if result:
@@ -1847,8 +1855,6 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
                             lor_list.append(lor)
                             lor_ph0_list.append(lor_ph0)
 
-            sim_spectra_tot += sim_spectra
-
         x = ppm_scale[sx:dx]-zero
         corr_baseline = par['E']*x**4 + par['D']*x**3 + par['C']*x**2 + par['B']*x + par['A']
 
@@ -1859,7 +1865,7 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
             lor_list = np.array(lor_list)*cost
         comp_list = np.array(comp_list)*cost
 
-        model = cost*(corr_baseline+sim_spectra[sx:dx]) 
+        model = cost*(corr_baseline+sim_spectra[sx:dx].real) 
 
         res = model.real-spettro[sx:dx].real
         res2plot = res.copy()
@@ -1914,10 +1920,10 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
 
             x = ppm_scale[sx:dx]-zero
             corr_baseline = par['E']*x**4 + par['D']*x**3 + par['C']*x**2 + par['B']*x + par['A']
-            model = cost*(corr_baseline+sim_spectra_tot[sx:dx])
+            model = cost*(corr_baseline+sim_spectra[sx:dx].real)
             #f_fun.f_figure(ppm_scale[sx:dx], spettro[sx:dx], model, name=dir_res+'/'+new_dir+'_D'+str(j+1)+'_I'+str(jj+1), basefig = cost*corr_baseline)
 
-            return integral_in, int_err, sim_spectra*cost, spettro[sx:dx]-corr_baseline*cost
+            return integral_in, int_err, sim_spectra*cost, spettro[sx:dx]-corr_baseline*cost, sim_fid*cost
         
    
     minner = lmfit.Minimizer(f_residue, param, fcn_args=(ppm_scale, spettro, tensor_red))
@@ -1927,13 +1933,13 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
             params = result.params
             result = minner.minimize(params=params, method='leastsq', max_nfev=10000)
         else:
-            result = minner.minimize(method='leastsq', max_nfev=10000)
+            result = minner.minimize(method='leastsq', max_nfev=5000)
     else:
         result = minner.minimize(method='Nelder', max_nfev=0)
     popt = result.params
-    peak_int, int_err, sim_spectra, spettro_corrbsl = f_residue(popt, ppm_scale, spettro, tensor_red, result=True)
+    peak_int, int_err, sim_spectra, spettro_corrbsl, sim_fid = f_residue(popt, ppm_scale, spettro, tensor_red, result=True)
     
-    return peak_int, int_err, popt, result, spettro_corrbsl, sim_spectra
+    return peak_int, int_err, popt, result, spettro_corrbsl, sim_spectra, sim_fid
 
 #------------------------------------------------------------#
 #                       TAILORED FUNCTIONS                   #
