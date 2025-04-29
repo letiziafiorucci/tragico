@@ -2213,7 +2213,7 @@ def f_figure_comp(ppmscale, data, model, comp, name=None, basefig=None, dic_fig=
         ax.plot(ppmscale, basefig, 'r',lw=0.5, label='baseline')
     ax.plot(ppmscale, data, lw=0.5, label='experiment')
     ax.plot(ppmscale, model, lw=0.5, label='model')
-    ax.plot(ppmscale, data-model, lw=0.5, label='residue')
+    ax.plot(ppmscale, data-model, lw=0.5, label='residual')
     for i in range(len(comp)):
         ax.plot(ppmscale, comp[i], '--', lw=0.4, label='comp. '+str(i+1))
     ax.set_xlabel(r'$\delta$ (ppm)', fontsize=8.5)
@@ -2233,7 +2233,7 @@ def f_figure_comp(ppmscale, data, model, comp, name=None, basefig=None, dic_fig=
         plt.savefig(name+'.png', dpi=600)
         plt.close()	
 
-def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=None, map='rainbow', dic_fig={'h':5,'w':4,'sx':None,'dx':None}, f_legend=False, area=False):
+def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=None, map='rainbow', dic_fig={'h':5,'w':4,'sx':None,'dx':None}, f_legend=True, area=False):
 
     #colors from map
     cmap = plt.get_cmap(map)
@@ -2247,17 +2247,17 @@ def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=
     sxo,dxo,_ = find_limits(limits[0],limits[1],ppmscale)
 
     fig = plt.figure()
-    fig.set_size_inches(dic_fig['h'],dic_fig['w'])   
-    plt.subplots_adjust(left=0.15,bottom=0.15,right=0.95,top=0.90)
+    fig.set_size_inches(3.5,3)#dic_fig['h'],dic_fig['w'])   
+    #plt.subplots_adjust(left=0.15,bottom=0.15,right=0.95,top=0.90)
     ax = fig.add_subplot(1,1,1)
     ax.tick_params(labelsize=6.5)
     for i in range(len(delays_list)):
         if f_legend:
-            ax.plot(ppmscale[sx:dx], data[i,sx:dx]-baseline[sx:dx], lw=0.3,c=colors[i], label=f'D: {delays_list[i]:.2e}')
+            ax.plot(ppmscale[sx:dx], data[i,sx:dx]-baseline[sx:dx], lw=0.5,c=colors[i], label=f'{delays_list[i]:.3f} s')
         else:
-            ax.plot(ppmscale[sx:dx], data[i,sx:dx]-baseline[sx:dx], lw=0.3,c=colors[i])
-    if area:
-        ax.fill_between(ppmscale[sxo:dxo], np.min(data[:,sx:dx].real-baseline[sx:dx]), np.max(data[:,sx:dx].real-baseline[sx:dx]), color='grey', alpha=0.2)
+            ax.plot(ppmscale[sx:dx], data[i,sx:dx]-baseline[sx:dx], lw=0.5,c=colors[i])
+    # if area:
+    #     ax.fill_between(ppmscale[sxo:dxo], np.min(data[:,sx:dx].real-baseline[sx:dx]), np.max(data[:,sx:dx].real-baseline[sx:dx]), color='grey', alpha=0.2)
     else:
         for i in range(len(lines)):
             ax.plot(lines[i], np.max(data[i,sxo:dxo].real-baseline[sxo:dxo]), 'o', c=colors[i], markersize=1)
@@ -2273,8 +2273,9 @@ def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=
     else:
         ax.set_xlim(limits[0],limits[1])
     ax.invert_xaxis()
+    plt.tight_layout()
     if f_legend:
-        ax.legend(fontsize=5)
+        ax.legend(fontsize=6)
     if name is None:
         plt.show()
     else:

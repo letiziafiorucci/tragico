@@ -1658,7 +1658,7 @@ def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal
     if Param is not None:
         np.savetxt(dir_res+'/Param.txt', Param_tot)
         #replace in the Param_tot_err the None values with -1
-        Param_tot_err = np.where(Param_tot_err==None, -1, Param_tot_err)
+        Param_tot_err = np.where(Param_tot_err==None, 0, Param_tot_err)
         np.savetxt(dir_res+'/Param_err.txt', Param_tot_err)
 
     int_del = np.column_stack((integral, delays))  #(n. delays x [integral[:,0],...,integral[:,n], delays[:]])
@@ -1815,7 +1815,7 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
                     lor_ph0 = t_voigt(t_aq, (par['shift_'+str(ii+1)]+cal-o1p)*sf1, 2*np.pi*par['lw_'+str(ii+1)]*sf1,
                                                 A=np.abs(par['k_'+str(ii+1)]), phi=0, x_g=par['xg_'+str(ii+1)])
                     ### processing
-                    lor_ph0 = zf(lor_ph0, SI)
+                    # lor_ph0 = zf(lor_ph0, SI)
                     ###
                 else:
                     lor_ph0 = None
