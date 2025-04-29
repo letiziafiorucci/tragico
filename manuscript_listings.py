@@ -13,8 +13,8 @@ import numpy as np
 path = 'path/to/spectra/folder/'
 
 
-# in this case the experiments’ names correspond to consecutive numbers (from 2 to 14)
-num_sp = list(np.arange(2,15,1))  
+# in this case the experiments’ names correspond to consecutive numbers (from 1 to 12). The arange function takes as input (start, stop, step) and ends at stop-1.
+num_sp = list(np.arange(1,13,1))  
 list_sp = [str(i)+'/pdata/1' for i in num_sp]
 
 
