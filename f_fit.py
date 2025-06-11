@@ -110,7 +110,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, IR=F
 
         # performs calibration on the spectra if cal_lim is not None
         if cal_lim is not None:
-            cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1]) 
+            cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1], debug_fig=True) 
             with open(dir_res+'/'+nameout, 'w') as f:
                 f.write('\n')
                 if fileinp is not None:
@@ -304,7 +304,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, IR=F
                         f.write('N. point\tIntegral\n')
                     else:
                         f.write('N. point\tIntensity\tShift\n')
-                for i in range(len(delays_list)):
+                for i in range(len(delays)):
                     if err_lims is not None:
                         if area:
                             f.write(str(i)+'\t'+f'{integral[i,j]:.3f}'+' +/- '+f'{error[i,j]:.3f}'+'\n')
@@ -2303,9 +2303,6 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
                         comments=""
                     )
 
-
-#========================================== ON DEV ===============================================
-
 def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors=False, I_reduce=[], reduce=[]):
     #I_reduce = list of n. intervals that I want to reduce (count starts from 1) (list of integers)
     #reduce = list of delays that I want to remove (count starts from 0) (list of integers)
@@ -2441,7 +2438,7 @@ def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors
             ax.errorbar(VClist, R1[:,1], yerr=err[:,1], fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
         else:
             ax.plot(VClist, R1, 'o', c='blue',markersize=1)
-            ax.errorbar(VClist, R1, yerr=err, fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
+            # ax.errorbar(VClist, R1, yerr=err, fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
         #x log scale
         ax.set_xscale('log')
         plt.savefig(dir_result+'/R1_'+str(i+1)+'_correct.png', dpi=600)
@@ -2465,3 +2462,459 @@ def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors
                         header=column_names,
                         comments=""
                     )
+
+#========================================== ON DEV ===============================================
+
+def intensity_fit_pseudo2D_4J(path, delays_list, list_path, prev_lims = False, IR=False, prev_coeff = False, area=False, auto_ph=False, VCLIST=None, cal_lim = None, baseline=False, delta=0, doexp=False, f_int_fit=None, fargs={}, fig_stack=True, fileinp='inp1_pseudo2D', err_lims_out=None, color_map='viridis'):
+
+    """
+    This is a copy of the function intensity_fit_pseudo2D, but it is tailored for allowing manual baseline definition for each transient of each pseudo2D spectrum.
+    I would not suggest to use it :)
+    """
+
+    # series of pseudo2D spectra 
+
+    # path: path to the directory containing the spectra
+    # delays_list: list of parameters to be used as x-variable in the fit of the intensity (can be time, temperature, etc.)
+    # list_path: list of pseudo2Ds
+    # area: if True the integral of the peak is calculated, otherwise the intensity is the maximum value of the peak
+    # VCLIST: list of the parameters (for HRR are the field values) that differentiate one pseudo2D from the other
+    # cal_lim: limits of the calibration region in ppm given as an iterable (e.g. [0.0, 10.0])
+    # baseline: if True the baseline is subtracted
+    # f_int_fit: function for the intensity fit against the chosen x-variable (delays_list)
+    # doexp: if True the intensities are fitted with an exponential decay (in this case f_int_fit is not used)
+    # fargs: dictionary of arguments to be passed to f_int_fit
+
+    for i in range(len(delays_list)):
+        if 'pdata' not in list_path[i]:
+            list_path[i] = list_path[i]+'/pdata/1'
+
+    new_dir = os.path.basename(os.path.normpath(path))
+    if area:
+        nome_folder = '_integral'
+    else:
+        nome_folder = '_intensity'
+    
+    try:
+        os.mkdir(new_dir+nome_folder)
+    except:
+        ans = input('\nThe directory '+color_term.BOLD+new_dir+nome_folder+color_term.END+' already exists.\nDo you want to:\n[overwrite the existing directory (1)]\ncreate a new directory (2)\ncontinue on writing on the existing (3)\n>')
+        if ans=='1' or ans == '':
+            shutil.rmtree(new_dir+nome_folder)           # Removes all the subdirectories!
+            os.makedirs(new_dir+nome_folder)
+        elif ans=='2':
+            new_dir = input('Write new directory name: ')
+            os.makedirs(new_dir+nome_folder)
+        elif ans=='3':
+            pass
+        else:
+            print('\nINVALID INPUT')
+            exit()
+    print('Writing directory '+color_term.BOLD+new_dir+nome_folder+color_term.END)
+
+    #creats directorys inside dir_result with the same names as the spectra in path
+    dir_result = new_dir+nome_folder
+    [os.makedirs(dir_result+'/'+list_path[i][:list_path[i].index('/pdata')]) for i in range(len(list_path))]
+    dir_result_sp = [dir_result+'/'+list_path[i][:list_path[i].index('/pdata')] for i in range(len(list_path))]  # 'nome_directory_risultato/numero_spettro'
+
+    if VCLIST is None:
+        VCLIST = []
+    field = False
+    for idx, dir_res in enumerate(dir_result_sp):  #for every pseudo2D
+
+        print('DIR: ', color_term.CYAN+dir_res+color_term.END)
+
+        nameout = new_dir+'_sp'+list_path[idx][:list_path[idx].index('/pdata')]+'.out'
+
+        delays = delays_list[idx]
+
+        print('PATH TO SPECTRA: ', path+'/'+list_path[idx])
+
+        datap, ppm_scale, dic = nmr_spectra_pseudo2d(path+'/'+list_path[idx]) #(n.delay x TD)
+
+        title = open(path+'/'+list_path[idx]+'/title').readlines()  #read field from title: format xxx.xxmT (this works only for HRR measurements)
+        if VCLIST==[] or field==True:
+            for i,line in enumerate(title):
+                if 'The selected field' in line:
+                    line = line.replace('\n','')
+                    splitline = line.split(' ')
+                    for ii in range(len(splitline)):
+                        try:
+                            field = float(splitline[ii][:-2])
+                        except:
+                            pass
+
+            VCLIST.append(field)
+            field = True
+
+        data = np.array([datap[r,:] for r in range(datap.shape[0]) if sum(datap[r,:]) != 0+1j*0])  #tolgo eventuali spettri non acquisiti
+        print('DATA SHAPE: ', data.shape)
+
+        if auto_ph:
+            data_p = []
+            for i in range(data.shape[0]):
+                p0, p1 = acme(data[i,:])
+                data = ps(data[i,:], ppm_scale, p0, p1)
+                data_p.append(data[i,:].real)
+            data = np.array(data_p)
+
+        to_order = np.hstack((np.reshape(delays,(len(delays),1)),data))
+
+        if IR:
+            # print('true',to_order[:,0].argsort()[::-1])
+            to_order = to_order[to_order[:,0].argsort()[::-1]]   
+        else:
+            # print('false', to_order[:,0].argsort())
+            to_order = to_order[to_order[:,0].argsort()]
+
+        data = to_order[:,1:]
+        delays = to_order[:,0].real
+
+        # performs calibration on the spectra if cal_lim is not None
+        if cal_lim is not None:
+            cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1]) 
+            with open(dir_res+'/'+nameout, 'w') as f:
+                f.write('\n')
+                if fileinp is not None:
+                    f.write('I/O INTERVALS: '+fileinp+'\n')
+                f.write('SPECTRA PATH: \n')
+                f.write(path+'/'+list_path[idx]+'\n')
+                f.write('\n')
+                f.write('CALIBRATION: ('+f'{cal_lim[0]:.5f}'+':'+f'{cal_lim[1]:.5f}'+') ppm\n')
+                f.write('in points\n')
+                [f.write(str(cal_shift[ii])+'   ') for ii in range(len(cal_shift))]
+                f.write('\nin ppm\n')
+                [f.write(f'{cal_shift_ppm[ii]:.5f}'+'   ') for ii in range(len(cal_shift_ppm))]
+                f.write('\n\n')
+                f.write('Points:\n')
+                [f.write(str(r+1)+'\t'+f'{delays[r]:.3f}'+'\n') for r in range(len(delays))]
+                if VCLIST is not None and len(VCLIST)>0:
+                    f.write('\n')
+                    f.write('VCLIST point: '+f'{VCLIST[idx]:.2f}'+' T\n')
+                f.close()
+        else:
+            with open(dir_res+'/'+nameout, 'w') as f:
+                f.write('\n')
+                f.write('I/O INTERVALS: '+fileinp+'\n')
+                f.write('SPECTRA PATH: \n')
+                f.write(path+'/'+list_path[idx]+'\n')
+                f.write('\n')
+                f.write('Points:\n')
+                [f.write(str(r+1)+'\t'+f'{delays[r]:.3f}'+'\n') for r in range(len(delays))]
+                if VCLIST is not None and len(VCLIST)>0:
+                    f.write('\n')
+                    f.write('VCLIST point: '+f'{VCLIST[idx]:.2f}'+' T\n')
+                f.close()
+
+        spettro = data[0,:]
+
+        err_lims = None
+
+        CI = create_input(ppm_scale, spettro)
+        if idx>0 and not prev_lims:
+            ans = input('Do you want to select different regions? ([y]|n) ')
+            if ans=='y' or ans=='':
+                limits, err_lims = CI.select_regions()
+            else:
+                pass
+        elif idx==0:
+            if os.path.isfile(fileinp):
+                limits = np.loadtxt(fileinp)
+                if len(limits.shape)==1:
+                    limits = np.array([limits])
+                np.savetxt(dir_res+'/'+fileinp, limits)
+            else:
+                limits, err_lims = CI.select_regions()
+                limits = np.array(limits)
+                np.savetxt(dir_res+'/'+fileinp, limits)
+                np.savetxt(fileinp, limits)
+
+            coeff_array = np.zeros((len(limits),5))
+            if isinstance(baseline, str):
+                coeff_array = np.loadtxt(baseline)
+                np.savetxt(dir_res+'/'+baseline, coeff_array)
+                with open(dir_res+'/'+nameout, 'a') as f:
+                    f.write('\nI/O BASELINE: '+baseline+'\n')
+                    f.close()
+
+        if err_lims is None:
+            err_lims = err_lims_out
+
+        elif idx>0 and prev_lims:
+            pass
+
+        int_tot = []
+        coeff_list = []
+        shift_list = []
+        for k in range(len(limits)):
+            
+            if baseline==True:
+                if idx>0 and not prev_coeff:
+                    ans = input('Do you want to select different baseline coefficients for region ('+f'{limits[k,0]:.3f}, {limits[k,1]:.3f}'+') ppm? ([y]|n) ')
+                    if ans=='y' or ans=='':
+                        coeff = CI.make_iguess([limits[k,0]-delta, limits[k,1]+delta], [limits[k,0], limits[k,1]])   
+                    else:
+                        coeff = old_coeff[k]
+                elif idx==0:
+                    coeff = CI.make_iguess([limits[k,0]-delta, limits[k,1]+delta], [limits[k,0], limits[k,1]])
+                elif idx>0 and prev_coeff:
+                    coeff = old_coeff[k]
+                coeff_array[k,:] = coeff
+            elif baseline==False:
+                coeff = np.zeros(5)
+            elif isinstance(baseline, str):
+                coeff = coeff_array[k,:]
+
+            intensity = []
+            shift = []
+            for iii in range(len(delays)):
+
+                coeff = CI.make_iguess([limits[k,0]-delta, limits[k,1]+delta], [limits[k,0], limits[k,1]])
+
+                coeff_list.append(coeff)
+
+                sx, dx, zero = find_limits(limits[k,0], limits[k,1], ppm_scale)  
+
+                x = ppm_scale.copy()
+                A,B,C,D,E = coeff
+                corr_baseline = E*x**4 + D*x**3 + C*x**2 + B*x + A
+
+            
+                if area:
+                    intensity.append(np.trapz(data[iii,sx:dx].real - corr_baseline[sx:dx]))
+                else:
+                    intensity.append(np.max(data[iii,sx:dx].real - corr_baseline[sx:dx]))
+                    shift.append(ppm_scale[sx:dx][np.argmax(data[iii,sx:dx].real - corr_baseline[sx:dx])])
+
+            if fig_stack:
+                fig_stacked_plot(ppm_scale, data, corr_baseline, delays, limits[k], shift, name=dir_res+'/Stack_I'+str(k+1), dic_fig={'h':5,'w':4,'sx':limits[k,0]-delta,'dx':limits[k,1]+delta}, area=area, map=color_map)
+
+            int_tot.append(intensity)
+            shift_list.append(shift)
+
+        old_coeff = coeff_list.copy()
+        if baseline==True:
+            np.savetxt(dir_res+'/'+'pseudo2D_bsl_coeff', coeff_array)
+            with open(dir_res+'/'+nameout, 'a') as f:
+                f.write('\nI/O BASELINE: pseudo2D_bsl_coeff\n')
+                f.close()
+                    
+        
+        with open(dir_res+'/'+nameout, 'a') as f:
+            f.write('\n')
+            f.write('Selected intervals (ppm):\n')
+            for ii in range(len(limits)):
+                f.write(str(ii+1)+'\t'+f'{limits[ii][0]:.4f}'+'\t'+f'{limits[ii][1]:.4f}'+'\n')
+            f.close()
+
+        integral=np.array(int_tot).T
+        Coeff = np.array(coeff_list)
+        shift_list = np.array(shift_list).T
+        print(err_lims)
+        #error evaluation
+        if err_lims is not None:
+            if area:
+                sx, dx, zero = find_limits(err_lims[0], err_lims[1], ppm_scale)
+                error = []
+                for k in range(len(limits)):
+                    error.append([])
+                    sxi, dxi, _ = find_limits(limits[k,0], limits[k,1], ppm_scale) 
+                    for iii in range(len(delays)):
+                        error[k].append(np.mean(np.abs(data[iii,sx:dx].real))*(dxi-sxi)) 
+                error = np.array(error).T
+            else:
+                sx, dx, zero = find_limits(err_lims[0], err_lims[1], ppm_scale)
+                error = []
+                for iii in range(len(delays)):
+                    error.append(np.std(data[iii,sx:dx].real))
+
+        int_del = np.column_stack((integral, delays))  #(n. delays x [integral[:,0],...,integral[:,n], delays[:]])
+        order = int_del[:,-1].argsort()
+        int_del = int_del[order]
+        if not area: 
+            shift_list = shift_list[order]
+        if err_lims is not None:
+            if area:
+                error = np.array(error)[order,:]
+            else:
+                error = np.array(error)[order]
+
+        with open(dir_res+'/'+nameout, 'a') as f:
+            f.write('\n')
+            for r in range(100):
+                f.write('=')
+            f.write('\n')
+            f.write('\n')
+            if not area and err_lims is not None:
+                np.savetxt(dir_res+'/Err.txt', error)
+            for j in range(integral.shape[1]):
+                if area and err_lims is not None:
+                    np.savetxt(dir_res+'/Err_'+str(j+1)+'.txt', error[:,j])
+                np.savetxt(dir_res+'/y_'+str(j+1)+'.txt', integral[:,j])
+                np.savetxt(dir_res+'/x_'+str(j+1)+'.txt', delays)
+                f.write('N. interval: '+str(j+1)+'\n')
+                if baseline:
+                    f.write('Baseline coefficients\n')
+                    f.write('A\t'+f'{Coeff[j,0]:.5e}'+'\n')
+                    f.write('B\t'+f'{Coeff[j,1]:.5e}'+'\n')
+                    f.write('C\t'+f'{Coeff[j,2]:.5e}'+'\n')
+                    f.write('D\t'+f'{Coeff[j,3]:.5e}'+'\n')
+                    f.write('E\t'+f'{Coeff[j,4]:.5e}'+'\n')
+                if err_lims is not None:
+                    if area:
+                        f.write('N. point\tIntegral\tError\n')
+                    else:
+                        f.write('N. point\tIntensity\tError\tShift\n')
+                else:
+                    if area:
+                        f.write('N. point\tIntegral\n')
+                    else:
+                        f.write('N. point\tIntensity\tShift\n')
+                for i in range(len(delays)):
+                    if err_lims is not None:
+                        if area:
+                            f.write(str(i)+'\t'+f'{integral[i,j]:.3f}'+' +/- '+f'{error[i,j]:.3f}'+'\n')
+                        else:
+                            f.write(str(i)+'\t'+f'{integral[i,j]:.3f}'+' +/- '+f'{error[i]:.3f}'+'\t'+f'{shift_list[i,j]:.3f}'+'\n')
+                    else:
+                        if not area:
+                            f.write(str(i)+'\t'+f'{integral[i,j]:.3f}'+'\t'+f'{shift_list[i,j]:.3f}'+'\n')
+                        else:
+                            f.write(str(i)+'\t'+f'{integral[i,j]:.3f}'+'\t'+'\n')
+                f.write('\n')
+
+        if doexp==True:
+
+            n_peak = 0
+            mono_fit = []
+            bi_fit = []
+            errmono_fit = []
+            errbi_fit = []
+            fitparameter_f = []
+            for ii in range(int_del.shape[-1]-1):
+                n_peak += 1
+                if err_lims is not None:
+                    if area:
+                        mono, bi, report1, report2, err1, err2, RMSE1, RMSE2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}',err_bar=error[:,ii])
+                    else:
+                        mono, bi, report1, report2, err1, err2, RMSE1, RMSE2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}',err_bar=error)
+                else:
+                    mono, bi, report1, report2, err1, err2, RMSE1, RMSE2 = fit_exponential(int_del[:,-1], int_del[:,ii], dir_res+'/'+f'{n_peak}')
+
+                
+                with open(dir_res+'/'+nameout, 'a') as f:
+                    f.write('\n')
+                    [f.write('-') for r in range(30)]
+                    f.write('\nN. PEAK: '+f'{n_peak}'+'\n')
+                    [f.write('-') for r in range(30)]
+                    f.write('\n')
+                    f.write('\nFit Parameters:\n')
+                    f.write('\nMONOEXPONENTIAL\n')
+                    f.write('y = a + A exp(-t/T1)\nfit: T1=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(mono))
+                    f.write('RMSE: %8.7e\n' % RMSE1)
+                    f.write(report1+'\n')
+                    f.write('\nBIEXPONENTIAL\n')
+                    f.write('y = a + A (f exp(-t/T1a)+ (1-f) exp(-t/T1b))\nfit: f=%5.3e, T1a=%5.4e, T1b=%5.4e, a=%5.3e, A=%5.3e\n' % tuple(bi))
+                    f.write('RMSE: %8.7e\n' % RMSE2)
+                    f.write(report2+'\n')
+                    f.close()
+
+                mono_fit.append(10**tuple(mono)[0])
+                errmono_fit.append(err1)
+                bi_fit.append((10**tuple(bi)[1], 10**tuple(bi)[2]))
+                errbi_fit.append(err2)
+                fitparameter_f.append(tuple(bi)[0])
+                
+                
+            with open(dir_res+'/'+'t1.txt', 'w') as f:
+                f.write('n.peak\tT1 (s)\terr (s)\tf\n')
+                for ii in range(len(mono_fit)):
+                    try:
+                        f.write(str(ii+1)+'\t'+f'{mono_fit[ii]:.4e}'+'\t'+f'{errmono_fit[ii]:.4e}'+'\n')
+                    except:
+                        f.write(str(ii+1)+'\t'+f'{mono_fit[ii]:.4e}'+'\t'+'Nan'+'\n')
+                    try:
+                        f.write(str(ii+1)+'\t'+f'{bi_fit[ii][0]:.4e}'+'\t'+f'{errbi_fit[ii][0]:.4e}'+'\t'+f'{bi_fit[ii][1]:.4e}'+'\t'+f'{errbi_fit[ii][1]:.4e}'+'\t'+f'{fitparameter_f[ii]:.4f}'+'\n')
+                    except:
+                        f.write(str(ii+1)+'\t'+f'{bi_fit[ii][0]:.4e}'+'\t'+'Nan'+'\t'+f'{bi_fit[ii][1]:.4e}'+'\t'+'Nan\t'+f'{fitparameter_f[ii]:.4f}'+'\n')
+                f.close()
+            with open(dir_res+'/'+nameout, 'a') as f:
+                for r in range(100):
+                    f.write('=')
+                f.close()
+
+        elif f_int_fit is not None and doexp==False:
+
+            n_peak = 0
+            for ii in range(int_del.shape[-1]-1):
+                n_peak += 1
+                #f_int_fit must return a dictionary with the fit parameters and the model
+                if err_lims is not None:
+                    if area:
+                        parameters, model, *_ = f_int_fit(int_del[:,-1], int_del[:,ii], err_bar=error[:,ii], **fargs)
+                    else:
+                        parameters, model, *_ = f_int_fit(int_del[:,-1], int_del[:,ii], err_bar=error, **fargs)
+                else:
+                    parameters, model, *_ = f_int_fit(int_del[:,-1], int_del[:,ii], **fargs)
+
+                fig = plt.figure()
+                ax = fig.add_subplot(111)
+                ax.plot(int_del[:,-1], int_del[:,ii], 'o', c='blue')
+                ax.plot(int_del[:,-1], model, 'r--', lw=0.7)
+                if err_lims is not None:
+                    if area:
+                        ax.errorbar(int_del[:,-1], int_del[:,ii], yerr=error[:,ii], fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
+                        ax.set_ylabel('Integral')
+                    else:
+                        ax.errorbar(int_del[:,-1], int_del[:,ii], yerr=error, fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
+                        ax.set_ylabel('Intensity')
+                else:
+                    if area:
+                        ax.set_ylabel('Integral')
+                    else:
+                        ax.set_ylabel('Intensity')
+
+                ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
+                plt.savefig(dir_res+'/Interval_'+str(ii+1)+'_sp'+str(idx+1)+'.png', dpi=600)
+                plt.close()
+
+                with open(dir_res+'/'+nameout, 'a') as f:
+                    f.write('\n')
+                    [f.write('-') for r in range(30)]
+                    f.write('\nN. PEAK: '+f'{n_peak}'+'\n')
+                    [f.write('-') for r in range(30)]
+                    f.write('\n')
+                    f.write('\nFit Parameters:\n')
+                    f.write('\n')
+                    f.write(' '.join([f'{key}={val}' for key, val in parameters.items()])+'\n')
+                    f.close()
+
+
+        else:
+
+            for ii in range(int_del.shape[-1]-1):
+                fig = plt.figure()
+                ax = fig.add_subplot(111)
+                ax.errorbar(int_del[:,-1], int_del[:,ii], yerr=error, fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
+                ax.plot(int_del[:,-1], int_del[:,ii], 'o', c='blue')
+                if err_lims is not None:
+                    if area:
+                        ax.errorbar(int_del[:,-1], int_del[:,ii], yerr=error[:,ii], fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
+                        ax.set_ylabel('Integral')
+                    else:
+                        ax.errorbar(int_del[:,-1], int_del[:,ii], yerr=error, fmt='none', ecolor='k', elinewidth=0.2, capsize=2, capthick=0.2)
+                        ax.set_ylabel('Intensity')
+                else:
+                    if area:
+                        ax.set_ylabel('Integral')
+                    else:
+                        ax.set_ylabel('Intensity')
+                ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
+                plt.savefig(dir_res+'/Interval_'+str(ii+1)+'_sp'+str(idx+1)+'.png', dpi=600)
+                plt.close()
+
+    if len(VCLIST)>0:        
+        VCLIST = np.array(VCLIST)
+        np.savetxt(dir_result+'/VCLIST.txt', VCLIST)
+            
+    return dir_result
