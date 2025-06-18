@@ -2,7 +2,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from f_functions import *
+from .f_functions import *
 from pprint import pprint
 import os
 import shutil
@@ -855,7 +855,11 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, IR=False, auto_ph
 
     return dir_res
 
-def model_fit_pseudo2D(path, delays_list, list_path, option = None, cal_lim = None, IR=False, VCLIST=None, dofit=True, prev_guess=False, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, acqupars=None, procpars=None, Param=None): 
+def model_fit_pseudo2D(path, delays_list, list_path, option=None, cal_lim=None, IR=False, VCLIST=None, dofit=True, prev_guess=False, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1=None, limits2=None, L1R=None, L2R=None, basl_fit='auto', err_conf=0.95, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, acqupars=None, procpars=None, Param=None): 
+
+    # auto = in the fit; fixed = no optimization; lsq = computed numerically on the residuals
+    if basl_fit not in ['auto', 'fixed', 'lsq']:
+        raise NameError('Baseline computation must be "auto", "fixed" or "lsq"')
     
     for i in range(len(list_path)):
         if 'pdata' not in list_path[i]:
@@ -1119,11 +1123,18 @@ def model_fit_pseudo2D(path, delays_list, list_path, option = None, cal_lim = No
                     param.add('ph_'+str(j+1)+'_f', value=tensor_red[j,6], min=-np.pi, max=np.pi)
                     param.add('xg_'+str(j+1)+'_f', value=tensor_red[j,7], min=0, max=1)
 
-            param.add('A', value=tensor_red[-1,8])
-            param.add('B', value=tensor_red[-1,9])
-            param.add('C', value=tensor_red[-1,10]) 
-            param.add('D', value=tensor_red[-1,11])
-            param.add('E', value=tensor_red[-1,12])
+            if basl_fit == 'auto':
+                param.add('A', value=tensor_red[-1,8])
+                param.add('B', value=tensor_red[-1,9])
+                param.add('C', value=tensor_red[-1,10]) 
+                param.add('D', value=tensor_red[-1,11])
+                param.add('E', value=tensor_red[-1,12])
+            else:
+                param.add('A', value=tensor_red[-1,8], vary=False)
+                param.add('B', value=tensor_red[-1,9], vary=False)
+                param.add('C', value=tensor_red[-1,10], vary=False) 
+                param.add('D', value=tensor_red[-1,11], vary=False)
+                param.add('E', value=tensor_red[-1,12], vary=False)
            
 
             # set limits for the fit
@@ -1201,7 +1212,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, option = None, cal_lim = No
                 peak_int, int_err, prev_param_compl, result, *_ = fit_peaks_bsl_I(param, ppm_scale, data[j,:], tensor_red, 
                                                                 t_aq, sf1, o1p, td, dw, j, i, dir_res, new_dir, SR=SR, 
                                                                 SI=SI, SW=SW, LB=LB, SSB=SSB, dofit=dofit,fast=fast, L1R=L1R, 
-                                                                L2R=L2R, err_conf=err_conf, IR=IR)
+                                                                L2R=L2R, err_conf=err_conf, IR=IR, basl_fit=basl_fit)
                 
                 #### write
                 if dofit:
@@ -1367,7 +1378,11 @@ def model_fit_pseudo2D(path, delays_list, list_path, option = None, cal_lim = No
 
     return dir_result
 
-def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal_lim = None, IR=False, dofit=True, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, acqupars=None, procpars=None, Param=None):    
+def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal_lim = None, IR=False, dofit=True, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, basl_fit='auto', err_conf=0.95, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, acqupars=None, procpars=None, Param=None):    
+
+    # auto = in the fit; fixed = no optimization; lsq = computed numerically on the residuals
+    if basl_fit not in ['auto', 'fixed', 'lsq']:
+        raise NameError('Baseline computation must be "auto", "fixed" or "lsq"')
 
     for i in range(len(list_path)):
         if 'pdata' not in list_path[i]:
@@ -1524,11 +1539,13 @@ def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal
 
     with open(dir_res+'/'+nameout, 'a') as f:
         f.write('\nINPUT1: '+filename1+'\n')
-        file = open(filename1).readlines()
+        with open(filename1, 'r') as q1:
+            file = q1.readlines()
         f.write('n. peak\t'+file[0])
         [f.write(str(name_peak[r-1])+'\t'+file[r]) for r in range(1,len(file))]
         f.write('\nINPUT2: '+filename2+'\n')
-        file = open(filename2).readlines()
+        with open(filename2, 'r') as q2:
+            file = q2.readlines()
         f.write('n. peak\t'+file[0])
         [f.write(str(name_peak[r-1])+'\t'+file[r]) for r in range(1,len(file))]
         [f.write('=') for r in range(100)]
@@ -1578,11 +1595,18 @@ def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal
                 param.add('ph_'+str(j+1)+'_f', value=tensor_red[j,6], min=-np.pi, max=np.pi)
                 param.add('xg_'+str(j+1)+'_f', value=tensor_red[j,7], min=0, max=1)
 
-        param.add('A', value=tensor_red[-1,8])
-        param.add('B', value=tensor_red[-1,9])
-        param.add('C', value=tensor_red[-1,10]) 
-        param.add('D', value=tensor_red[-1,11])
-        param.add('E', value=tensor_red[-1,12])
+        if basl_fit == 'auto':
+            param.add('A', value=tensor_red[-1,8])
+            param.add('B', value=tensor_red[-1,9])
+            param.add('C', value=tensor_red[-1,10]) 
+            param.add('D', value=tensor_red[-1,11])
+            param.add('E', value=tensor_red[-1,12])
+        else:
+            param.add('A', value=tensor_red[-1,8], vary=False)
+            param.add('B', value=tensor_red[-1,9], vary=False)
+            param.add('C', value=tensor_red[-1,10], vary=False) 
+            param.add('D', value=tensor_red[-1,11], vary=False)
+            param.add('E', value=tensor_red[-1,12], vary=False)
 
         # set limits for the fit
         # limits1 = {'shift':(-0.5,0.5), 'k':(0,1), 'lw':(1e-4,3.5), 'ph':(-np.pi,np.pi), 'xg':(0,1)}
@@ -1658,7 +1682,7 @@ def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal
             peak_int, int_err, prev_param_compl, result, _, sim_spectra, sim_fid = fit_peaks_bsl_I(param, ppm_scale, data[j,:], tensor_red, 
                                                             t_aq, sf1, o1p, td, dw, j, i, dir_res, new_dir, SR=SR, 
                                                             SI=SI, SW=SW, LB=LB, SSB=SSB, dofit=dofit, fast=fast, L1R=L1R, 
-                                                            L2R=L2R, err_conf=err_conf, IR=IR)
+                                                            L2R=L2R, err_conf=err_conf, IR=IR, basl_fit=basl_fit)
             data_sim[j,:] += sim_spectra
             FID_sim[j,:] += sim_fid
             #### write
@@ -1668,6 +1692,7 @@ def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal
                 if prev_fit is not None:
                     file = open(prev_fit+new_dir+'popt_I'+str(i)+'_P'+str(j), 'w')
                     prev_param_compl.dump(file)
+                file.close()
             ####
 
             if Param is not None:
@@ -1825,12 +1850,12 @@ def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal
     else:
         return dir_res, (data, data_sim, FID_sim), delays, ppm_scale
 
-def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, dw, j, jj, dir_res, new_dir, SR=0, SI=0, SW=0, LB=0, SSB=0, dofit=True, fast=False, IR=False, L1R=None, L2R=None, err_conf=0.95):
+def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, dw, j, jj, dir_res, new_dir, SR=0, SI=0, SW=0, LB=0, SSB=0, dofit=True, fast=False, IR=False, L1R=None, L2R=None, err_conf=0.95, basl_fit='auto'):
     
     cal = SR/sf1 - (ppm_scale[0]-ppm_scale[1])
     
     cycle = -1   
-    def f_residue(param, ppm_scale, spettro, tensor_red, result=False):
+    def f_residue(param, ppm_scale, spettro, tensor_red, basl_fit, result=False):
         nonlocal cycle
         cycle += 1
         par = param.valuesdict()
@@ -1909,7 +1934,10 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
                             lor_ph0_list.append(lor_ph0)
 
         x = ppm_scale[sx:dx]-zero
-        corr_baseline = par['E']*x**4 + par['D']*x**3 + par['C']*x**2 + par['B']*x + par['A']
+        if basl_fit != 'lsq':
+            corr_baseline = par['E']*x**4 + par['D']*x**3 + par['C']*x**2 + par['B']*x + par['A']
+        else:
+            corr_baseline=np.zeros_like(x)
 
         cost = np.max(spettro.real)  #useless since it is normaliazed
         
@@ -1920,7 +1948,28 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
 
         model = cost*(corr_baseline+sim_spectra[sx:dx].real) 
 
-        res = model.real-spettro[sx:dx].real
+        res = spettro[sx:dx].real - model.real
+        if basl_fit == 'lsq':
+            # Make the Vandermonde matrix of the x-scale
+            T = np.array(
+                    [x**k for k in range(5)]
+                    ).T
+            # Pseudo-invert it
+            Tpinv = np.linalg.pinv(T)
+            # Solve the system
+            coeff = Tpinv @ res
+            for pp, cc in zip(['A', 'B', 'C', 'D', 'E'], coeff):
+                param[f'{pp}'].set(value=cc)
+            corr_baseline = par['E']*x**4 + par['D']*x**3 + par['C']*x**2 + par['B']*x + par['A']
+            res -= corr_baseline
+        """
+        plt.plot(spettro[sx:dx].real, c='k')
+        plt.plot(model.real, c='b')
+        plt.plot(model.real-corr_baseline.real, c='r')
+        plt.plot(spettro[sx:dx].real-model.real+corr_baseline, c='g')
+        plt.plot(res)
+        plt.show()
+        """
         res2plot = res.copy()
 
         if L1R is not None:
@@ -1937,10 +1986,10 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
         print('cycle: '+f'{cycle:5g} | target: {np.sum(res**2):.5e}     ',end='\r')
 
         if cycle%1000==0 or result:
-            f_figure_comp(ppm_scale[sx:dx], spettro[sx:dx], model, comp_list, 
-                                name=dir_res+'/'+new_dir+'_P'+str(j+1)+'_I'+str(jj+1), basefig = cost*corr_baseline, 
+            f_figure_comp(ppm_scale[sx:dx], spettro[sx:dx], corr_baseline+model, comp_list, 
+                                name=dir_res+'/'+new_dir+'_P'+str(j+1)+'_I'+str(jj+1), basefig = corr_baseline, 
                                 dic_fig={'h':5.59,'w':4.56, 'sx':tensor_red[0,1], 'dx':tensor_red[0,2]})
-            histogram(res2plot, nbins=100, density=True, f_lims= None, xlabel=None, x_symm=False, name=dir_res+'/'+new_dir+'_P'+str(j+1)+'_I'+str(jj+1)+'_hist')
+            histogram(res2plot, nbins=100, density=True, f_lims= None, xlabel='Residuals', x_symm=True, name=dir_res+'/'+new_dir+'_P'+str(j+1)+'_I'+str(jj+1)+'_hist')
 
         if not result:
             residuals = res
@@ -1979,7 +2028,7 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
             return integral_in, int_err, sim_spectra*cost, spettro[sx:dx]-corr_baseline*cost, sim_fid*cost
         
    
-    minner = lmfit.Minimizer(f_residue, param, fcn_args=(ppm_scale, spettro, tensor_red))
+    minner = lmfit.Minimizer(f_residue, param, fcn_args=(ppm_scale, spettro, tensor_red, basl_fit))
     if dofit:
         if not fast:
             result = minner.minimize(method='Nelder', max_nfev=10000)#, xtol=1e-7, ftol=1e-7)
@@ -1990,7 +2039,7 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
     else:
         result = minner.minimize(method='Nelder', max_nfev=0)
     popt = result.params
-    peak_int, int_err, sim_spectra, spettro_corrbsl, sim_fid = f_residue(popt, ppm_scale, spettro, tensor_red, result=True)
+    peak_int, int_err, sim_spectra, spettro_corrbsl, sim_fid = f_residue(popt, ppm_scale, spettro, tensor_red, basl_fit, result=True)
     
     return peak_int, int_err, popt, result, spettro_corrbsl, sim_spectra, sim_fid
 

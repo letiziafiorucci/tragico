@@ -3,6 +3,7 @@
 
 import numpy as np
 import nmrglue as ng
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import lmfit
 from matplotlib.widgets import Slider, Button, RadioButtons, TextBox, CheckButtons, Cursor, SpanSelector, AxesWidget
@@ -247,7 +248,7 @@ def set_fontsizes(ax, fontsize=10):
             columnspacing = l.columnspacing,
             ncol = l._ncols,
             mode = l._mode,
-            fancybox = type(l.legendPatch.get_boxstyle())==matplotlib.patches.BoxStyle.Round,
+            fancybox = type(l.legendPatch.get_boxstyle())==mpl.patches.BoxStyle.Round,
             shadow = l.shadow,
             title = l.get_title().get_text() if l._legend_title_box.get_visible() else None,
             framealpha = l.get_frame().get_alpha(),
@@ -307,9 +308,9 @@ def mathformat(ax, axis='y', limits=(-2,2)):
         fontsize = tmp[0].get_fontsize()
         ax.xaxis.get_offset_text().set_size(fontsize)
 
-def pretty_scale(ax, limits, axis='x', n_major_ticks=10):
+def pretty_scale(ax, limits, axis='x', n_major_ticks=10, *, minor_each=5, fmt=None):
     """
-    This function computes a pretty scale for your plot. Calculates and sets a scale made of 'n_major_ticks' numbered ticks, spaced by 5*n_major_ticks unnumbered ticks. After that, the plot borders are trimmed according to the given limits.
+    This function computes a pretty scale for your plot. Calculates and sets a scale made of 'n_major_ticks' numbered ticks, spaced by 'minor_each' unnumbered ticks. After that, the plot borders are trimmed according to the given limits.
     --------
     Parameters:
     - ax: matplotlib.AxesSubplot object
@@ -317,49 +318,45 @@ def pretty_scale(ax, limits, axis='x', n_major_ticks=10):
     - limits: tuple
         limits to apply of the given axis. (left, right)
     - axis: str
-        'x' for x-axis, 'y' for y-axis
+        'x' for x-axis, 'y' for y-axis, 'z' for z-axis
     - n_major_ticks: int
         Number of numbered ticks in the final scale. An oculated choice gives very pleasant results.
+    - minor_each: int
+        Number of divisions for each interval between two major ticks
+    - fmt: str
+        String-formatting for the numbers on the axis. Should be given as e.g. '.3f'
     """
-
-    import matplotlib.ticker as TKR
-
-    if axis=='x':
-        ax.set_xlim(limits)
-        sx, dx = ax.get_xlim()
-    elif axis=='y':
-        ax.set_ylim(limits)
-        sx, dx = ax.get_ylim()
-    else:
-        raise ValueError('Unknown options for "axis".')
-
-    # Compute major ticks
+    # Convert the input format to something matplotlib can understand
+    # Define optimal division steps
     steps = [1, 2, 4, 5, 10]
-    majorlocs = TKR.MaxNLocator(nbins=n_major_ticks, steps=steps).tick_values(sx, dx)
+    # Compute location of major ticks
+    majorlocs = mpl.ticker.MaxNLocator(nbins=n_major_ticks, steps=steps)
+    # Compute location of minor ticks
+    minorlocs = mpl.ticker.AutoMinorLocator(minor_each)
 
-    # Compute minor ticks manually because matplotlib is complicated
-    ndivs = 5
-    majorstep = majorlocs[1] - majorlocs[0]
-    minorstep = majorstep / ndivs
-
-    vmin, vmax = sx, dx
-    if vmin > vmax:
-        vmin, vmax = vmax, vmin
-
-    t0 = majorlocs[0]
-    tmin = ((vmin - t0) // minorstep + 1) * minorstep
-    tmax = ((vmax - t0) // minorstep + 1) * minorstep
-    minorlocs = np.arange(tmin, tmax, minorstep) + t0
-
-    # Set the computed ticks and update the limits
+    # Find on which axis to apply modifications
     if axis == 'x':
-        ax.set_xticks(majorlocs)
-        ax.set_xticks(minorlocs, minor=True)
-        ax.set_xlim(sx,dx)
+        target_axis = ax.xaxis
+        lim_function = ax.set_xlim
     elif axis == 'y':
-        ax.set_yticks(majorlocs)
-        ax.set_yticks(minorlocs, minor=True)
-        ax.set_ylim(sx,dx)
+        target_axis = ax.yaxis
+        lim_function = ax.set_ylim
+    elif axis == 'z':
+        target_axis = ax.yaxis
+        lim_function = ax.set_zlim
+    else:
+        raise ValueError(f'Unrecognized Axis "{axis}"')
+
+    # Apply the given settings
+    target_axis.set_major_locator(majorlocs)
+    target_axis.set_minor_locator(minorlocs)
+    if fmt: # Change the format only if explicitely given
+        fmt = r'{x:' + fmt + r'}'
+        # Here it is passed as mpl.ticker.ScalarFormatter
+        target_axis.set_major_formatter(fmt)
+
+    # Set the limits on the given axis
+    lim_function(limits)
 
 def find_nearest(array, value):
     # Finds the value in 'array' which is the nearest to 'value'
@@ -2174,14 +2171,13 @@ def histogram(data, nbins=100, density=True, f_lims= None, xlabel=None, x_symm=F
     fit_g = A / (np.sqrt(2 * np.pi) * s) * np.exp(-0.5 * ((lnspc - m) / s)**2) # Gaussian lineshape
 
     fig = plt.figure()
-    fig.set_size_inches(3.2,2.8)
+    fig.set_size_inches(5,3)
+    plt.subplots_adjust(left=0.10, bottom=0.14, top=0.925, right=0.95)
+
     ax = fig.add_subplot(1,1,1)
     ax.hist(data, color='tab:blue', density=density, bins=bin_edges)
     ax.plot(lnspc, fit_g, c='r', lw=0.6, label = r'$\mu = ${:.3g}'.format(m)+'\n'+r'$\sigma = ${:.3g}'.format(s))
-    ax.tick_params(labelsize=8)
-    ax.ticklabel_format(axis='both', style='scientific', scilimits=(-3,3), useMathText=True)
-    ax.yaxis.get_offset_text().set_size(9)
-    ax.xaxis.get_offset_text().set_size(9)
+
     if density:
         ax.set_ylabel('Normalized count', fontsize=9.5)
     else:
@@ -2190,8 +2186,16 @@ def histogram(data, nbins=100, density=True, f_lims= None, xlabel=None, x_symm=F
         ax.set_xlabel(xlabel, fontsize=9.5)
     if f_lims:
         ax.set_xlim(f_lims)
+    else:
+        ax.set_xlim(lims)
+
     ax.legend(loc='upper right', fontsize=9)
-    fig.tight_layout()
+
+    pretty_scale(ax, ax.get_xlim(), 'x')
+    pretty_scale(ax, ax.get_ylim(), 'y')
+    mathformat(ax, 'both')
+    set_fontsizes(ax, 12)
+    
     if name:
         plt.savefig(name+'.png', format='png', dpi=600)
     else:
@@ -2204,29 +2208,28 @@ def histogram(data, nbins=100, density=True, f_lims= None, xlabel=None, x_symm=F
 def f_figure_comp(ppmscale, data, model, comp, name=None, basefig=None, dic_fig={'h':3.59,'w':2.56,'sx':None,'dx':None}):
 	
     fig = plt.figure()
-    #fig.set_size_inches(dic_fig['h'],dic_fig['w'])   #3.59,2.56
-    fig.set_size_inches(3.2,2.8)
-    #plt.subplots_adjust(left=0.15,bottom=0.15,right=0.95,top=0.90)
+    fig.set_size_inches(5, 3)
+    plt.subplots_adjust(left=0.10,bottom=0.14,right=0.760,top=0.925)
     ax = fig.add_subplot(1,1,1)
-    ax.tick_params(labelsize=7)
+    ax.plot(ppmscale, data.real, lw=0.8, c='k', label='Experiment', zorder=0)
+    ax.plot(ppmscale, model.real, lw=0.7, c='b', label='Model', zorder=1)
     if basefig is not None:
-        ax.plot(ppmscale, basefig, 'r',lw=0.5, label='baseline')
-    ax.plot(ppmscale, data, lw=0.5, label='experiment')
-    ax.plot(ppmscale, model, lw=0.5, label='model')
-    ax.plot(ppmscale, data-model, lw=0.5, label='residual')
+        ax.plot(ppmscale, basefig, 'r', lw=0.7, label='Baseline', zorder=2)
+    ax.plot(ppmscale, data, lw=0.5, label='Experiment')
+    ax.plot(ppmscale, model, lw=0.5, label='Model')
+    ax.plot(ppmscale, (data-model).real, c='g', lw=0.5, label='Residuals', zorder=10)
     for i in range(len(comp)):
-        ax.plot(ppmscale, comp[i], '--', lw=0.4, label='comp. '+str(i+1))
-    ax.set_xlabel(r'$\delta$ (ppm)', fontsize=8.5)
-    ax.set_ylabel('Intensity (a.u.)', fontsize=8.5)
-    ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
-    ax.yaxis.get_offset_text().set_size(7)
+        ax.plot(ppmscale, comp[i], '--', lw=0.6, label='Comp. '+str(i+1), zorder=5)
+    ax.set_xlabel(r'$\delta$ (ppm)')
+    ax.set_ylabel('Intensity (a.u.)')
     if dic_fig['sx'] and dic_fig['dx']:
         ax.set_xlim(dic_fig['dx'],dic_fig['sx'])
     ax.invert_xaxis()
-    #set spacing between ticks
-    #ax.xaxis.set_major_locator(plt.MaxNLocator(5))
-    ax.legend(fontsize=7)
-    plt.tight_layout()
+    pretty_scale(ax, ax.get_xlim(), 'x')
+    pretty_scale(ax, ax.get_ylim(), 'y')
+    mathformat(ax)
+    set_fontsizes(ax, 12)
+    ax.legend(loc='best', bbox_to_anchor=(0.75, 0.10, 0.245, 0.70), bbox_transform=fig.transFigure, fontsize=8)
     if name is None:
         plt.show()
     else:
