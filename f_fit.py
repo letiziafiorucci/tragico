@@ -2215,7 +2215,7 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
         y_tot.append([])
         yerr_tot.append([])
         folder = dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]
-        n_peaks = len([file for file in os.listdir(folder) if 'x_' in file])
+        n_peaks = len([file for file in os.listdir(folder) if 'x_' in file and '_correct' not in file])
         for i in range(n_peaks):
             if not reduce:
                 try:
