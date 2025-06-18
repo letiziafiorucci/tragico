@@ -23,7 +23,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, IR=F
     # doexp: if True the intensities are fitted with an exponential decay (in this case f_int_fit is not used)
     # fargs: dictionary of arguments to be passed to f_int_fit
 
-    for i in range(len(delays_list)):
+    for i in range(len(list_path)):
         if 'pdata' not in list_path[i]:
             list_path[i] = list_path[i]+'/pdata/1'
 
@@ -82,6 +82,15 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, IR=F
                         except:
                             pass
 
+                if 'Input field' in line:
+                    line = line.replace('\n','')
+                    splitline = line.split(' ')
+                    for ii in range(len(splitline)):
+                        try:
+                            field = float(splitline[ii][:-2])
+                        except:
+                            pass
+
             VCLIST.append(field)
             field = True
 
@@ -110,7 +119,7 @@ def intensity_fit_pseudo2D(path, delays_list, list_path, prev_lims = False, IR=F
 
         # performs calibration on the spectra if cal_lim is not None
         if cal_lim is not None:
-            cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1], debug_fig=True) 
+            cal_shift, cal_shift_ppm, data = calibration(ppm_scale, data, cal_lim[0], cal_lim[1], debug_fig=False) 
             with open(dir_res+'/'+nameout, 'w') as f:
                 f.write('\n')
                 if fileinp is not None:
@@ -467,7 +476,7 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, IR=False, auto_ph
     # doexp: if True the intensities are fitted with an exponential decay (in this case f_int_fit is not used)
     # fargs: dictionary of arguments to be passed to f_int_fit
 
-    for i in range(len(delays_list)):
+    for i in range(len(list_path)):
         if 'pdata' not in list_path[i]:
             list_path[i] = list_path[i]+'/pdata/1'
 
@@ -846,9 +855,9 @@ def intensity_fit_1D(path, delays_list, list_path, area=False, IR=False, auto_ph
 
     return dir_res
 
-def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, VCLIST=None, dofit=True, prev_guess=False, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None): 
+def model_fit_pseudo2D(path, delays_list, list_path, option = None, cal_lim = None, IR=False, VCLIST=None, dofit=True, prev_guess=False, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, acqupars=None, procpars=None, Param=None): 
     
-    for i in range(len(delays_list)):
+    for i in range(len(list_path)):
         if 'pdata' not in list_path[i]:
             list_path[i] = list_path[i]+'/pdata/1'
     
@@ -857,12 +866,18 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
     try:
         os.mkdir(new_dir+nome_folder)
     except:
-        ans = input('\nThe directory '+color_term.BOLD+new_dir+nome_folder+color_term.END+' already exists.\nDo you want to:\n[overwrite the existing directory (1)]\ncreate a new directory (2)\ncontinue writing in the existing directory (3)\n>')
-        if ans=='1' or ans=='':
+        if option is None:
+            ans = input('\nThe directory '+color_term.BOLD+new_dir+nome_folder+color_term.END+' already exists.\nDo you want to:\n[overwrite the existing directory (1)]\ncreate a new directory (2)\ncontinue writing in the existing directory (3)\n>')
+        else:
+            ans = str(option)
+        if ans=='1' or ans == '':
             shutil.rmtree(new_dir+nome_folder)           # Removes all the subdirectories!
             os.makedirs(new_dir+nome_folder)
         elif ans=='2':
-            new_dir = input('Write new directory name: ')
+            if dir_name is None:
+                new_dir = input('Write new directory name: ')
+            else:
+                new_dir = dir_name
             os.makedirs(new_dir+nome_folder)
         elif ans=='3':
             pass
@@ -889,7 +904,27 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
 
         print('PATH TO SPECTRA: ', path+list_path[idx])
 
-        datap, ppm_scale, ngdicp = nmr_spectra_pseudo2d(path+list_path[idx]) #(n.delay x TD)
+        if Spectra is None:
+            datap, ppm_scale, ngdicp = nmr_spectra_pseudo2d(path+list_path[idx]) #(n.delay x TD)
+        
+            if acqupars is None:
+                acqupars = param_acq(ngdicp)
+            else:
+                acqu_out = acqupars.copy()
+                acqupars = param_acq(ngdicp)
+                acqupars.update(acqu_out)
+
+            if procpars is None:
+                procpars = param_pr(ngdicp)
+            else:
+                proc_out = procpars.copy()
+                procpars = param_pr(ngdicp)    #only qsin and em are considered for the apodization
+                procpars.update(proc_out)
+        
+        else:
+            # when you pass the Spectra and ppm_scale it assumes that you will also pass the acqupars and procpars (you can modify this piece of code if that's not the case)
+            datap = Spectra[idx]
+            ppm_scale = ppmscale
 
         title = open(path+list_path[idx]+'/title').readlines()  # format xxx.xxmT
         if VCLIST==[] or field==True:
@@ -905,9 +940,6 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
 
             VCLIST.append(field)
             field = True
-
-        acqupars = param_acq(ngdicp)
-        procpars = param_pr(ngdicp)  #only qsin and em are considered for the apodization
 
         DE = acqupars['DE'] 
         SR = procpars['SR']
@@ -1058,6 +1090,8 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
 
         tensor_red_list = []
 
+        Param_tot = []
+        Param_tot_err = []
         integral_tot = []
         error_tot = []
         for i in range(len(ppm1_set)):  # for each interval
@@ -1124,9 +1158,12 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
                                 param[name_var].set(min=limits1[key][0], max=limits1[key][1])
 
 
-            param0 = param.copy()
             integral_tot.append([])
             error_tot.append([])
+            Param_tot.append([])
+            Param_tot_err.append([])
+
+            param0 = param.copy()
             for j in range(data.shape[0]):  #per delay
 
                 if j>0:
@@ -1175,6 +1212,10 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
                         prev_param_compl.dump(file)
                 ####
 
+                if Param is not None:
+                    Param_tot[-1].append([prev_param_compl[Param+'_'+str(jj+1)].value for jj in range(tensor_red.shape[0]) if tensor_red[jj,0]=='true'])
+                    Param_tot_err[-1].append([prev_param_compl[Param+'_'+str(jj+1)].stderr for jj in range(tensor_red.shape[0]) if tensor_red[jj,0]=='true'])
+
                 prev_param = prev_param_compl.copy()
 
                 integral_tot[-1].append(peak_int)
@@ -1203,11 +1244,21 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
 
         integral=np.concatenate(integral_tot, axis=1)
         error = np.concatenate(error_tot, axis=1) 
+        if Param is not None:
+            # Param_tot = np.array(Param_tot)
+            Param_tot = np.concatenate(Param_tot, axis=1)
+            # Param_tot_err = np.array(Param_tot_err)
+            Param_tot_err = np.concatenate(Param_tot_err, axis=1)
 
         for j in range(integral.shape[1]):
             np.savetxt(dir_res+'/Err_'+str(j+1)+'.txt', error[:,j])
             np.savetxt(dir_res+'/y_'+str(j+1)+'.txt', integral[:,j])
             np.savetxt(dir_res+'/x_'+str(j+1)+'.txt', delays)
+        if Param is not None:
+            np.savetxt(dir_res+'/Param.txt', Param_tot)
+            #replace in the Param_tot_err the None values with 0
+            Param_tot_err = np.where(Param_tot_err==None, 0, Param_tot_err)
+            np.savetxt(dir_res+'/Param_err.txt', Param_tot_err)
 
         int_del = np.column_stack((integral, delays))  #(n. delays x [integral[:,0],...,integral[:,n], delays[:]])
         order = int_del[:,-1].argsort()
@@ -1318,7 +1369,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, cal_lim = None, IR=False, V
 
 def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal_lim = None, IR=False, dofit=True, prev_fit=None, file_inp1=None, file_inp2=None, fast=False, limits1 = None, limits2 = None, L1R = None, L2R = None, err_conf=0.95, doexp=False, f_int_fit=None, fargs=None, Spectra=None, ppmscale=None, acqupars=None, procpars=None, Param=None):    
 
-    for i in range(len(delays_list)):
+    for i in range(len(list_path)):
         if 'pdata' not in list_path[i]:
             list_path[i] = list_path[i]+'/pdata/1'
     
@@ -1379,6 +1430,7 @@ def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal
             procpars = param_pr(ngdicp)    #only qsin and em are considered for the apodization
             procpars.update(proc_out)
     else:
+        # when you pass the Spectra and ppm_scale it assumes that you will also pass the acqupars and procpars (you can modify this piece of code if that's not the case)
         data = Spectra
         ppm_scale = ppmscale
 
@@ -1642,7 +1694,8 @@ def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal
                 for jj in range(len(peak_int)):
                     f.write(f'{jj+1}    {peaks_shift[jj]:.3f}    {peak_int[jj]:.3f} +/- {np.abs(int_err[jj]):.3f}\n')
                 f.close()
-        print("\n")           
+        print("\n")      
+
     integral=np.concatenate(integral_tot, axis=1)
     error = np.concatenate(error_tot, axis=1) 
     if Param is not None:
@@ -1657,7 +1710,7 @@ def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal
         np.savetxt(dir_res+'/x_'+str(j+1)+'.txt', delays)
     if Param is not None:
         np.savetxt(dir_res+'/Param.txt', Param_tot)
-        #replace in the Param_tot_err the None values with -1
+        #replace in the Param_tot_err the None values with 0
         Param_tot_err = np.where(Param_tot_err==None, 0, Param_tot_err)
         np.savetxt(dir_res+'/Param_err.txt', Param_tot_err)
 
@@ -2134,6 +2187,13 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
     #can be used also for modelfit. To do so put area=True
 
     #errors = bool, define if the error bars for the intensities are plotted or not
+    
+    if I_reduce:
+        if not reduce:
+            print("You've defined a I_reduce list, please define also the reduce list.")
+            exit()
+        else:
+            pass
 
     if VClist is None:
         VClist = np.loadtxt(dir_result+'/VCLIST.txt')
@@ -2148,22 +2208,37 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
     x_tot = []   # n.campi x n.peaks x (delay, intensity)
     y_tot = []
     yerr_tot = []
-
+    
     for idx in range(len(list_path)):
-        
+    
         x_tot.append([])
         y_tot.append([])
         yerr_tot.append([])
         folder = dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]
         n_peaks = len([file for file in os.listdir(folder) if 'x_' in file])
         for i in range(n_peaks):
-            x_tot[idx].append(np.loadtxt(folder+'/x_'+str(i+1)+'.txt'))
-            y_tot[idx].append(np.loadtxt(folder+'/y_'+str(i+1)+'.txt'))
-            if errors:
-                if area:
-                    yerr_tot[idx].append(np.loadtxt(folder+'/Err_'+str(i+1)+'.txt'))
-                else:
-                    yerr_tot[idx].append(np.loadtxt(folder+'/Err.txt'))
+            if not reduce:
+                try:
+                    x_tot[idx].append(np.loadtxt(folder+'/x_'+str(i+1)+'_correct.txt'))
+                    y_tot[idx].append(np.loadtxt(folder+'/y_'+str(i+1)+'_correct.txt'))
+                    if errors:
+                        yerr_tot[idx].append(np.loadtxt(folder+'/Err_'+str(i+1)+'_correct.txt'))
+                except:
+                    x_tot[idx].append(np.loadtxt(folder+'/x_'+str(i+1)+'.txt'))
+                    y_tot[idx].append(np.loadtxt(folder+'/y_'+str(i+1)+'.txt'))
+                    if errors:
+                        if area:
+                            yerr_tot[idx].append(np.loadtxt(folder+'/Err_'+str(i+1)+'.txt'))
+                        else:
+                            yerr_tot[idx].append(np.loadtxt(folder+'/Err.txt'))
+            else:
+                x_tot[idx].append(np.loadtxt(folder+'/x_'+str(i+1)+'.txt'))
+                y_tot[idx].append(np.loadtxt(folder+'/y_'+str(i+1)+'.txt'))
+                if errors:
+                    if area:
+                        yerr_tot[idx].append(np.loadtxt(folder+'/Err_'+str(i+1)+'.txt'))
+                    else:
+                        yerr_tot[idx].append(np.loadtxt(folder+'/Err.txt'))
 
     # invert the dimensions (I cannot use the arrays since the dimensions are not uniform)
     X = []
@@ -2313,6 +2388,13 @@ def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors
     #can be used also for modelfit. To do so put area=True
 
     #errors = bool, define if the error bars for the intensities are plotted or not
+    
+    if I_reduce:
+        if not reduce:
+            print("You've defined a I_reduce list, please define also the reduce list.")
+            exit()
+        else:
+            pass
 
     if VClist is None:
         VClist = np.loadtxt(dir_result+'/VCLIST.txt')
@@ -2374,6 +2456,13 @@ def fit_exp(dir_result, list_path, bi_list=None, area=False, VClist=None, errors
                     if errors:
                         Err[i][j] = np.delete(Err[i][j], reduce)
 
+    for i in range(n_peaks):                  
+        for idx in range(len(list_path)):
+            folder = dir_result+'/'+list_path[idx][:list_path[idx].index('/pdata')]
+            np.savetxt(folder+'/x_'+str(i+1)+'_correct.txt', X[i][idx])
+            np.savetxt(folder+'/y_'+str(i+1)+'_correct.txt', Y[i][idx])
+            if errors:
+                np.savetxt(folder+'/err_'+str(i+1)+'_correct.txt', Err[i][idx])
 
     for i in range(n_peaks):
         
