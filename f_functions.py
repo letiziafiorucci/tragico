@@ -2215,8 +2215,6 @@ def f_figure_comp(ppmscale, data, model, comp, name=None, basefig=None, dic_fig=
     ax.plot(ppmscale, model.real, lw=0.7, c='b', label='Model', zorder=1)
     if basefig is not None:
         ax.plot(ppmscale, basefig, 'r', lw=0.7, label='Baseline', zorder=2)
-    ax.plot(ppmscale, data, lw=0.5, label='Experiment')
-    ax.plot(ppmscale, model, lw=0.5, label='Model')
     ax.plot(ppmscale, (data-model).real, c='g', lw=0.5, label='Residuals', zorder=10)
     for i in range(len(comp)):
         ax.plot(ppmscale, comp[i], '--', lw=0.6, label='Comp. '+str(i+1), zorder=5)
