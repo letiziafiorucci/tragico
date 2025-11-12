@@ -2250,7 +2250,7 @@ def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=
 
     fig = plt.figure()
     fig.set_size_inches(5, 3)#dic_fig['h'],dic_fig['w'])   
-    plt.subplots_adjust(left=0.10,bottom=0.10,right=0.80,top=0.95)     # TODO afterwards
+    plt.subplots_adjust(left=0.10,bottom=0.15,right=0.80,top=0.95)
     ax = fig.add_subplot(1,1,1)
     ax.tick_params(labelsize=6.5)
     for i in range(len(delays_list)):
@@ -2267,18 +2267,22 @@ def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=
     ax.set_ylabel('Intensity (a.u.)', fontsize=8)
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
     ax.yaxis.get_offset_text().set_size(6.5)
+    print('\033[96mDEBUG TEXT')
+    print( dic_fig['sx'], dic_fig['dx'] )
     if not (dic_fig['sx'] is None or dic_fig['dx'] is None):
         if dic_fig['sx'] > dic_fig['dx']:
             ax.set_xlim(dic_fig['dx'],dic_fig['sx'])
         else:
             ax.set_xlim(dic_fig['sx'],dic_fig['dx'])
     else:
+        print('IF CONDITION FAILED')
         ax.set_xlim(limits[0],limits[1])
     ax.invert_xaxis()
-    fig.tight_layout()
     if f_legend:
         ax.legend(fontsize=6, bbox_to_anchor=(0.975, 0.95), bbox_transform=fig.transFigure)
+    print('END DEBUG TEXT \033[0m')
 
+    fig.tight_layout()
     if name is None:
         plt.show()
     else:

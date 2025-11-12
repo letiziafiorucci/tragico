@@ -2,7 +2,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .f_functions import *
+from f_functions import *
 from pprint import pprint
 import os
 import shutil
