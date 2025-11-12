@@ -2413,11 +2413,11 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
         fig.set_size_inches(5,3)
         plt.subplots_adjust(left=0.10,bottom=0.10,right=0.80,top=0.95)
         ax = fig.add_subplot(1,1,1)
-        ax.tick_params(labelsize=5)
-        ax.set_xlabel('Delay (s)', fontsize=6)
-        ax.set_ylabel('Intensity (a.u.)', fontsize=6)
+        ax.tick_params(labelsize=6.5)
+        ax.set_xlabel('Delay (s)', fontsize=8)
+        ax.set_ylabel('Intensity (a.u.)', fontsize=8)
         ax.ticklabel_format(axis='y', style='scientific', scilimits=(-3,3), useMathText=True)
-        ax.yaxis.get_offset_text().set_size(5)
+        ax.yaxis.get_offset_text().set_size(6.5)
         ax.set_xscale('log')
         R1 = []
         err = []
@@ -2450,7 +2450,7 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
                 else:
                     err.append(err1/10**monopar[0]*R1[-1])
         
-        ax.legend(fontsize=3, bbox_to_anchor=(0.9,0.95), bbox_transform=fig.transFigure)
+        ax.legend(fontsize=3, bbox_to_anchor=(0.975, 0.95), bbox_transform=fig.transFigure)
         plt.savefig(dir_result+'/'+str(i+1)+'.png', dpi=600)
         plt.close()
 
@@ -2459,13 +2459,13 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
 
         fig=plt.figure()
         fig.set_size_inches(5,3)
-        plt.subplots_adjust(left=0.10,bottom=0.10,right=0.80,top=0.95)
+        plt.subplots_adjust(left=0.10,bottom=0.10,right=0.95,top=0.95)
         ax = fig.add_subplot(1,1,1)
-        ax.tick_params(labelsize=5)
-        ax.set_xlabel('Field (mT)', fontsize=6)
-        ax.set_ylabel(r'$R_1$ ($s^{-1}$)', fontsize=6)
+        ax.tick_params(labelsize=6.5)
+        ax.set_xlabel('Field (mT)', fontsize=8)
+        ax.set_ylabel(r'$R_1$ ($s^{-1}$)', fontsize=8)
         ax.ticklabel_format(axis='y', style='scientific', scilimits=(-3,3), useMathText=True)
-        ax.yaxis.get_offset_text().set_size(5)
+        ax.yaxis.get_offset_text().set_size(6.5)
         if biflag:
             ax.plot(VClist, R1[:,0], 'o', c='blue',markersize=1)
             ax.plot(VClist, R1[:,1], 'o', c='green',markersize=1)

@@ -2249,8 +2249,8 @@ def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=
     sxo,dxo,_ = find_limits(limits[0],limits[1],ppmscale)
 
     fig = plt.figure()
-    fig.set_size_inches(3.5,3)#dic_fig['h'],dic_fig['w'])   
-    #plt.subplots_adjust(left=0.15,bottom=0.15,right=0.95,top=0.90)
+    fig.set_size_inches(5, 3)#dic_fig['h'],dic_fig['w'])   
+    plt.subplots_adjust(left=0.10,bottom=0.10,right=0.80,top=0.95)     # TODO afterwards
     ax = fig.add_subplot(1,1,1)
     ax.tick_params(labelsize=6.5)
     for i in range(len(delays_list)):
@@ -2266,8 +2266,8 @@ def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=
     ax.set_xlabel(r'$\delta$ (ppm)', fontsize=8)
     ax.set_ylabel('Intensity (a.u.)', fontsize=8)
     ax.ticklabel_format(axis='y', style='scientific', scilimits=(-2,2), useMathText=True)
-    ax.yaxis.get_offset_text().set_size(7)
-    if dic_fig['sx'] and dic_fig['dx']:
+    ax.yaxis.get_offset_text().set_size(6.5)
+    if not (dic_fig['sx'] is None or dic_fig['dx'] is None):
         if dic_fig['sx'] > dic_fig['dx']:
             ax.set_xlim(dic_fig['dx'],dic_fig['sx'])
         else:
@@ -2275,9 +2275,10 @@ def fig_stacked_plot(ppmscale, data, baseline, delays_list, limits, lines, name=
     else:
         ax.set_xlim(limits[0],limits[1])
     ax.invert_xaxis()
-    plt.tight_layout()
+    fig.tight_layout()
     if f_legend:
-        ax.legend(fontsize=6)
+        ax.legend(fontsize=6, bbox_to_anchor=(0.975, 0.95), bbox_transform=fig.transFigure)
+
     if name is None:
         plt.show()
     else:
