@@ -53,7 +53,7 @@ if 0: #test passed
                                 f_int_fit=None, # function for the intensity fit
                                 fargs=None, # arguments of the intensity fit, except for x and y
                                 fileinp='inp1_1D',
-                                err_lims = (-73.75, -73.50),
+                                err_lims_out = (-73.75, -73.50),
                                 color_map = 'viridis')
     
 ### FUNCTION 2 ###
@@ -88,7 +88,7 @@ if 0: #test passed
                                         f_int_fit=None, # function for the intensity fit
                                         fargs=None, # arguments of the intensity fit, except for x and y
                                         fileinp='inp1_pseudo2D',
-                                        err_lims = None,
+                                        err_lims_out = None,
                                         color_map = 'viridis')
     # the limits of integration are ordered from the smallest ppmvalue to the largest (as also stated in the output file)
     theUltimatePlot(dir_result, list_path, bi_list=[], colormap = 'hsv', area=True)

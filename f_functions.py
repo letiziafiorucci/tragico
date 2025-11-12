@@ -377,8 +377,7 @@ def ppmfind(ppm_1h, value):
     try:
         return I, V
     except UnboundLocalError:
-        print(value)
-        exit()
+        raise UnboundLocalError('Error in ppmfind')
 
 def trim_data(ppm_scale, y, sx, dx):
     # Trims the frequency scale and correspondant
@@ -1985,6 +1984,7 @@ class create_input():
         ppm1_set.sort()
         ppm2_set.sort()
 
+        ### TODO
         DE = acqupars['DE'] 
         SR = procpars['SR'] 
         SI = procpars['SI'] 
@@ -1994,6 +1994,7 @@ class create_input():
         TD = acqupars['TD']
         o1 = acqupars['o1']
         sf1 = acqupars['SFO1']
+        ###
         
         dw = 1/(SW)
         td = TD//2

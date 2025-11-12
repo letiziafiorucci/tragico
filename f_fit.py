@@ -930,6 +930,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, option=None, cal_lim=None, 
             datap = Spectra[idx]
             ppm_scale = ppmscale
 
+
         title = open(path+list_path[idx]+'/title').readlines()  # format xxx.xxmT
         if VCLIST==[] or field==True:
             for i,line in enumerate(title):
@@ -945,18 +946,50 @@ def model_fit_pseudo2D(path, delays_list, list_path, option=None, cal_lim=None, 
             VCLIST.append(field)
             field = True
 
+        # Reading DE
+        if 'DE' not in acqupars.keys():
+            print('W! "DE" missing in acqupars. Setting DE=0 by default.')
+            acqupars['DE'] = 0
         DE = acqupars['DE'] 
-        SR = procpars['SR']
-        SI = procpars['SI'] 
-        SW = acqupars['SW'] 
-        LB = procpars['LB']
-        SSB = procpars['SSB']
-        TD = acqupars['TD']
-        o1 = acqupars['o1']
-        sf1 = acqupars['SFO1']
         
+        # Reading SI
+        if 'SI' not in procpars.keys(): # klassez
+            SI = Spectra.shape[-1]
+        else:                           # bruker
+            SI = procpars['SI'] 
+
+        # Reading SR
+        if 'SR' in procpars.keys():     # bruker
+            SR = procpars['SR']
+        elif 'cal' in procpars.keys():  # klassez
+            SR = 0      # spectra in klassez are already calibrated
+
+        # Reading SW
+        if 'SW_h' in acqupars.keys():   # bruker
+            SW = acqupars['SW_h'] 
+        else:                           # klassez
+            SW = acqupars['SW']
+
+        # Same names in both bruker and klassez
+        o1 = acqupars['o1']         # TODO CHECK NEEDED
+        sf1 = acqupars['SFO1']      # TODO CHECK NEEDED
+        TD = acqupars['TD']
+        if Spectra is None:     # ...but klassez has the "real" complex TD
+            td = TD//2
+        else:
+            td = TD
+        # Processing parameters
+        if 'lb' in procpars.keys():     # klassez
+            LB = procpars['lb']
+        else:                           # bruker
+            LB = procpars['LB']
+        if 'ssb' in procpars.keys():    # klassez
+            SSB = procpars['ssb']
+        else:                           # bruker
+            SSB = procpars['SSB']
+        
+        # Calculate the missing entries
         dw = 1/(SW)
-        td = TD//2
         o1p = o1/sf1
         t_aq = np.linspace(0, SI*dw, SI) + DE
 
@@ -1208,6 +1241,7 @@ def model_fit_pseudo2D(path, delays_list, list_path, option=None, cal_lim=None, 
                     file = open(prev_fit+list_path[idx][:list_path[idx].index('/pdata')]+'/'+new_dir+'popt_sp'+str(idx)+'_I'+str(i)+'_P'+str(j), 'r')
                     param.load(file)
                 ###
+
             
                 peak_int, int_err, prev_param_compl, result, *_ = fit_peaks_bsl_I(param, ppm_scale, data[j,:], tensor_red, 
                                                                 t_aq, sf1, o1p, td, dw, j, i, dir_res, new_dir, SR=SR, 
@@ -1449,18 +1483,50 @@ def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal
         data = Spectra
         ppm_scale = ppmscale
 
+
+    # Reading DE
+    if 'DE' not in acqupars.keys():
+        print('W! "DE" missing in acqupars. Setting DE=0 by default.')
+        acqupars['DE'] = 0
     DE = acqupars['DE'] 
-    SR = procpars['SR']
-    SI = procpars['SI'] 
-    SW = acqupars['SW'] 
-    LB = procpars['LB']
-    SSB = procpars['SSB']
-    TD = acqupars['TD']
-    o1 = acqupars['o1']
-    sf1 = acqupars['SFO1']
     
+    # Reading SI
+    if 'SI' not in procpars.keys(): # klassez
+        SI = Spectra.shape[-1]
+    else:                           # bruker
+        SI = procpars['SI'] 
+
+    # Reading SW
+    if 'SW_h' in acqupars.keys():   # bruker
+        SW = acqupars['SW_h'] 
+    else:                           # klassez
+        SW = acqupars['SW']
+
+    # Same names in both bruker and klassez
+    o1 = acqupars['o1']         
+    sf1 = acqupars['SFO1']      
+    TD = acqupars['TD']
+    if Spectra is None:     # ...but klassez has the "real" complex TD
+        td = TD//2
+    else:
+        td = TD
+
+    # Reading SR
+    if 'SR' in procpars.keys():     # bruker
+        SR = procpars['SR']
+    elif 'cal' in procpars.keys():  # klassez
+        SR = 0  # spectra in klassez are already calibrated
+
+    # Processing parameters
+    if 'wf' in procpars.keys():
+        LB = procpars['wf']['lb']
+        SSB = procpars['wf']['ssb']
+    else:                           # bruker
+        LB = procpars['LB']
+        SSB = procpars['SSB']
+    
+    # Calculate the missing entries
     dw = 1/(SW)
-    td = TD//2
     o1p = o1/sf1
     t_aq = np.linspace(0, SI*dw, SI) + DE
 
@@ -1683,8 +1749,8 @@ def model_fit_1D(path, delays_list, list_path, option = None, dir_name=None, cal
                                                             t_aq, sf1, o1p, td, dw, j, i, dir_res, new_dir, SR=SR, 
                                                             SI=SI, SW=SW, LB=LB, SSB=SSB, dofit=dofit, fast=fast, L1R=L1R, 
                                                             L2R=L2R, err_conf=err_conf, IR=IR, basl_fit=basl_fit)
-            data_sim[j,:] += sim_spectra
-            FID_sim[j,:] += sim_fid
+            data_sim[j,:] += sim_spectra.astype(data_sim[j].dtype)
+            FID_sim[j,:] += sim_fid.astype(data_sim[j].dtype)
             #### write
             if dofit:
                 file = open(dir_res+'/'+new_dir+'popt_I'+str(i)+'_P'+str(j), 'w')
@@ -1939,6 +2005,7 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
         else:
             corr_baseline=np.zeros_like(x)
 
+
         cost = np.max(spettro.real)  #useless since it is normaliazed
         
         if result:
@@ -1962,14 +2029,18 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
                 param[f'{pp}'].set(value=cc)
             corr_baseline = par['E']*x**4 + par['D']*x**3 + par['C']*x**2 + par['B']*x + par['A']
             res -= corr_baseline
+
         """
-        plt.plot(spettro[sx:dx].real, c='k')
-        plt.plot(model.real, c='b')
-        plt.plot(model.real-corr_baseline.real, c='r')
-        plt.plot(spettro[sx:dx].real-model.real+corr_baseline, c='g')
-        plt.plot(res)
+        plt.plot(spettro[sx:dx].real, c='k', label='exp')
+        plt.plot(model.real, c='b', label='model')
+        plt.plot(model.real-cost*corr_baseline.real, c='r', label='model-basl')
+        plt.plot(spettro[sx:dx].real-model.real+cost*corr_baseline, c='g', label='spettro-model-basl')
+        plt.plot(cost*corr_baseline, c='violet', label='baseline')
+        plt.plot(res, c='tab:orange', label='residuals')
+        plt.legend()
         plt.show()
         """
+
         res2plot = res.copy()
 
         if L1R is not None:
@@ -1987,7 +2058,7 @@ def fit_peaks_bsl_I(param, ppm_scale, spettro, tensor_red, t_aq, sf1, o1p, td, d
 
         if cycle%1000==0 or result:
             f_figure_comp(ppm_scale[sx:dx], spettro[sx:dx], corr_baseline+model, comp_list, 
-                                name=dir_res+'/'+new_dir+'_P'+str(j+1)+'_I'+str(jj+1), basefig = corr_baseline, 
+                                name=dir_res+'/'+new_dir+'_P'+str(j+1)+'_I'+str(jj+1), basefig = cost*corr_baseline, 
                                 dic_fig={'h':5.59,'w':4.56, 'sx':tensor_red[0,1], 'dx':tensor_red[0,2]})
             histogram(res2plot, nbins=100, density=True, f_lims= None, xlabel='Residuals', x_symm=True, name=dir_res+'/'+new_dir+'_P'+str(j+1)+'_I'+str(jj+1)+'_hist')
 
