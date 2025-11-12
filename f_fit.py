@@ -2411,7 +2411,7 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
         
         fig=plt.figure()
         fig.set_size_inches(5,3)
-        plt.subplots_adjust(left=0.10,bottom=0.10,right=0.80,top=0.95)
+        plt.subplots_adjust(left=0.10,bottom=0.15,right=0.80,top=0.95)
         ax = fig.add_subplot(1,1,1)
         ax.tick_params(labelsize=6.5)
         ax.set_xlabel('Delay (s)', fontsize=8)
@@ -2459,7 +2459,7 @@ def theUltimatePlot(dir_result, list_path, bi_list=None, colormap = 'hsv', area=
 
         fig=plt.figure()
         fig.set_size_inches(5,3)
-        plt.subplots_adjust(left=0.10,bottom=0.10,right=0.95,top=0.95)
+        plt.subplots_adjust(left=0.10,bottom=0.15,right=0.95,top=0.95)
         ax = fig.add_subplot(1,1,1)
         ax.tick_params(labelsize=6.5)
         ax.set_xlabel('Field (mT)', fontsize=8)
