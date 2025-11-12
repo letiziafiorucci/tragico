@@ -47,7 +47,7 @@ if 0: #test passed
                                 auto_ph = False, # if True, the phase is automatically adjusted  #not working at the moment
                                 cal_lim = (-72.94,-72.52), # limits for the calibration
                                 baseline='bsl_19F', # if True, the baseline interface is activated, if string the coefficients are read from file, if False no bsl is used
-                                delta = 1, # expansion of the baseline correction region and plot
+                                delta = 1, # expansion of the baseline correction region, and of the stacked plot (integration region +/- delta)
                                 fig_stack = True,
                                 doexp=False, # if True, the intensities are fitted with an exponential decay
                                 f_int_fit=None, # function for the intensity fit
